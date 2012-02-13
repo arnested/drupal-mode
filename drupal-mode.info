@@ -1,0 +1,78 @@
+Dette er drupal-mode.info, produceret med makeinfo version 4.8 ud fra
+stdin.
+
+
+File: drupal-mode.info,  Node: Top,  Up: (dir)
+
+Top
+***
+
+* Menu:
+
+* Drupal Mode::
+
+
+File: drupal-mode.info,  Node: Drupal Mode,  Prev: Top,  Up: Top
+
+1 Drupal Mode
+*************
+
+Drupal Mode is an advanced minor mode for developing in Drupal.
+
+   Drupal Mode is based on top of PHP mode and defines among other
+things indentation etc. to match Drupal Coding Standards.
+
+* Menu:
+
+* Mission statement::
+* Installation::
+
+
+File: drupal-mode.info,  Node: Mission statement,  Next: Installation,  Up: Drupal Mode
+
+1.1 Mission statement
+=====================
+
+   * Don't over do it
+        * Only provide what makes sense in standard Emacs fashion.
+
+        * Leave out what is considered personal taste.
+
+        * Provide optional stuff if in doubt.
+
+        * ... or provide option to disable if the personal taste is
+          considered good practice.
+
+        * The rest can go as advice on EmacsWiki or github wiki or
+          g.d.o.
+
+   * Lets base this on Emacs 24 - to do it simple, backporting can come
+     later.
+
+   * Do the right thing in all relevant major modes:
+        * php-mode
+
+        * javascript mode(s)
+
+        * conf-mode (module.info)
+
+   * Provide the mode via ELPA.
+
+
+File: drupal-mode.info,  Node: Installation,  Prev: Mission statement,  Up: Drupal Mode
+
+1.2 Installation
+================
+
+The easiest way to install Drupal Mode is probably to install it via
+the ELPA archive at Marmalade (http://marmalade-repo.org).
+
+
+
+Tag Table:
+Node: Top78
+Node: Drupal Mode163
+Node: Mission statement500
+Node: Installation1275
+
+End Tag Table
