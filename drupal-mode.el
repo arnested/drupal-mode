@@ -1,4 +1,4 @@
-;;; drupal-mode.el --- Advanced minor mode for developing in Drupal
+;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
 ;; Copyright (C) 2012 Arne Jørgensen
 
@@ -86,7 +86,7 @@ First parameter is the Drupal version. Second parameter is the search term."
 
 ;;;###autoload
 (define-minor-mode drupal-mode
-  "Major mode for developing Drupal modules and code.\n\n\\{drupal-mode-map}"
+  "Advanced minor mode for Drupal development.\n\n\\{drupal-mode-map}"
   :group 'drupal
   :init-value nil
   :lighter "/Drupal"
@@ -153,7 +153,7 @@ According to http://drupal.org/coding-standards#indenting."
   "Convert to unix style line ending.
 According to http://drupal.org/coding-standards#indenting you
 should save your files with unix style end of line."
-  (when (and (eq major-mode 'drupal-mode)
+  (when (and drupal-mode
 	     drupal-convert-line-ending
 	     (/= (coding-system-eol-type buffer-file-coding-system) 0))
     (if (or (eq drupal-convert-line-ending t)
@@ -166,7 +166,7 @@ should save your files with unix style end of line."
 
 (defun drupal-delete-trailing-whitespace ()
   "Delete trailing whitespace if in drupal mode."
-  (when (and (eq major-mode 'drupal-mode)
+  (when (and drupal-mode
 	     drupal-delete-trailing-whitespace)
     (delete-trailing-whitespace)))
 
