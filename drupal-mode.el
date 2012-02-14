@@ -124,7 +124,7 @@ According to http://drupal.org/coding-standards#indenting."
 (defun drupal-mode-manual ()
   "Go to the Drupal Mode info page."
   (interactive)
-  (info-display-manual "drupal-mode"))
+  (info "drupal-mode"))
 
 
 
