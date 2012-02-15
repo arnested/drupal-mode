@@ -53,6 +53,7 @@ According to http://drupal.org/coding-standards#indenting."
 	  (const :tag "Always" t)
 	  (const :tag "Never" nil)
 	  (const :tag "Ask" ask))
+  :link '(url-link "http://drupal.org/coding-standards#indenting")
   :group 'drupal)
 (make-variable-buffer-local 'drupal-convert-line-ending)
 
@@ -64,6 +65,7 @@ According to http://drupal.org/coding-standards#indenting."
 	  :tag " we offer to delete trailing whitespace."
 	  (const :tag "Always" t)
 	  (const :tag "Never" nil))
+  :link '(url-link "http://drupal.org/coding-standards#indenting")
   :group 'drupal)
 
 ;; Where to lookup symbols
@@ -121,6 +123,7 @@ According to http://drupal.org/coding-standards#indenting."
     )
   "Drupal coding style.
 According to http://drupal.org/coding-standards#indenting."
+  :link '(url-link "http://drupal.org/coding-standards#indenting")
   :group 'drupal)
 
 (c-add-style "drupal" drupal-style)
