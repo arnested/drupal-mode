@@ -196,18 +196,20 @@ should save your files with unix style end of line."
   (if drupal-version
       drupal-version
     (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/includes/bootstrap.inc"))
-      (let ((dir (locate-dominating-file buffer-file-name file)))
-        (when dir
-          (with-current-buffer (find-file-noselect (concat dir file) t)
-            (save-excursion
-              (goto-char (point-min))
-              (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
-                (dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))))))
-                (dir-locals-set-directory-class dir 'drupal-class)))
-            (setq drupal-version (match-string-no-properties 2))
-            )
-          (hack-local-variables))))
-    drupal-version))
+      (let ((here (or buffer-file-name dired-directory)))
+	(when here
+	  (let ((dir (locate-dominating-file here file)))
+	    (when dir
+	      (with-current-buffer (find-file-noselect (concat dir file) t)
+		(save-excursion
+		  (goto-char (point-min))
+		  (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
+		    (dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))))))
+		    (dir-locals-set-directory-class dir 'drupal-class)))
+		(setq drupal-version (match-string-no-properties 2))
+		)))
+	  (hack-local-variables)
+	  drupal-version)))))
 
 (defun drupal-major-version (&optional version)
   "Return major version number of version string.
