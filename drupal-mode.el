@@ -49,10 +49,10 @@
   "Should we offer to change line endings if needed?.
 According to http://drupal.org/coding-standards#indenting."
   :type `(choice 
-	  :tag " we offer to change line endings if needed?"
-	  (const :tag "Always" t)
-	  (const :tag "Never" nil)
-	  (const :tag "Ask" ask))
+          :tag " we offer to change line endings if needed?"
+          (const :tag "Always" t)
+          (const :tag "Never" nil)
+          (const :tag "Ask" ask))
   :link '(url-link "http://drupal.org/coding-standards#indenting")
   :group 'drupal)
 (make-variable-buffer-local 'drupal-convert-line-ending)
@@ -62,9 +62,9 @@ According to http://drupal.org/coding-standards#indenting."
   "Should we delete trailing white space?.
 According to http://drupal.org/coding-standards#indenting."
   :type `(choice 
-	  :tag " we offer to delete trailing whitespace."
-	  (const :tag "Always" t)
-	  (const :tag "Never" nil))
+          :tag " we offer to delete trailing whitespace."
+          (const :tag "Always" t)
+          (const :tag "Never" nil))
   :link '(url-link "http://drupal.org/coding-standards#indenting")
   :group 'drupal)
 
@@ -74,8 +74,8 @@ According to http://drupal.org/coding-standards#indenting."
 %v is the Drupal major version.
 %s is the search term."
   :type '(choice (const :tag "Drupal.org" "http://api.drupal.org/api/search/%v/%s")
-		 (const :tag "DrupalContrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
-		 (string :tag "Other" "http://example.com/search?q=%s&version=%v"))
+                 (const :tag "DrupalContrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
+                 (string :tag "Other" "http://example.com/search?q=%s&version=%v"))
   :group 'drupal)
 
 (defvar drupal-version nil "Drupal version as auto detected.")
@@ -113,10 +113,10 @@ According to http://drupal.org/coding-standards#indenting."
     (indent-tabs-mode . nil)
     (require-final-newline . t)
     (c-offsets-alist . ((arglist-close . 0)
-			(arglist-cont-nonempty . c-lineup-math)
-			(arglist-intro . +)
-			(case-label . +)
-			(comment-intro . 0)))
+                        (arglist-cont-nonempty . c-lineup-math)
+                        (arglist-intro . +)
+                        (case-label . +)
+                        (comment-intro . 0)))
     (c-doc-comment-style . (php-mode . javadoc))
     (c-label-minimum-indentation . 1)
     (c-special-indent-hook . c-gnu-impose-minimum)
@@ -164,20 +164,20 @@ According to http://drupal.org/coding-standards#indenting."
 According to http://drupal.org/coding-standards#indenting you
 should save your files with unix style end of line."
   (when (and drupal-mode
-	     drupal-convert-line-ending
-	     (/= (coding-system-eol-type buffer-file-coding-system) 0))
+             drupal-convert-line-ending
+             (/= (coding-system-eol-type buffer-file-coding-system) 0))
     (if (or (eq drupal-convert-line-ending t)
-	    (y-or-n-p "Convert to unix style line endings?"))
-	(progn
-	  (message "Coding system conversion")
-	  (set-buffer-file-coding-system 'unix))
+            (y-or-n-p "Convert to unix style line endings?"))
+        (progn
+          (message "Coding system conversion")
+          (set-buffer-file-coding-system 'unix))
       (progn
-	(setq drupal-convert-line-ending nil)))))
+        (setq drupal-convert-line-ending nil)))))
 
 (defun drupal-delete-trailing-whitespace ()
   "Delete trailing whitespace if in drupal mode."
   (when (and drupal-mode
-	     drupal-delete-trailing-whitespace)
+             drupal-delete-trailing-whitespace)
     (delete-trailing-whitespace)))
 
 (defun drupal-search-documentation ()
@@ -185,7 +185,7 @@ should save your files with unix style end of line."
   (interactive)
   (browse-url
    (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
-				    (?s . ,(symbol-at-point))))))
+                                    (?s . ,(symbol-at-point))))))
 
 
 
@@ -197,17 +197,17 @@ should save your files with unix style end of line."
       drupal-version
     (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/includes/bootstrap.inc"))
       (let ((dir (locate-dominating-file buffer-file-name file)))
-	(when dir
-	  (with-current-buffer (find-file-noselect (concat dir file) t)
-	    (save-excursion
-	      (goto-char (point-min))
-	      (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
-		(dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))))))
-		(dir-locals-set-directory-class dir 'drupal-class)))
-	    (setq drupal-version (match-string-no-properties 2))
-	    )
-	  (hack-local-variables))))
-	  drupal-version))
+        (when dir
+          (with-current-buffer (find-file-noselect (concat dir file) t)
+            (save-excursion
+              (goto-char (point-min))
+              (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
+                (dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))))))
+                (dir-locals-set-directory-class dir 'drupal-class)))
+            (setq drupal-version (match-string-no-properties 2))
+            )
+          (hack-local-variables))))
+    drupal-version))
 
 (defun drupal-major-version (&optional version)
   "Return major version number of version string.
@@ -216,7 +216,7 @@ If major version number is 4 - return both major and minor."
     (setq version (drupal-detect-drupal-version)))
   (let ((version-list (split-string version "\\.")))
     (if (= (string-to-number (car version-list)) 4)
-	(format "%s.%s" (car version-list) (cadr version-list))
+        (format "%s.%s" (car version-list) (cadr version-list))
       (car version-list))))
 
 ;;;###autoload
