@@ -34,6 +34,7 @@
 ;;; Code:
 
 (require 'php-mode)
+(require 'format-spec)
 
 
 
@@ -65,11 +66,14 @@ According to http://drupal.org/coding-standards#indenting."
 	  (const :tag "Never" nil))
   :group 'drupal)
 
-;; 
-(defcustom drupal-search-url "http://api.drupal.org/api/search/%s/%s"
+;; Where to lookup symbols
+(defcustom drupal-search-url "http://api.drupal.org/api/search/%v/%s"
   "The URL to search the Drupal API.
-First parameter is the Drupal version. Second parameter is the search term."
-  :type 'string
+%v is the Drupal major version.
+%s is the search term."
+  :type '(choice (const :tag "Drupal.org" "http://api.drupal.org/api/search/%v/%s")
+		 (const :tag "DrupalContrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
+		 (string :tag "Other" "http://example.com/search?q=%s&version=%v"))
   :group 'drupal)
 
 (defvar drupal-version nil "Drupal version as auto detected.")
@@ -173,7 +177,9 @@ should save your files with unix style end of line."
 (defun drupal-search-documentation ()
   "Search Drupal documentation for symbol at point."
   (interactive)
-  (browse-url(format drupal-search-url (drupal-major-version drupal-version) (symbol-at-point))))
+  (browse-url
+   (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
+				    (?s . ,(symbol-at-point))))))
 
 
 
