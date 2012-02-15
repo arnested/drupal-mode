@@ -115,6 +115,9 @@ According to http://drupal.org/coding-standards#indenting."
 			(arglist-intro . +)
 			(case-label . +)
 			(comment-intro . 0)))
+    (c-doc-comment-style . (php-mode . javadoc))
+    (c-label-minimum-indentation . 1)
+    (c-special-indent-hook . c-gnu-impose-minimum)
     )
   "Drupal coding style.
 According to http://drupal.org/coding-standards#indenting."
