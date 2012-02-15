@@ -20,7 +20,20 @@ indentation etc. to match Drupal Coding Standards.
 	* conf-mode (module.info)
 * Provide the mode via ELPA.
 
+## Other drupal modes ##
+
+There are quite a few attempts at writing a drupal-mode out in the
+wild:
+
+* [Search Github for drupal-mode](https://github.com/search?type=Repositories&q=drupal-mode)
+* At drupal.org:
+	* http://drupal.org/sandbox/bartlantz/1405156
+	* http://drupal.org/project/emacs
+
+All of them more or less based on
+[Configuring Emacs](http://drupal.org/node/59868).
+
 ## Installation ##
 
 The easiest way to install Drupal Mode is probably to install it via
-the ELPA archive at [Marmalade](http://marmalade-repo.org).
+the ELPA archive at [Marmalade](http://marmalade-repo.org/packages/drupal-mode).
