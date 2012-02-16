@@ -47,8 +47,8 @@ File: drupal-mode.info,  Node: Mission statement,  Next: Other drupal modes,  Up
         * The rest can go as advice on EmacsWiki or github wiki or
           g.d.o.
 
-   * Lets base this on Emacs 24 - to do it simple, backporting can come
-     later.
+   * Development is based on Emacs 24 - but Emacs 23 will be supported
+     for all releases as well (although only a subset).
 
    * Do the right thing in all relevant major modes:
         * php-mode
@@ -95,7 +95,7 @@ Tag Table:
 Node: Top78
 Node: Drupal Mode163
 Node: Mission statement523
-Node: Other drupal modes1304
-Node: Installation1851
+Node: Other drupal modes1347
+Node: Installation1894
 
 End Tag Table

@@ -13,7 +13,8 @@ indentation etc. to match Drupal Coding Standards.
     * Provide optional stuff if in doubt.
     * ... or provide option to disable if the personal taste is considered good practice.
     * The rest can go as advice on EmacsWiki or github wiki or g.d.o.
-* Lets base this on Emacs 24 - to do it simple, backporting can come later.
+* Development is based on Emacs 24 - but Emacs 23 will be supported
+  for all releases as well (although only a subset).
 * Do the right thing in all relevant major modes:
 	* php-mode
 	* javascript mode(s)
