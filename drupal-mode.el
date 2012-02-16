@@ -82,6 +82,10 @@ According to http://drupal.org/coding-standards#indenting."
 (make-variable-buffer-local 'drupal-version)
 (put 'drupal-version 'safe-local-variable 'string-or-null-p)
 
+(defvar drupal-root nil "Drupal project root as auto detected.")
+(make-variable-buffer-local 'drupal-root)
+(put 'drupal-root 'safe-local-variable 'string-or-null-p)
+
 (defvar drupal-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-cdf" 'drupal-search-documentation)
@@ -102,6 +106,12 @@ According to http://drupal.org/coding-standards#indenting."
     (c-add-language 'drupal-mode 'c-mode)
     (c-set-style "drupal"))
 
+  ;; setup TAGS file for etags if it exists in DRUPAL_ROOT
+  (when (and (boundp 'drupal-root)
+	     (file-exists-p (concat drupal-root "TAGS")))
+    (setq tags-file-name (concat drupal-root "TAGS")))
+
+  ;; handle line ending and trailing whitespace
   (add-hook 'before-save-hook 'drupal-convert-line-ending)
   (add-hook 'before-save-hook 'drupal-delete-trailing-whitespace))
 
@@ -204,7 +214,8 @@ should save your files with unix style end of line."
 		(save-excursion
 		  (goto-char (point-min))
 		  (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
-		    (dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))))))
+		    (dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))
+									    (drupal-root . ,dir)))))
 		    (dir-locals-set-directory-class dir 'drupal-class)))
 		(setq drupal-version (match-string-no-properties 2))
 		)))
