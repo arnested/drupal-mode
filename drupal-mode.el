@@ -193,9 +193,10 @@ should save your files with unix style end of line."
 (defun drupal-search-documentation ()
   "Search Drupal documentation for symbol at point."
   (interactive)
-  (browse-url
-   (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
-                                    (?s . ,(symbol-at-point))))))
+  (when (symbol-at-point)
+    (browse-url
+     (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
+				      (?s . ,(symbol-at-point)))))))
 
 
 
