@@ -25,10 +25,11 @@ things indentation etc. to match Drupal Coding Standards.
 * Menu:
 
 * Mission statement::
+* Other drupal modes::
 * Installation::
 
 
-File: drupal-mode.info,  Node: Mission statement,  Next: Installation,  Up: Drupal Mode
+File: drupal-mode.info,  Node: Mission statement,  Next: Other drupal modes,  Up: Drupal Mode
 
 1.1 Mission statement
 =====================
@@ -46,8 +47,8 @@ File: drupal-mode.info,  Node: Mission statement,  Next: Installation,  Up: Drup
         * The rest can go as advice on EmacsWiki or github wiki or
           g.d.o.
 
-   * Lets base this on Emacs 24 - to do it simple, backporting can come
-     later.
+   * Development is based on Emacs 24 - but Emacs 23 will be supported
+     for all releases as well (although only a subset).
 
    * Do the right thing in all relevant major modes:
         * php-mode
@@ -59,20 +60,42 @@ File: drupal-mode.info,  Node: Mission statement,  Next: Installation,  Up: Drup
    * Provide the mode via ELPA.
 
 
-File: drupal-mode.info,  Node: Installation,  Prev: Mission statement,  Up: Drupal Mode
+File: drupal-mode.info,  Node: Other drupal modes,  Next: Installation,  Prev: Mission statement,  Up: Drupal Mode
 
-1.2 Installation
+1.2 Other drupal modes
+======================
+
+There are quite a few attempts at writing a drupal-mode out in the wild:
+
+   * Search Github for drupal-mode
+     (https://github.com/search?type=Repositories&q=drupal-mode)
+
+   * At drupal.org:
+        * http://drupal.org/sandbox/bartlantz/1405156
+
+        * http://drupal.org/project/emacs
+
+
+   All of them more or less based on Configuring Emacs
+(http://drupal.org/node/59868).
+
+
+File: drupal-mode.info,  Node: Installation,  Prev: Other drupal modes,  Up: Drupal Mode
+
+1.3 Installation
 ================
 
 The easiest way to install Drupal Mode is probably to install it via
-the ELPA archive at Marmalade (http://marmalade-repo.org).
+the ELPA archive at Marmalade
+(http://marmalade-repo.org/packages/drupal-mode).
 
 
 
 Tag Table:
 Node: Top78
 Node: Drupal Mode163
-Node: Mission statement500
-Node: Installation1275
+Node: Mission statement523
+Node: Other drupal modes1347
+Node: Installation1894
 
 End Tag Table
