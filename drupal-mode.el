@@ -44,6 +44,11 @@
   :prefix "drupal-"
   :group 'languages)
 
+(defgroup drupal-drush nil
+  "Drush configuration."
+  :prefix "drupal-drush-"
+  :group 'drupal)
+
 ;; Should we offer to change line endings if needed?
 (defcustom drupal-convert-line-ending 'ask
   "Should we offer to change line endings if needed?.
@@ -78,6 +83,29 @@ According to http://drupal.org/coding-standards#indenting."
                  (string :tag "Other" "http://example.com/search?q=%s&version=%v"))
   :group 'drupal)
 
+(defcustom drupal-drush-search-url "http://api.drush.org/api/search/%v/%s"
+  "The URL to search the Drush API.
+%v is the Drush major version.
+%s is the search term."
+  :type '(choice (const :tag "Drush.org" "http://api.drush.org/api/search/%v/%s")
+                 (string :tag "Other" "http://example.com/search?q=%s&version=%v"))
+  :group 'drupal-drush)
+
+(defcustom drupal-drush-program (executable-find "drush")
+  "Name of the Drush program."
+  :type 'file
+  :group 'drupal-drush)
+
+(defcustom drupal-drush-version (ignore-errors
+                                  (replace-regexp-in-string
+                                   "[\n\r]" ""
+                                   (with-output-to-string
+                                     (with-current-buffer standard-output
+                                       (call-process drupal-drush-program nil (list t nil) nil "--version" "--pipe")))))
+  "The installed version of Drush."
+  :type 'string
+  :group 'drupal-drush)
+
 (defvar drupal-version nil "Drupal version as auto detected.")
 (make-variable-buffer-local 'drupal-version)
 (put 'drupal-version 'safe-local-variable 'string-or-null-p)
@@ -92,6 +120,11 @@ According to http://drupal.org/coding-standards#indenting."
     map)
   "Keymap for `drupal-mode'")
 
+(defvar drupal-drush-mode-map
+  (let ((map (make-sparse-keymap)))
+    map)
+  "Keymap for `drupal-drush-mode'")
+
 
 
 ;;;###autoload
@@ -99,7 +132,7 @@ According to http://drupal.org/coding-standards#indenting."
   "Advanced minor mode for Drupal development.\n\n\\{drupal-mode-map}"
   :group 'drupal
   :init-value nil
-  :lighter "/Drupal"
+  :lighter " Drupal"
   :keymap drupal-mode-map
   (drupal-detect-drupal-version)
   (when (eq major-mode 'php-mode)
@@ -108,12 +141,20 @@ According to http://drupal.org/coding-standards#indenting."
 
   ;; setup TAGS file for etags if it exists in DRUPAL_ROOT
   (when (and (boundp 'drupal-root)
-	     (file-exists-p (concat drupal-root "TAGS")))
+             (file-exists-p (concat drupal-root "TAGS")))
     (setq tags-file-name (concat drupal-root "TAGS")))
 
   ;; handle line ending and trailing whitespace
   (add-hook 'before-save-hook 'drupal-convert-line-ending)
   (add-hook 'before-save-hook 'drupal-delete-trailing-whitespace))
+
+(define-minor-mode drupal-drush-mode
+  "Advanced minor mode for Drupal Drush development.\n\n\\{drupal-drush-mode-map}"
+  :group 'drupal-drush
+  :init-value nil
+  :lighter " Drush"
+  :keymap drupal-drush-mode-map
+  (drupal-mode 1))
 
 ;; drupal style
 (defcustom drupal-style
@@ -193,10 +234,16 @@ should save your files with unix style end of line."
 (defun drupal-search-documentation ()
   "Search Drupal documentation for symbol at point."
   (interactive)
-  (when (symbol-at-point)
-    (browse-url
-     (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
-				      (?s . ,(symbol-at-point)))))))
+  (let ((symbol (symbol-at-point)))
+    (when symbol
+      (if (and drupal-drush-program
+               (string-match "drush" (symbol-name symbol)))
+          (browse-url
+           (format-spec drupal-drush-search-url `((?v . ,(replace-regexp-in-string "\.[0-9]+\\'" ".x" drupal-drush-version))
+                                                  (?s . ,symbol))))
+        (browse-url
+         (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
+                                          (?s . ,symbol))))))))
 
 
 
@@ -208,20 +255,20 @@ should save your files with unix style end of line."
       drupal-version
     (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/includes/bootstrap.inc"))
       (let ((here (or buffer-file-name dired-directory)))
-	(when here
-	  (let ((dir (locate-dominating-file here file)))
-	    (when dir
-	      (with-current-buffer (find-file-noselect (concat dir file) t)
-		(save-excursion
-		  (goto-char (point-min))
-		  (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
-		    (dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))
-									    (drupal-root . ,dir)))))
-		    (dir-locals-set-directory-class dir 'drupal-class)))
-		(setq drupal-version (match-string-no-properties 2))
-		)))
-	  (hack-local-variables)
-	  drupal-version)))))
+        (when here
+          (let ((dir (locate-dominating-file here file)))
+            (when dir
+              (with-current-buffer (find-file-noselect (concat dir file) t)
+                (save-excursion
+                  (goto-char (point-min))
+                  (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
+                    (dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))
+                                                                            (drupal-root . ,dir)))))
+                    (dir-locals-set-directory-class dir 'drupal-class)))
+                (setq drupal-version (match-string-no-properties 2))
+                )))
+          (hack-local-variables)
+          drupal-version)))))
 
 (defun drupal-major-version (&optional version)
   "Return major version number of version string.
@@ -249,7 +296,9 @@ mode-hook, i.e.
   (when (eq major-mode 'php-mode)
     (drupal-detect-drupal-version)
     (when drupal-version
-      (drupal-mode 1))))
+      (drupal-mode 1))
+    (when (string-match "drush" buffer-file-name)
+      (drupal-drush-mode 1))))
 
 ;;;###autoload
 (eval-after-load 'php-mode
