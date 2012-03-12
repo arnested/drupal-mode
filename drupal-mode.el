@@ -307,6 +307,7 @@ mode-hook, i.e.
 
 ;; Load support for various Emacs features if necessary.
 (eval-after-load 'etags '(require 'drupal/etags))
+(eval-after-load 'gtags '(require 'drupal/gtags))
 
 
 
