@@ -78,17 +78,17 @@ According to http://drupal.org/coding-standards#indenting."
   "The URL to search the Drupal API.
 %v is the Drupal major version.
 %s is the search term."
-  :type '(choice (const :tag "Drupal.org" "http://api.drupal.org/api/search/%v/%s")
-                 (const :tag "DrupalContrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
-                 (string :tag "Other" "http://example.com/search?q=%s&version=%v"))
+  :type '(choice (const :tag "Api.drupal.org" "http://api.drupal.org/api/search/%v/%s")
+                 (const :tag "Api.drupalcontrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
+                 (string :tag "Other" "http://example.com/api/search/%v/%s"))
   :group 'drupal)
 
 (defcustom drupal-drush-search-url "http://api.drush.org/api/search/%v/%s"
   "The URL to search the Drush API.
-%v is the Drush major version.
+%v is the Drush version.
 %s is the search term."
-  :type '(choice (const :tag "Drush.org" "http://api.drush.org/api/search/%v/%s")
-                 (string :tag "Other" "http://example.com/search?q=%s&version=%v"))
+  :type '(choice (const :tag "Api.drush.org" "http://api.drush.org/api/search/%v/%s")
+                 (string :tag "Other" "http://example.com/api/search/%v/%s"))
   :group 'drupal-drush)
 
 (defcustom drupal-drush-program (executable-find "drush")
