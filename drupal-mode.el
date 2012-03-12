@@ -139,11 +139,6 @@ According to http://drupal.org/coding-standards#indenting."
     (c-add-language 'drupal-mode 'c-mode)
     (c-set-style "drupal"))
 
-  ;; setup TAGS file for etags if it exists in DRUPAL_ROOT
-  (when (and (boundp 'drupal-root)
-             (file-exists-p (concat drupal-root "TAGS")))
-    (setq tags-file-name (concat drupal-root "TAGS")))
-
   ;; handle line ending and trailing whitespace
   (add-hook 'before-save-hook 'drupal-convert-line-ending)
   (add-hook 'before-save-hook 'drupal-delete-trailing-whitespace))
@@ -308,6 +303,9 @@ mode-hook, i.e.
 (progn
   (add-to-list 'auto-mode-alist '("\\.\\(module\\|test\\|install\\|theme\\|tpl\\.php\\)$" . php-mode))
   (add-to-list 'auto-mode-alist '("\\.info$" . conf-windows-mode)))
+
+;; Load support for various Emacs features if necessary.
+(eval-after-load 'etags '(require 'drupal/etags))
 
 
 

@@ -11,7 +11,7 @@ README: README.md
 	pandoc -t plain -o $@ $^
 
 # create a tar ball in package.el format for uploading to http://marmalade-repo.org
-elpa-package: README drupal-mode.el drupal-mode-pkg.el drupal-mode.info dir
+elpa-package: README drupal-mode.el drupal-mode-pkg.el drupal-mode.info dir drupal/*.el
 	tar -c -s "@^@drupal-mode-${VERSION}/@" -f drupal-mode-${VERSION}.tar $^
 
 elpa-install: elpa-package
