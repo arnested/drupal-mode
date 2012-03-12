@@ -239,7 +239,7 @@ should save your files with unix style end of line."
       (if (and drupal-drush-program
                (string-match "drush" (symbol-name symbol)))
           (browse-url
-           (format-spec drupal-drush-search-url `((?v . ,(replace-regexp-in-string "\.[0-9]+\\'" ".x" drupal-drush-version))
+           (format-spec drupal-drush-search-url `((?v . ,(replace-regexp-in-string ".*-dev" "master" (replace-regexp-in-string "\.[0-9]+\\'" ".x" drupal-drush-version)))
                                                   (?s . ,symbol))))
         (browse-url
          (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
