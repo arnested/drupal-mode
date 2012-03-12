@@ -72,6 +72,7 @@ According to http://drupal.org/coding-standards#indenting."
           (const :tag "Never" nil))
   :link '(url-link "http://drupal.org/coding-standards#indenting")
   :group 'drupal)
+(make-variable-buffer-local 'drupal-delete-trailing-whitespace)
 
 ;; Where to lookup symbols
 (defcustom drupal-search-url "http://api.drupal.org/api/search/%v/%s"
@@ -137,11 +138,7 @@ According to http://drupal.org/coding-standards#indenting."
   (drupal-detect-drupal-version)
   (when (eq major-mode 'php-mode)
     (c-add-language 'drupal-mode 'c-mode)
-    (c-set-style "drupal"))
-
-  ;; handle line ending and trailing whitespace
-  (add-hook 'before-save-hook 'drupal-convert-line-ending)
-  (add-hook 'before-save-hook 'drupal-delete-trailing-whitespace))
+    (c-set-style "drupal")))
 
 (define-minor-mode drupal-drush-mode
   "Advanced minor mode for Drupal Drush development.\n\n\\{drupal-drush-mode-map}"
@@ -303,6 +300,10 @@ mode-hook, i.e.
 (progn
   (add-to-list 'auto-mode-alist '("\\.\\(module\\|test\\|install\\|theme\\|tpl\\.php\\)$" . php-mode))
   (add-to-list 'auto-mode-alist '("\\.info$" . conf-windows-mode)))
+
+;; Handle line ending and trailing white space.
+(add-hook 'before-save-hook 'drupal-convert-line-ending)
+(add-hook 'before-save-hook 'drupal-delete-trailing-whitespace)
 
 ;; Load support for various Emacs features if necessary.
 (eval-after-load 'etags '(require 'drupal/etags))
