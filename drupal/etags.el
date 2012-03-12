@@ -8,9 +8,9 @@
 
 (defun drupal/etags-enable ()
   "Setup TAGS file for etags if it exists in DRUPAL_ROOT."
-  (when (and (boundp 'drupal-root)
-	     (file-exists-p (concat drupal-root "TAGS")))
-    (setq tags-file-name (concat drupal-root "TAGS"))))
+  (when (and (boundp 'drupal-rootdir)
+	     (file-exists-p (concat drupal-rootdir "TAGS")))
+    (setq tags-file-name (concat drupal-rootdir "TAGS"))))
 
 (add-hook 'drupal-mode-hook 'drupal/etags-enable)
 

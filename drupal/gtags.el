@@ -8,8 +8,8 @@
 
 (defun drupal/gtags-enable ()
   "Setup rootdir for gtags to be DRUPAL_ROOT."
-  (when (boundp 'drupal-root)
-    (setq gtags-rootdir drupal-root)))
+  (when (boundp 'drupal-rootdir)
+    (setq gtags-rootdir drupal-rootdir)))
 
 (add-hook 'drupal-mode-hook 'drupal/gtags-enable)
 

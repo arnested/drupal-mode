@@ -111,9 +111,9 @@ According to http://drupal.org/coding-standards#indenting."
 (make-variable-buffer-local 'drupal-version)
 (put 'drupal-version 'safe-local-variable 'string-or-null-p)
 
-(defvar drupal-root nil "Drupal project root as auto detected.")
-(make-variable-buffer-local 'drupal-root)
-(put 'drupal-root 'safe-local-variable 'string-or-null-p)
+(defvar drupal-rootdir nil "Drupal project rootdir as auto detected.")
+(make-variable-buffer-local 'drupal-rootdir)
+(put 'drupal-rootdir 'safe-local-variable 'string-or-null-p)
 
 (defvar drupal-mode-map
   (let ((map (make-sparse-keymap)))
@@ -255,7 +255,7 @@ should save your files with unix style end of line."
                   (goto-char (point-min))
                   (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
                     (dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))
-                                                                            (drupal-root . ,dir)))))
+                                                                            (drupal-rootdir . ,dir)))))
                     (dir-locals-set-directory-class dir 'drupal-class)))
                 (setq drupal-version (match-string-no-properties 2))
                 )))
