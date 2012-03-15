@@ -118,6 +118,7 @@ According to http://drupal.org/coding-standards#indenting."
 (defvar drupal-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-cdf" 'drupal-search-documentation)
+    (define-key map "\C-cdc" 'drupal-drush-cache-clear)
     map)
   "Keymap for `drupal-mode'")
 
@@ -179,6 +180,23 @@ According to http://drupal.org/coding-standards#indenting."
   (interactive)
   (info "drupal-mode"))
 
+(defun drupal-drush-cache-clear ()
+  "Clear all Drupal caches.
+Runs `drush cache-clear all'. Depends on `drupal-drush-program'
+pointing to Drush and depends on the buffer being part of a
+Drupal project (that means `drupal-rootdir' being set to the root
+of the project)."
+  (interactive)
+  (if (and drupal-rootdir
+           drupal-drush-program)
+      (let ((root drupal-rootdir))
+        (with-temp-buffer
+          (cd-absolute root)
+          (message "Clearing all caches...")
+          (call-process drupal-drush-program nil nil nil "cache-clear" "all")
+          (message "Clearing all caches...done")))
+    (message "Can't clear caches. No DRUPALROOT and/or no drush command.")))
+
 
 
 ;; Make a menu keymap (with a prompt string)
@@ -197,6 +215,10 @@ According to http://drupal.org/coding-standards#indenting."
 (define-key drupal-mode-map
   [menu-bar drupal search-documentation]
   '("Search documentation" . drupal-search-documentation))
+(define-key drupal-mode-map
+  [menu-bar drupal cache-clear]
+  '(menu-item "Clear all caches" drupal-drush-cache-clear
+              :enable (and drupal-rootdir drupal-drush-program)))
 
 
 
