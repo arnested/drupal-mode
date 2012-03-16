@@ -10,7 +10,8 @@
   "Set `ispell-local-dictionary' to `american'.
 Comments and names should use US English spelling (e.g., `color'
 not `colour') according to http://drupal.org/coding-standards."
-  (setq ispell-local-dictionary "american"))
+  (when (member "american" (ispell-valid-dictionary-list))
+    (setq ispell-local-dictionary "american")))
 
 (add-hook 'drupal-mode-hook 'drupal/ispell-enable)
 
