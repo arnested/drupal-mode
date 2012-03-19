@@ -44,37 +44,51 @@
   :prefix "drupal-"
   :group 'languages)
 
+
 (defgroup drupal-drush nil
   "Drush configuration."
   :prefix "drupal-drush-"
   :group 'drupal)
 
-;; Should we offer to change line endings if needed?
+
 (defcustom drupal-convert-line-ending 'ask
-  "Should we offer to change line endings if needed?.
-According to http://drupal.org/coding-standards#indenting."
+  "Whether line endings is converted to a single newline (\\n).
+If `Always' always convert line endings.
+If `Never' never convert line endings.
+If `Ask' ask the user whether to convert line endings.
+
+Drupal coding standards states that all text files should end in
+a single newline (\\n)."
   :type `(choice 
           :tag " we offer to change line endings if needed?"
           (const :tag "Always" t)
           (const :tag "Never" nil)
           (const :tag "Ask" ask))
-  :link '(url-link "http://drupal.org/coding-standards#indenting")
+  :link '(url-link :tag "drupal.org" "http://drupal.org/coding-standards#indenting")
   :group 'drupal)
-(make-variable-buffer-local 'drupal-convert-line-ending)
 
-;; Should we delete trailing white space?
-(defcustom drupal-delete-trailing-whitespace t
-  "Should we delete trailing white space?.
-According to http://drupal.org/coding-standards#indenting."
+
+(defcustom drupal-delete-trailing-whitespace 'always
+  "Whether to delete all the trailing whitespace across Drupal buffers.
+All whitespace after the last non-whitespace character in a line is deleted.
+This respects narrowing, created by C-x n n and friends.
+A formfeed is not considered whitespace by this function.
+
+If `Always' delete trailing whitespace across drupal mode buffers.
+If `Never' never delete trailing whitespace across drupal mode buffers.
+If `Default' do what the global setting is.
+
+Drupal coding standards states that lines should have no trailing
+whitespace at the end."
   :type `(choice 
-          :tag " we offer to delete trailing whitespace."
-          (const :tag "Always" t)
-          (const :tag "Never" nil))
-  :link '(url-link "http://drupal.org/coding-standards#indenting")
+          :tag "Whether to delete all the trailing whitespace."
+          (const :tag "Always" always)
+          (const :tag "Default" default)
+          (const :tag "Never" never))
+  :link '(url-link :tag "drupal.org" "http://drupal.org/coding-standards#indenting")
   :group 'drupal)
-(make-variable-buffer-local 'drupal-delete-trailing-whitespace)
 
-;; Where to lookup symbols
+
 (defcustom drupal-search-url "http://api.drupal.org/api/search/%v/%s"
   "The URL to search the Drupal API.
 %v is the Drupal major version.
@@ -82,7 +96,10 @@ According to http://drupal.org/coding-standards#indenting."
   :type '(choice (const :tag "Api.drupal.org" "http://api.drupal.org/api/search/%v/%s")
                  (const :tag "Api.drupalcontrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
                  (string :tag "Other" "http://example.com/api/search/%v/%s"))
+  :link '(url-link :tag "api.drupalcontrib.org" "http://api.drupalcontrib.org")
+  :link '(url-link :tag "api.drupal.org" "http://api.drupal.org")
   :group 'drupal)
+
 
 (defcustom drupal-drush-search-url "http://api.drush.org/api/search/%v/%s"
   "The URL to search the Drush API.
@@ -90,12 +107,17 @@ According to http://drupal.org/coding-standards#indenting."
 %s is the search term."
   :type '(choice (const :tag "Api.drush.org" "http://api.drush.org/api/search/%v/%s")
                  (string :tag "Other" "http://example.com/api/search/%v/%s"))
+  :link '(url-link :tag "api.drush.org" "http://api.drush.org")
   :group 'drupal-drush)
 
+
 (defcustom drupal-drush-program (executable-find "drush")
-  "Name of the Drush program."
+  "Name of the Drush executable.
+Include path to the executable if it is not in your $PATH."
   :type 'file
+  :link '(url-link :tag "Drush" "http://drupal.org/project/drush")
   :group 'drupal-drush)
+
 
 (defcustom drupal-drush-version (ignore-errors
                                   (replace-regexp-in-string
@@ -103,9 +125,12 @@ According to http://drupal.org/coding-standards#indenting."
                                    (with-output-to-string
                                      (with-current-buffer standard-output
                                        (call-process drupal-drush-program nil (list t nil) nil "--version" "--pipe")))))
-  "The installed version of Drush."
+  "Version number of the installed version Drush."
   :type 'string
+  :link '(variable-link drupal-drush-program)
   :group 'drupal-drush)
+
+
 
 (defvar drupal-version nil "Drupal version as auto detected.")
 (make-variable-buffer-local 'drupal-version)
@@ -136,18 +161,36 @@ According to http://drupal.org/coding-standards#indenting."
   :init-value nil
   :lighter " Drupal"
   :keymap drupal-mode-map
+
+  ;; Detect drupal version, drupal root, etc.
   (drupal-detect-drupal-version)
+
+  ;; Delete trailing white space.
+  (when (eq drupal-delete-trailing-whitespace 'always)
+    (add-hook 'before-save-hook 'delete-trailing-whitespace nil t))
+  (when (eq drupal-delete-trailing-whitespace 'never)
+    (remove-hook 'before-save-hook 'delete-trailing-whitespace t))
+
+  ;; Handle line ending and trailing white space.
+  (add-hook 'before-save-hook 'drupal-convert-line-ending nil t)
+
+  ;; Stuff special for php-mode buffers.
   (when (eq major-mode 'php-mode)
     (c-add-language 'drupal-mode 'c-mode)
     (c-set-style "drupal")))
 
+;;;###autoload
 (define-minor-mode drupal-drush-mode
   "Advanced minor mode for Drupal Drush development.\n\n\\{drupal-drush-mode-map}"
   :group 'drupal-drush
   :init-value nil
   :lighter " Drush"
   :keymap drupal-drush-mode-map
+
+  ;; Currently only enables drupal-mode.
   (drupal-mode 1))
+
+
 
 ;; drupal style
 (defcustom drupal-style
@@ -167,7 +210,7 @@ According to http://drupal.org/coding-standards#indenting."
     )
   "Drupal coding style.
 According to http://drupal.org/coding-standards#indenting."
-  :link '(url-link "http://drupal.org/coding-standards#indenting")
+  :link '(url-link :tag "drupal.org" "http://drupal.org/coding-standards#indenting")
   :group 'drupal)
 
 (c-add-style "drupal" drupal-style)
@@ -195,7 +238,7 @@ of the project)."
           (message "Clearing all caches...")
           (call-process drupal-drush-program nil nil nil "cache-clear" "all")
           (message "Clearing all caches...done")))
-    (message "Can't clear caches. No DRUPALROOT and/or no drush command.")))
+    (message "Can't clear caches. No DRUPAL_ROOT and/or no drush command.")))
 
 
 
@@ -239,12 +282,6 @@ should save your files with unix style end of line."
       (progn
         (setq drupal-convert-line-ending nil)))))
 
-(defun drupal-delete-trailing-whitespace ()
-  "Delete trailing whitespace if in drupal mode."
-  (when (and drupal-mode
-             drupal-delete-trailing-whitespace)
-    (delete-trailing-whitespace)))
-
 (defun drupal-search-documentation ()
   "Search Drupal documentation for symbol at point."
   (interactive)
@@ -263,7 +300,9 @@ should save your files with unix style end of line."
 
 ;; Detect Drupal and Drupal version
 (defun drupal-detect-drupal-version ()
-  "Detect if the buffer is part of a Drupal project."
+  "Detect if the buffer is part of a Drupal project.
+If part of a Drupal project also detect the version of Drupal and
+the location of DRUPAL_ROOT."
   (interactive)
   (if drupal-version
       drupal-version
@@ -305,8 +344,7 @@ The function is suitable for adding to the supported major modes
 mode-hook, i.e.
 
 (eval-after-load 'php-mode
-  '(add-hook 'php-mode-hook 'drupal-mode-bootstrap))
-"
+  '(add-hook 'php-mode-hook 'drupal-mode-bootstrap))"
   (when (eq major-mode 'php-mode)
     (drupal-detect-drupal-version)
     (when drupal-version
@@ -323,9 +361,6 @@ mode-hook, i.e.
   (add-to-list 'auto-mode-alist '("\\.\\(module\\|test\\|install\\|theme\\|tpl\\.php\\)$" . php-mode))
   (add-to-list 'auto-mode-alist '("\\.info$" . conf-windows-mode)))
 
-;; Handle line ending and trailing white space.
-(add-hook 'before-save-hook 'drupal-convert-line-ending)
-(add-hook 'before-save-hook 'drupal-delete-trailing-whitespace)
 
 ;; Load support for various Emacs features if necessary.
 (eval-after-load 'etags '(require 'drupal/etags))
