@@ -8,13 +8,14 @@
 
 (defun drupal/flymake-phpcs-enable ()
   "Enable drupal-mode support for flymake-phpcs."
-  (when (and (executable-find flymake-phpcs-command)
-	     (ignore-errors
-	       (string-match
-		"Drupal"
-		(with-output-to-string
-		  (with-current-buffer standard-output
-		    (call-process (executable-find flymake-phpcs-command) nil (list t nil) nil "-i"))))))
+  (when (and (eq major-mode 'php-mode)
+             (executable-find flymake-phpcs-command)
+             (ignore-errors
+               (string-match
+                "Drupal"
+                (with-output-to-string
+                  (with-current-buffer standard-output
+                    (call-process (executable-find flymake-phpcs-command) nil (list t nil) nil "-i"))))))
     (set (make-local-variable 'flymake-phpcs-standard) "Drupal")
     ;; We have probably set `flymake-phpcs-standard' after a syntax
     ;; check was initiated - so kill it and start syntax check again.
