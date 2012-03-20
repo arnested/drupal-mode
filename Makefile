@@ -8,7 +8,7 @@ drupal-mode.info: README.md
 	pandoc -t texinfo $^ | makeinfo -o $@
 
 README: README.md
-	pandoc -t plain -o $@ $^
+	pandoc --atx-headers -t plain -o $@ $^
 
 # create a tar ball in package.el format for uploading to http://marmalade-repo.org
 elpa-package: README drupal-mode.el drupal-mode-pkg.el drupal-mode.info dir drupal/*.el
