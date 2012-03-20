@@ -9,63 +9,259 @@ Top
 
 * Menu:
 
-* Drupal Mode::
+* Drupal mode::
 
 
-File: drupal-mode.info,  Node: Drupal Mode,  Prev: Top,  Up: Top
+File: drupal-mode.info,  Node: Drupal mode,  Prev: Top,  Up: Top
 
-1 Drupal Mode
+1 Drupal mode
 *************
 
-Drupal Mode is an advanced minor mode for developing in Drupal.
+Drupal mode is an advanced minor mode for developing in Drupal.
 
-   Drupal Mode is based on top of PHP mode and defines among other
-things indentation etc. to match Drupal Coding Standards.
+   The approach taken is somewhat different from other attempts at
+creating a Drupal mode.
+
+   This mode is a minor mode and can be applied to all files in a
+Drupal project no matter what major mode they use - whether it be
+php-mode or something else.
+
+   Besides giving access to general functionality in all modes (i.e.
+clearing cache through Drush) it will also adapt it self to the major
+mode to enable functionality only for that particular major mode (i.e.
+adhering to Drupals PHP coding standards only in php-mode).
+
+   Drupal mode will try not to enforce specific ways of working with
+Emacs on to you. Emacs can be extended in a million different ways and
+you should use the parts and extensions that fit _you_ and _your_
+working habits.
+
+   If Drupal mode recognizes you using an extension that it knows about
+it will adapt the extension to be useful in Drupal mode and with
+Drupal. I.e. it will recognize if you have loaded etags support and
+setup your buffers to use the TAGS file in your DRUPAL_ROOT folder.
+
+   Drupal mode won't embed other libraries but will suggest some (see
+below) and depend on a few through the packaging system (i.e. php-mode).
 
 * Menu:
 
-* Mission statement::
-* Other drupal modes::
 * Installation::
+* Features of Drupal mode::
+* Emacs modes and extensions that Drupal mode will enhance::
+* Other takes on a Drupal mode::
+* Development of Drupal mode::
 
 
-File: drupal-mode.info,  Node: Mission statement,  Next: Other drupal modes,  Up: Drupal Mode
+File: drupal-mode.info,  Node: Installation,  Next: Features of Drupal mode,  Up: Drupal mode
 
-1.1 Mission statement
-=====================
+1.1 Installation
+================
 
-   * Don't over do it
-        * Only provide what makes sense in standard Emacs fashion.
+The easiest way to install Drupal mode is probably to install it via
+the ELPA archive at Marmalade
+(http://marmalade-repo.org/packages/drupal-mode).
 
-        * Leave out what is considered personal taste.
-
-        * Provide optional stuff if in doubt.
-
-        * ... or provide option to disable if the personal taste is
-          considered good practice.
-
-        * The rest can go as advice on EmacsWiki or github wiki or
-          g.d.o.
-
-   * Development is based on Emacs 24 - but Emacs 23 will be supported
-     for all releases as well (although only a subset).
-
-   * Do the right thing in all relevant major modes:
-        * php-mode
-
-        * javascript mode(s)
-
-        * conf-mode (module.info)
-
-   * Provide the mode via ELPA.
+   ELPA (package.el) is part of Emacs 24. For Emacs 23 see Marmalade
+(http://marmalade-repo.org) for installation instructions.
 
 
-File: drupal-mode.info,  Node: Other drupal modes,  Next: Installation,  Prev: Mission statement,  Up: Drupal Mode
+File: drupal-mode.info,  Node: Features of Drupal mode,  Next: Emacs modes and extensions that Drupal mode will enhance,  Prev: Installation,  Up: Drupal mode
 
-1.2 Other drupal modes
-======================
+1.2 Features of Drupal mode
+===========================
 
-There are quite a few attempts at writing a drupal-mode out in the wild:
+* Menu:
+
+* Drupal Coding Standards::
+* Search documentation::
+* Clearing all caches::
+* Drush editing minor mode::
+
+
+File: drupal-mode.info,  Node: Drupal Coding Standards,  Next: Search documentation,  Up: Features of Drupal mode
+
+1.2.1 Drupal Coding Standards
+-----------------------------
+
+Drupal mode will make you write code that adheres to Drupals coding
+standards (http://drupal.org/coding-standards#indenting).
+
+   It does this by:
+
+* Menu:
+
+* Indentation::
+* Fixing line endings::
+* Delete trailing white space::
+
+
+File: drupal-mode.info,  Node: Indentation,  Next: Fixing line endings,  Up: Drupal Coding Standards
+
+1.2.1.1 Indentation
+...................
+
+In php-mode code will be indented according to Drupals coding standards
+(http://drupal.org/coding-standards#indenting). If not it is considered
+a bug!
+
+
+File: drupal-mode.info,  Node: Fixing line endings,  Next: Delete trailing white space,  Prev: Indentation,  Up: Drupal Coding Standards
+
+1.2.1.2 Fixing line endings
+...........................
+
+If your files are not written with unix style line endings Drupal mode
+will ask your to convert them to unix style line endings on saving
+buffers.
+
+   This behavior can be customized be the variable
+`drupal-convert-line-ending'.
+
+   The default is to ask if you want the file to be converted. By
+asking you we hopefully won't trick you into making a commit in your
+version control system consisting of a bunch of functionality changes
+with every line also changed by a new line ending. If you have ever
+read 1000 of commits/diffs you will appreciate this.
+
+
+File: drupal-mode.info,  Node: Delete trailing white space,  Prev: Fixing line endings,  Up: Drupal Coding Standards
+
+1.2.1.3 Delete trailing white space
+...................................
+
+In Drupal mode buffers we will enable Emacs'
+`delete-trailing-whitespace'.
+
+   This behavior can be customized be the variable
+`drupal-delete-trailing-whitespace'.
+
+
+File: drupal-mode.info,  Node: Search documentation,  Next: Clearing all caches,  Prev: Drupal Coding Standards,  Up: Features of Drupal mode
+
+1.2.2 Search documentation
+--------------------------
+
+You can search Drupal documentation for the symbol at point by issuing
+`C-c d f' or `M-x drupal-search-documentation' or from the Drupal menu
+entry.
+
+   Files that are part of a Drupal project will try to identify the
+used version of Drupal core and look up the documentation for the
+corresponding version at http://api.drupal.org.
+
+   If the symbol at point is believed to be a drush command the
+documentation will be looked up at http://api.drush.org instead. If
+Drush is installed it will identify the version of Drush and look up
+the documentation for that version.
+
+   You can change where to search for documentation be customizing
+`drupal-search-url' (besides api.drupal.org it also has a predefined
+setting for api.drupalcontrib.org) and `drupal-drush-search-url'.
+
+
+File: drupal-mode.info,  Node: Clearing all caches,  Next: Drush editing minor mode,  Prev: Search documentation,  Up: Features of Drupal mode
+
+1.2.3 Clearing all caches
+-------------------------
+
+If Drush is installed you can issue a `drush cc all' from within Emacs
+by issuing `C-c d c' or `M-x drupal-drush-cache-clear' or from the
+Drupal menu entry.
+
+
+File: drupal-mode.info,  Node: Drush editing minor mode,  Prev: Clearing all caches,  Up: Features of Drupal mode
+
+1.2.4 Drush editing minor mode
+------------------------------
+
+If the buffer you visit is believe to be a Drush command (we think it
+is its name or path contains "drush") we will also enter a Drush minor
+mode.
+
+   There is currently no functionality connected to `drupal-drush-mode'.
+
+
+File: drupal-mode.info,  Node: Emacs modes and extensions that Drupal mode will enhance,  Next: Other takes on a Drupal mode,  Prev: Features of Drupal mode,  Up: Drupal mode
+
+1.3 Emacs modes and extensions that Drupal mode will enhance
+============================================================
+
+* Menu:
+
+* etags::
+* GNU Globals / gtags::
+* ispell::
+* flymake-phpcs::
+
+
+File: drupal-mode.info,  Node: etags,  Next: GNU Globals / gtags,  Up: Emacs modes and extensions that Drupal mode will enhance
+
+1.3.1 etags
+-----------
+
+If you have generated a TAGS file in your DRUPAL_ROOT folder Drupal
+mode will setup all buffers running drupal-mode to set `tags-file-name'
+to point to that TAGS file.
+
+   Etags is a builtin part of Emacs.
+
+
+File: drupal-mode.info,  Node: GNU Globals / gtags,  Next: ispell,  Prev: etags,  Up: Emacs modes and extensions that Drupal mode will enhance
+
+1.3.2 GNU Globals / gtags
+-------------------------
+
+If you load GNU Globals / gtags (http://www.gnu.org/software/global/)
+support in Emacs then Drupal mode will set `gtags-rootdir' to your
+DRUPAL_ROOT.
+
+
+File: drupal-mode.info,  Node: ispell,  Next: flymake-phpcs,  Prev: GNU Globals / gtags,  Up: Emacs modes and extensions that Drupal mode will enhance
+
+1.3.3 ispell
+------------
+
+If ispell.el is loaded in Emacs then Drupal mode will set the language
+of your Drupal mode buffers to `american' as stated in Drupals coding
+standards (http://drupal.org/coding-standards).
+
+   ispell.el is a builtin part of Emacs. A external program must be
+installed to run the actual spell checking, i.e. ispell
+(http://www.gnu.org/software/ispell/), aspell (http://aspell.net/), or
+hunspell (http://hunspell.sourceforge.net/).
+
+
+File: drupal-mode.info,  Node: flymake-phpcs,  Prev: ispell,  Up: Emacs modes and extensions that Drupal mode will enhance
+
+1.3.4 flymake-phpcs
+-------------------
+
+If support for flymake-phpcs.el
+(https://github.com/illusori/emacs-flymake-phpcs) is loaded in emacs
+and you have installed Drupal Code Sniffer
+(http://drupal.org/project/drupalcs) rules then Drupal mode will enable
+flymake-phpcs under php-mode.
+
+   For this to work you need:
+
+   * PHP CodeSniffer (http://pear.php.net/package/PHP_CodeSniffer)
+
+   * flymake-phpcs.el (https://github.com/illusori/emacs-flymake-phpcs)
+
+   * Drupal Code Sniffer (http://drupal.org/project/drupalcs) rules
+
+   Making all of them work together can be a bit of a puzzle.
+Especially notice the need to run `phpcs' through a wrapper you get
+with flymake-phpcs.el.
+
+
+File: drupal-mode.info,  Node: Other takes on a Drupal mode,  Next: Development of Drupal mode,  Prev: Emacs modes and extensions that Drupal mode will enhance,  Up: Drupal mode
+
+1.4 Other takes on a Drupal mode
+================================
+
+There are quite a few attempts at writing a Drupal mode out in the wild:
 
    * Search Github for drupal-mode
      (https://github.com/search?type=Repositories&q=drupal-mode)
@@ -80,22 +276,35 @@ There are quite a few attempts at writing a drupal-mode out in the wild:
 (http://drupal.org/node/59868).
 
 
-File: drupal-mode.info,  Node: Installation,  Prev: Other drupal modes,  Up: Drupal Mode
+File: drupal-mode.info,  Node: Development of Drupal mode,  Prev: Other takes on a Drupal mode,  Up: Drupal mode
 
-1.3 Installation
-================
+1.5 Development of Drupal mode
+==============================
 
-The easiest way to install Drupal Mode is probably to install it via
-the ELPA archive at Marmalade
-(http://marmalade-repo.org/packages/drupal-mode).
+Drupal mode is actively developed at GitHub
+(https://github.com/arnested/drupal-mode). Feature requests, ideas, bug
+reports, and pull request are more that welcome!
 
 
 
 Tag Table:
 Node: Top78
-Node: Drupal Mode163
-Node: Mission statement523
-Node: Other drupal modes1347
-Node: Installation1894
+Node: Drupal mode163
+Node: Installation1670
+Node: Features of Drupal mode2081
+Node: Drupal Coding Standards2416
+Node: Indentation2824
+Node: Fixing line endings3121
+Node: Delete trailing white space3875
+Node: Search documentation4233
+Node: Clearing all caches5207
+Node: Drush editing minor mode5564
+Node: Emacs modes and extensions that Drupal mode will enhance5966
+Node: etags6340
+Node: GNU Globals / gtags6703
+Node: ispell7053
+Node: flymake-phpcs7665
+Node: Other takes on a Drupal mode8474
+Node: Development of Drupal mode9104
 
 End Tag Table
