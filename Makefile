@@ -1,11 +1,11 @@
 .PHONY: all clean install
 
-ARCHIVE_NAME=drupal-mode
-VERSION=$(shell emacs --batch --eval "(with-temp-buffer \
+ARCHIVE_NAME:=drupal-mode
+VERSION:=$(shell emacs --batch --eval "(with-temp-buffer \
 		(require 'package)\
 		(insert-file \"$(ARCHIVE_NAME).el\")\
 		(princ (aref (package-buffer-info) 3)))")
-PACKAGE_NAME=$(ARCHIVE_NAME)-$(VERSION)
+PACKAGE_NAME:=$(ARCHIVE_NAME)-$(VERSION)
 
 all: $(PACKAGE_NAME).tar
 
