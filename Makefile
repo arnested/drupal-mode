@@ -33,7 +33,7 @@ $(PACKAGE_NAME).tar: README $(ARCHIVE_NAME).el $(ARCHIVE_NAME)-pkg.el drupal-mod
 install: $(PACKAGE_NAME).tar
 	emacs --batch --user `whoami` --eval "(progn \
 		(package-initialize)\
-		(package-install-file \"`pwd`/drupal-mode-${VERSION}.tar\"))"
+		(package-install-file \"`pwd`/$(PACKAGE_NAME).tar\"))"
 
 clean:
 	$(RM) $(ARCHIVE_NAME)-*.tar $(ARCHIVE_NAME)-pkg.el README
