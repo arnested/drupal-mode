@@ -157,12 +157,8 @@ Drupal mode will enable flymake-phpcs under php-mode.
 For this to work you need:
 
 *    [PHP CodeSniffer](http://pear.php.net/package/PHP_CodeSniffer)
-*    [flymake-phpcs.el](https://github.com/illusori/emacs-flymake-phpcs)
+*    [flymake-phpcs.el](http://marmalade-repo.org/packages/flymake-phpcs)
 *    [Drupal Code Sniffer](http://drupal.org/project/drupalcs) rules
-
-Making all of them work together can be a bit of a puzzle. Especially
-notice the need to run `phpcs` through a wrapper you get with
-flymake-phpcs.el.
 
 
 ## Other takes on a Drupal mode
