@@ -36,4 +36,4 @@ install: $(PACKAGE_NAME).tar
 		(package-install-file \"`pwd`/$(PACKAGE_NAME).tar\"))"
 
 clean:
-	$(RM) $(ARCHIVE_NAME)-*.tar $(ARCHIVE_NAME)-pkg.el README
+	$(RM) $(ARCHIVE_NAME).info $(ARCHIVE_NAME)-*.tar $(ARCHIVE_NAME)-pkg.el README

@@ -1,4 +1,5 @@
 *.elc
+drupal-mode.info
 drupal-mode-*.tar
 drupal-mode-pkg.el
 README
