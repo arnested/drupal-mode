@@ -6,19 +6,28 @@
 
 ;;; Code:
 
+(defcustom drupal/flymake-phpcs-standard
+  (ignore-errors
+    (let ((standards (with-output-to-string
+                       (with-current-buffer standard-output
+                         (call-process (executable-find flymake-phpcs-command) nil (list t nil) nil "-i")))))
+      (string-match
+       "\\(Drupal[^, 
+]*\\)"
+       standards)
+      (match-string-no-properties 1 standards)))
+  "Name of Drupal coding standard rules for PHP CodeSniffer."
+  :link '(url-link :tag "Drupal Code Sniffer" "http://drupal.org/project/drupalcs")
+  :group 'drupal)
+
 (defun drupal/flymake-phpcs-enable ()
   "Enable drupal-mode support for flymake-phpcs."
   (when (and (eq major-mode 'php-mode)
              (executable-find flymake-phpcs-command)
-             (ignore-errors
-               (string-match
-                "Drupal"
-                (with-output-to-string
-                  (with-current-buffer standard-output
-                    (call-process (executable-find flymake-phpcs-command) nil (list t nil) nil "-i"))))))
+             drupal/flymake-phpcs-standard)
     ;; Set the coding standard to "Drupal" (we checked that it is
     ;; supported above.
-    (set (make-local-variable 'flymake-phpcs-standard) "Drupal")
+    (set (make-local-variable 'flymake-phpcs-standard) drupal/flymake-phpcs-standard)
 
     ;; This is a php-mode file so add the extension to a buffer locale
     ;; version of `flymake-allowed-file-name-masks' and make
