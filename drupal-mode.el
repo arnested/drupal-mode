@@ -140,6 +140,10 @@ Include path to the executable if it is not in your $PATH."
 (make-variable-buffer-local 'drupal-rootdir)
 (put 'drupal-rootdir 'safe-local-variable 'string-or-null-p)
 
+(defvar drupal-module nil "Drupal module name if auto detected.")
+(make-variable-buffer-local 'drupal-module)
+(put 'drupal-module 'safe-local-variable 'string-or-null-p)
+
 (defvar drupal-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-cdf" 'drupal-search-documentation)
@@ -304,8 +308,8 @@ should save your files with unix style end of line."
 If part of a Drupal project also detect the version of Drupal and
 the location of DRUPAL_ROOT."
   (interactive)
-  (if drupal-version
-      drupal-version
+  (hack-local-variables)
+  (when (not drupal-version)
     (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/includes/bootstrap.inc"))
       (let ((here (or buffer-file-name dired-directory)))
         (when here
@@ -313,15 +317,72 @@ the location of DRUPAL_ROOT."
             (when dir
               (with-current-buffer (find-file-noselect (concat dir file) t)
                 (save-excursion
+                  (widen)
                   (goto-char (point-min))
                   (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
-                    (dir-locals-set-class-variables 'drupal-class `((nil . ((drupal-version . ,(match-string-no-properties 2))
-                                                                            (drupal-rootdir . ,dir)))))
-                    (dir-locals-set-directory-class dir 'drupal-class)))
-                (setq drupal-version (match-string-no-properties 2))
-                )))
-          (hack-local-variables)
-          drupal-version)))))
+                    (dir-locals-set-class-variables 'drupal-site `((nil . ((drupal-version . ,(match-string-no-properties 2))
+                                                                           (drupal-rootdir . ,dir)))))
+                    (dir-locals-set-directory-class dir 'drupal-site)))
+                (setq drupal-version (match-string-no-properties 2)))))))))
+  (let ((module (drupal-locate-dominating-module buffer-file-name t))
+        (version drupal-version))
+    (when module
+      (when (not drupal-version)
+        (with-current-buffer (find-file-noselect module t)
+          (save-excursion
+            (widen)
+            (goto-char (point-min))
+            (re-search-forward "core *= *\"?\\(.+\\)\"?" nil t)
+            (setq version (match-string-no-properties 1)))))
+      (dir-locals-set-class-variables 'drupal-module `((nil . ((drupal-module . ,(file-name-nondirectory
+                                                                                  (file-name-sans-extension module)))
+                                                               (drupal-version . ,version)))))
+      (dir-locals-set-directory-class (file-name-directory module) 'drupal-module)))
+  (hack-local-variables)
+  drupal-version)
+
+(defun drupal-locate-dominating-module (file &optional info-file-location)
+  "Look up the directory hierarchy from FILE for a Drupal module root.
+Stop at the first parent where a matching module is found and
+return the directory.
+
+We believe to have found a module if we discover two files in a
+directory with same file name sans extension and extensions .info
+and .module.
+
+If optional parameter `info-file-location' is t return file-name
+of the modules .info file including path.
+
+The implementation of this function is vary much based on an
+older implementation of `locate-dominating-file'."
+  (catch 'found
+    ;; `user' is not initialized yet because `file' may not exist, so we may
+    ;; have to walk up part of the hierarchy before we find the "initial UID".
+    (let ((user nil)
+          ;; Abbreviate, so as to stop when we cross ~/.
+          (dir (abbreviate-file-name (file-name-as-directory file)))
+          files)
+      (while (and dir
+                  ;; As a heuristic, we stop looking up the hierarchy of
+                  ;; directories as soon as we find a directory belonging to
+                  ;; another user.  This should save us from looking in
+                  ;; things like /net and /afs.  This assumes that all the
+                  ;; files inside a project belong to the same user.
+                  (let ((prev-user user))
+                    (setq user (nth 2 (file-attributes dir)))
+                    (or (null prev-user) (equal user prev-user))))
+        (if (and (setq files (condition-case nil
+                                 (directory-files dir 'full "\\(.+\\)\\.info\\'" 'nosort)
+                               (error nil)))
+                 (file-exists-p (concat (file-name-sans-extension (car files)) ".module")))
+            (if info-file-location
+                (throw 'found (car files))
+              (throw 'found (file-name-nondirectory (file-name-sans-extension (car files)))))
+          (if (equal dir
+                     (setq dir (file-name-directory
+                                (directory-file-name dir))))
+              (setq dir nil))))
+      nil)))
 
 (defun drupal-major-version (&optional version)
   "Return major version number of version string.
