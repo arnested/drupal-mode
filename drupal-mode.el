@@ -167,8 +167,7 @@ Include path to the executable if it is not in your $PATH."
   :keymap drupal-mode-map
 
   ;; Detect drupal version, drupal root, etc.
-  (unless drupal-version
-    (drupal-detect-drupal-version))
+  (drupal-detect-drupal-version)
 
   ;; Delete trailing white space.
   (when (eq drupal-delete-trailing-whitespace 'always)
@@ -255,15 +254,6 @@ of the project)."
 
 ;; Define specific subcommands in this menu.
 (define-key drupal-mode-map
-  [menu-bar drupal flattr]
-  '("Flattr Drupal Mode" . (lambda () (interactive) (browse-url "https://flattr.com/thing/511837"))))
-(define-key drupal-mode-map
-  [menu-bar drupal github]
-  '("Drupal Mode on GitHub" . (lambda () (interactive) (browse-url "https://github.com/arnested/drupal-mode"))))
-(define-key drupal-mode-map
-  [menu-bar drupal separator]
-  '("--"))
-(define-key drupal-mode-map
   [menu-bar drupal customize]
   '("Customize Drupal Mode" . (lambda () (interactive) (customize-group 'drupal))))
 (define-key drupal-mode-map
@@ -312,49 +302,44 @@ should save your files with unix style end of line."
 
 
 
-(defvar drupal-detect-drupal-version-in-progress nil
-  "Detect in progress.")
-
 ;; Detect Drupal and Drupal version
 (defun drupal-detect-drupal-version ()
   "Detect if the buffer is part of a Drupal project.
 If part of a Drupal project also detect the version of Drupal and
 the location of DRUPAL_ROOT."
   (interactive)
-  (unless drupal-detect-drupal-version-in-progress
-    (let ((drupal-detect-drupal-version-in-progress t))
-      (hack-local-variables)
+  (hack-local-variables)
+  (when (not drupal-version)
+    (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/includes/bootstrap.inc"))
+      (let ((here (or buffer-file-name dired-directory)))
+        (when here
+          (let ((dir (locate-dominating-file here file)))
+            (when dir
+              (with-current-buffer (find-file-noselect (concat dir file) t)
+                (save-excursion
+                  (widen)
+                  (goto-char (point-min))
+                  (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
+                    (dir-locals-set-class-variables 'drupal-site `((nil . ((drupal-version . ,(match-string-no-properties 2))
+                                                                           (drupal-rootdir . ,dir)))))
+                    (dir-locals-set-directory-class dir 'drupal-site)))
+                (setq drupal-version (match-string-no-properties 2)))))))))
+  (let ((module (drupal-locate-dominating-module buffer-file-name t))
+        (version drupal-version))
+    (when module
       (when (not drupal-version)
-        (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/includes/bootstrap.inc"))
-          (let ((here (or buffer-file-name dired-directory)))
-            (when here
-              (let ((dir (locate-dominating-file here file)))
-                (when dir
-                  (with-current-buffer (find-file-noselect (concat dir file) t)
-                    (save-excursion
-                      (widen)
-                      (goto-char (point-min))
-                      (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
-                        (dir-locals-set-class-variables 'drupal-site `((nil . ((drupal-version . ,(match-string-no-properties 2))
-                                                                               (drupal-rootdir . ,dir)))))
-                        (dir-locals-set-directory-class dir 'drupal-site)))
-                    (setq drupal-version (match-string-no-properties 2)))))))))
-      (let ((module (drupal-locate-dominating-module buffer-file-name t))
-            (version drupal-version))
-        (when module
-          (when (not drupal-version)
-            (with-current-buffer (find-file-noselect module t)
-              (save-excursion
-                (widen)
-                (goto-char (point-min))
-                (re-search-forward "core *= *\"?\\(.+\\)\"?" nil t)
-                (setq version (match-string-no-properties 1)))))
-          (dir-locals-set-class-variables 'drupal-module `((nil . ((drupal-module . ,(file-name-nondirectory
-                                                                                      (file-name-sans-extension module)))
-                                                                   (drupal-version . ,version)))))
-          (dir-locals-set-directory-class (file-name-directory module) 'drupal-module)))
-      (hack-local-variables)
-      drupal-version)))
+        (with-current-buffer (find-file-noselect module t)
+          (save-excursion
+            (widen)
+            (goto-char (point-min))
+            (re-search-forward "core *= *\"?\\(.+\\)\"?" nil t)
+            (setq version (match-string-no-properties 1)))))
+      (dir-locals-set-class-variables 'drupal-module `((nil . ((drupal-module . ,(file-name-nondirectory
+                                                                                  (file-name-sans-extension module)))
+                                                               (drupal-version . ,version)))))
+      (dir-locals-set-directory-class (file-name-directory module) 'drupal-module)))
+  (hack-local-variables)
+  drupal-version)
 
 (defun drupal-locate-dominating-module (file &optional info-file-location)
   "Look up the directory hierarchy from FILE for a Drupal module root.
