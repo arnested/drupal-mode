@@ -34,12 +34,7 @@
     ;; flymake-phpcs initialize.
     (make-local-variable 'flymake-allowed-file-name-masks)
     (add-to-list 'flymake-allowed-file-name-masks
-                 `(,(concat "\\." (file-name-extension (buffer-file-name)) "\\'") flymake-phpcs-init))
-
-    ;; We have probably set `flymake-phpcs-standard' after a syntax
-    ;; check was initiated - so kill it and start syntax check again.
-    (flymake-stop-all-syntax-checks)
-    (flymake-start-syntax-check)))
+                 `(,(concat "\\." (file-name-extension (buffer-file-name)) "\\'") flymake-phpcs-init))))
 
 (add-hook 'drupal-mode-hook 'drupal/flymake-phpcs-enable)
 
