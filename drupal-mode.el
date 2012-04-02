@@ -310,11 +310,19 @@ should save your files with unix style end of line."
                                           (?s . ,symbol))))))))
 
 
+(defvar drupal-symbol-collection nil
+  "A collection or a function returning a collection of Drupal symbols.
+Used by `drupal-insert-hook' to provide completions on hooks.")
+(make-variable-buffer-local 'drupal-symbol-collection)
 
 (define-skeleton drupal-insert-hook
   "Insert Drupal hook function skeleton."
   nil
-  '(setq v1 (skeleton-read "Hook: " "hook_"))
+  '(setq v1 (completing-read "Hook: "
+                             (if (functionp drupal-symbol-collection)
+                                 (funcall drupal-symbol-collection)
+                               drupal-symbol-collection)
+                             nil nil "hook_"))
   "/**\n"
   " * Implements " v1 "().\n"
   " */\n"
