@@ -148,6 +148,8 @@ Include path to the executable if it is not in your $PATH."
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-cdf" 'drupal-search-documentation)
     (define-key map "\C-cdc" 'drupal-drush-cache-clear)
+    (define-key map "\C-cdih" 'drupal-insert-hook)
+    (define-key map "\C-cdif" 'drupal-insert-function)
     map)
   "Keymap for `drupal-mode'")
 
@@ -309,6 +311,29 @@ should save your files with unix style end of line."
 
 
 
+(define-skeleton drupal-insert-hook
+  "Insert Drupal hook function skeleton."
+  nil
+  '(setq v1 (skeleton-read "Hook: " "hook_"))
+  "/**\n"
+  " * Implements " v1 "().\n"
+  " */\n"
+  "function " (replace-regexp-in-string "hook" (drupal-module-name) v1) "(" @ - ") {\n"
+  "  " @ _ "\n"
+  "}\n")
+
+(define-skeleton drupal-insert-function
+  "Insert Drupal function skeleton."
+  nil
+  "/**\n"
+  " * " @ "\n"
+  " */\n"
+  "function " (drupal-module-name) "_" @ - "(" @ ") {\n"
+  "  " @ _ "\n"
+  "}\n")
+
+
+
 ;; Detect Drupal and Drupal version
 (defun drupal-detect-drupal-version ()
   "Detect if the buffer is part of a Drupal project.
@@ -390,6 +415,19 @@ older implementation of `locate-dominating-file'."
                                 (directory-file-name dir))))
               (setq dir nil))))
       nil)))
+
+(defun drupal-module-name ()
+  "Return Drupal module name suitable for function names.
+This will return the best guess at the name of the Drupal module
+and encoded suitable for use as function name prefixes.
+
+Used in `drupal-insert-hook' and `drupal-insert-function'."
+  (replace-regexp-in-string "-" "_"
+                            (if drupal-module
+                                drupal-module
+                              ;; Otherwise fall back to a very naive
+                              ;; way of guessing the module name.
+                              (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))))
 
 (defun drupal-major-version (&optional version)
   "Return major version number of version string.
