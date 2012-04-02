@@ -254,6 +254,12 @@ of the project)."
 
 ;; Define specific subcommands in this menu.
 (define-key drupal-mode-map
+  [menu-bar drupal github]
+  '("Drupal Mode on GitHub" . (lambda () (interactive) (browse-url "https://github.com/arnested/drupal-mode"))))
+(define-key drupal-mode-map
+  [menu-bar drupal separator]
+  '("--"))
+(define-key drupal-mode-map
   [menu-bar drupal customize]
   '("Customize Drupal Mode" . (lambda () (interactive) (customize-group 'drupal))))
 (define-key drupal-mode-map
@@ -261,7 +267,8 @@ of the project)."
   '("Drupal Mode manual" . drupal-mode-manual))
 (define-key drupal-mode-map
   [menu-bar drupal search-documentation]
-  '("Search documentation" . drupal-search-documentation))
+  '(menu-item "Search documentation" drupal-search-documentation
+              :enable (eq major-mode 'php-mode)))
 (define-key drupal-mode-map
   [menu-bar drupal cache-clear]
   '(menu-item "Clear all caches" drupal-drush-cache-clear
