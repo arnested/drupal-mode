@@ -6,6 +6,8 @@
 
 ;;; Code:
 
+(require 'etags)
+
 (defun drupal/etags-enable ()
   "Setup TAGS file for etags if it exists in DRUPAL_ROOT."
   (when (and (boundp 'drupal-rootdir)

@@ -6,6 +6,8 @@
 
 ;;; Code:
 
+(require 'flymake)
+
 (defcustom drupal/flymake-phpcs-standard
   (ignore-errors
     (let ((standards (with-output-to-string

@@ -6,6 +6,8 @@
 
 ;;; Code:
 
+(require 'ispell)
+
 (defun drupal/ispell-enable ()
   "Set `ispell-local-dictionary' to `american'.
 Comments and names should use US English spelling (e.g., `color'

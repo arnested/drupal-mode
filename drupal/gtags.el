@@ -6,6 +6,8 @@
 
 ;;; Code:
 
+(require 'gtags)
+
 (defun drupal/gtags-enable ()
   "Setup rootdir for gtags to be DRUPAL_ROOT."
   (when (boundp 'drupal-rootdir)
