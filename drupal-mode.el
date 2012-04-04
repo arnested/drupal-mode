@@ -349,7 +349,8 @@ If part of a Drupal project also detect the version of Drupal and
 the location of DRUPAL_ROOT."
   (interactive)
   (hack-local-variables)
-  (when (not drupal-version)
+  (when (or (not drupal-version)
+            (not drupal-rootdir))
     (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/includes/bootstrap.inc"))
       (let ((here (or buffer-file-name dired-directory)))
         (when here
@@ -363,7 +364,8 @@ the location of DRUPAL_ROOT."
                     (dir-locals-set-class-variables 'drupal-site `((nil . ((drupal-version . ,(match-string-no-properties 2))
                                                                            (drupal-rootdir . ,dir)))))
                     (dir-locals-set-directory-class dir 'drupal-site)))
-                (setq drupal-version (match-string-no-properties 2)))))))))
+                (setq drupal-version (match-string-no-properties 2))))))))
+    (hack-local-variables))
   (let ((module (drupal-locate-dominating-module buffer-file-name t))
         (version drupal-version))
     (when module
