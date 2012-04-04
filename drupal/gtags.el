@@ -13,7 +13,7 @@
   (when (boundp 'drupal-rootdir)
     (setq gtags-rootdir drupal-rootdir)))
 
-(add-hook 'drupal-mode-hook 'drupal/gtags-enable)
+(add-hook 'drupal-mode-hook #'drupal/gtags-enable)
 
 
 

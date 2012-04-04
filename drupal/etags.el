@@ -18,9 +18,9 @@
 
     ;; Set `drupal-symbol-collection' to `tags-completion-table' so
     ;; that inserting hooks will do completion based on etags.
-    (setq drupal-symbol-collection 'tags-completion-table)))
+    (setq drupal-symbol-collection #'tags-completion-table)))
 
-(add-hook 'drupal-mode-hook 'drupal/etags-enable)
+(add-hook 'drupal-mode-hook #'drupal/etags-enable)
 
 
 

@@ -38,7 +38,7 @@
     (add-to-list 'flymake-allowed-file-name-masks
                  `(,(concat "\\." (file-name-extension (buffer-file-name)) "\\'") flymake-phpcs-init))))
 
-(add-hook 'drupal-mode-hook 'drupal/flymake-phpcs-enable)
+(add-hook 'drupal-mode-hook #'drupal/flymake-phpcs-enable)
 
 
 

@@ -15,7 +15,7 @@ not `colour') according to http://drupal.org/coding-standards."
   (when (member "american" (ispell-valid-dictionary-list))
     (setq ispell-local-dictionary "american")))
 
-(add-hook 'drupal-mode-hook 'drupal/ispell-enable)
+(add-hook 'drupal-mode-hook #'drupal/ispell-enable)
 
 
 

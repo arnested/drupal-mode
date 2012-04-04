@@ -146,10 +146,10 @@ Include path to the executable if it is not in your $PATH."
 
 (defvar drupal-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "\C-cdf" 'drupal-search-documentation)
-    (define-key map "\C-cdc" 'drupal-drush-cache-clear)
-    (define-key map "\C-cdih" 'drupal-insert-hook)
-    (define-key map "\C-cdif" 'drupal-insert-function)
+    (define-key map "\C-cdf" #'drupal-search-documentation)
+    (define-key map "\C-cdc" #'drupal-drush-cache-clear)
+    (define-key map "\C-cdih" #'drupal-insert-hook)
+    (define-key map "\C-cdif" #'drupal-insert-function)
     map)
   "Keymap for `drupal-mode'")
 
@@ -173,12 +173,12 @@ Include path to the executable if it is not in your $PATH."
 
   ;; Delete trailing white space.
   (when (eq drupal-delete-trailing-whitespace 'always)
-    (add-hook 'before-save-hook 'delete-trailing-whitespace nil t))
+    (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))
   (when (eq drupal-delete-trailing-whitespace 'never)
-    (remove-hook 'before-save-hook 'delete-trailing-whitespace t))
+    (remove-hook 'before-save-hook #'delete-trailing-whitespace t))
 
   ;; Handle line ending and trailing white space.
-  (add-hook 'before-save-hook 'drupal-convert-line-ending nil t)
+  (add-hook 'before-save-hook #'drupal-convert-line-ending nil t)
 
   ;; Stuff special for php-mode buffers.
   (when (eq major-mode 'php-mode)
@@ -468,7 +468,7 @@ mode-hook, i.e.
 
 ;;;###autoload
 (eval-after-load 'php-mode
-  '(add-hook 'php-mode-hook 'drupal-mode-bootstrap))
+  '(add-hook 'php-mode-hook #'drupal-mode-bootstrap))
 
 ;;;###autoload
 (progn
