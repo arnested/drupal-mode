@@ -28,7 +28,7 @@ $(ARCHIVE_NAME)-pkg.el: $(ARCHIVE_NAME).el
 				(package-buffer-info))))"
 
 # create a tar ball in package.el format for uploading to http://marmalade-repo.org
-$(PACKAGE_NAME).tar: README $(ARCHIVE_NAME).el $(ARCHIVE_NAME)-pkg.el $(ARCHIVE_NAME).info dir drupal/*.el
+$(PACKAGE_NAME).tar: README $(ARCHIVE_NAME).el $(ARCHIVE_NAME)-pkg.el $(ARCHIVE_NAME).info dir drupal/*.el drupal-tests.el
 	tar -c -s "@^@$(PACKAGE_NAME)/@" -f $(PACKAGE_NAME).tar $^
 
 install: $(PACKAGE_NAME).tar
