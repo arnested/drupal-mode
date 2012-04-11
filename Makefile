@@ -1,4 +1,4 @@
-.PHONY: all clean install
+.PHONY: all test clean install
 
 ARCHIVE_NAME:=drupal-mode
 VERSION:=$(shell emacs --batch -l package --eval "(with-temp-buffer \
@@ -7,6 +7,9 @@ VERSION:=$(shell emacs --batch -l package --eval "(with-temp-buffer \
 PACKAGE_NAME:=$(ARCHIVE_NAME)-$(VERSION)
 
 all: $(PACKAGE_NAME).tar
+
+test:
+	emacs --batch --user `whoami` -L `pwd` -l drupal-tests -f ert-run-tests-batch-and-exit
 
 $(ARCHIVE_NAME).info: README.md
 	pandoc -t texinfo $^ | makeinfo -o $@
