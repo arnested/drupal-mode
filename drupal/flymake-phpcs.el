@@ -39,7 +39,7 @@
 
 (defun drupal/flymake-phpcs-enable ()
   "Enable drupal-mode support for flymake-phpcs."
-  (when (and (eq major-mode 'php-mode)
+  (when (and (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes))
              (executable-find flymake-phpcs-command)
              drupal/flymake-phpcs-standard)
     ;; Set the coding standard to "Drupal" (we checked that it is

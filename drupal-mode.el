@@ -130,6 +130,21 @@ Include path to the executable if it is not in your $PATH."
   :link '(variable-link drupal-drush-program)
   :group 'drupal-drush)
 
+(defcustom drupal-php-modes (list 'php-mode)
+  "Major modes to consider PHP in Drupal mode."
+  :type '(repeat symbol)
+  :group 'drupal)
+
+(defcustom drupal-css-modes (list 'css-mode)
+  "Major modes to consider CSS in Drupal mode."
+  :type '(repeat symbol)
+  :group 'drupal)
+
+(defcustom drupal-js-modes (list 'javascript-mode 'js-mode 'js2-mode)
+  "Major modes to consider JavaScript in Drupal mode."
+  :type '(repeat symbol)
+  :group 'drupal)
+
 
 
 (defvar drupal-version nil "Drupal version as auto detected.")
@@ -181,7 +196,7 @@ Include path to the executable if it is not in your $PATH."
   (add-hook 'before-save-hook #'drupal-convert-line-ending nil t)
 
   ;; Stuff special for php-mode buffers.
-  (when (eq major-mode 'php-mode)
+  (when (apply 'derived-mode-p drupal-php-modes)
     (c-add-language 'drupal-mode 'c-mode)
     (c-set-style "drupal")))
 
@@ -270,7 +285,7 @@ of the project)."
 (define-key drupal-mode-map
   [menu-bar drupal search-documentation]
   '(menu-item "Search documentation" drupal-search-documentation
-              :enable (eq major-mode 'php-mode)))
+              :enable (apply 'derived-mode-p drupal-php-modes)))
 (define-key drupal-mode-map
   [menu-bar drupal cache-clear]
   '(menu-item "Clear all caches" drupal-drush-cache-clear
@@ -461,7 +476,7 @@ mode-hook, i.e.
 
 (eval-after-load 'php-mode
   '(add-hook 'php-mode-hook 'drupal-mode-bootstrap))"
-  (when (eq major-mode 'php-mode)
+  (when (apply 'derived-mode-p drupal-php-modes)
     (drupal-detect-drupal-version)
     (when drupal-version
       (drupal-mode 1))
