@@ -37,6 +37,15 @@
   :link '(url-link :tag "Drupal Code Sniffer" "http://drupal.org/project/drupalcs")
   :group 'drupal)
 
+(defcustom drupal/flymake-phpcs-dont-show-trailing-whitespace t
+  "Non-nil means don't highlight trailing whitespace when flymake-phpcs is in use.
+Flymake-phpcs will also highlight trailing whitespace as an error
+so no need to highlight it twice."
+  :type `(choice 
+          (const :tag "Yes" t)
+          (const :tag "No" nil))
+  :group 'drupal)
+
 (defun drupal/flymake-phpcs-enable ()
   "Enable drupal-mode support for flymake-phpcs."
   (when (and (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes))
@@ -45,6 +54,11 @@
     ;; Set the coding standard to "Drupal" (we checked that it is
     ;; supported above.
     (set (make-local-variable 'flymake-phpcs-standard) drupal/flymake-phpcs-standard)
+
+    ;; Flymake-phpcs will also highlight trailing whitespace as an
+    ;; error so no need to highlight it twice.
+    (when drupal/flymake-phpcs-dont-show-trailing-whitespace
+      (setq show-trailing-whitespace nil))
 
     ;; This is a php-mode file so add the extension to a buffer locale
     ;; version of `flymake-allowed-file-name-masks' and make
