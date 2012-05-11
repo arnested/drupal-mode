@@ -1,5 +1,9 @@
 # This file is part of Drupal mode.
 
+# Copyright (C) 2012 Arne Jørgensen
+
+# Author: Arne Jørgensen <arne@arnested.dk>
+
 # Drupal mode is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published
 # by the Free Software Foundation, either version 3 of the License,

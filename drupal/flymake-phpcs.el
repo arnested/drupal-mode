@@ -1,5 +1,9 @@
 ;;; drupal/flymake-phpcs.el --- Drupal-mode support for flymake-phpcs
 
+;; Copyright (C) 2012 Arne Jørgensen
+
+;; Author: Arne Jørgensen <arne@arnested.dk>
+
 ;; This file is part of Drupal mode.
 
 ;; Drupal mode is free software: you can redistribute it and/or modify

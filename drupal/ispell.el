@@ -1,5 +1,9 @@
 ;;; drupal/ispell.el --- Drupal-mode support for ispell
 
+;; Copyright (C) 2012 Arne Jørgensen
+
+;; Author: Arne Jørgensen <arne@arnested.dk>
+
 ;; This file is part of Drupal mode.
 
 ;; Drupal mode is free software: you can redistribute it and/or modify
