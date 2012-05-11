@@ -30,7 +30,12 @@
 (defun drupal/gtags-enable ()
   "Setup rootdir for gtags to be DRUPAL_ROOT."
   (when (boundp 'drupal-rootdir)
-    (setq gtags-rootdir drupal-rootdir)))
+    (setq gtags-rootdir drupal-rootdir)
+
+    ;; Set `drupal-symbol-collection' to a call to
+    ;; `gtags-completing-gtags' so that inserting hooks will do
+    ;; completion based on gtags.
+    (setq drupal-symbol-collection #'(lambda() (gtags-completing-gtags "" nil t)))))
 
 (add-hook 'drupal-mode-hook #'drupal/gtags-enable)
 
