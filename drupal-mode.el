@@ -130,18 +130,27 @@ Include path to the executable if it is not in your $PATH."
   :link '(variable-link drupal-drush-program)
   :group 'drupal-drush)
 
+;;;###autoload
 (defcustom drupal-php-modes (list 'php-mode)
   "Major modes to consider PHP in Drupal mode."
   :type '(repeat symbol)
   :group 'drupal)
 
+;;;###autoload
 (defcustom drupal-css-modes (list 'css-mode)
   "Major modes to consider CSS in Drupal mode."
   :type '(repeat symbol)
   :group 'drupal)
 
+;;;###autoload
 (defcustom drupal-js-modes (list 'javascript-mode 'js-mode 'js2-mode)
   "Major modes to consider JavaScript in Drupal mode."
+  :type '(repeat symbol)
+  :group 'drupal)
+
+;;;###autoload
+(defcustom drupal-info-modes (list 'conf-windows-mode)
+  "Major modes to consider info files in Drupal mode."
   :type '(repeat symbol)
   :group 'drupal)
 
@@ -472,11 +481,8 @@ is a mode supported by `drupal-mode' (currently only
 `php-mode').
 
 The function is suitable for adding to the supported major modes
-mode-hook, i.e.
-
-(eval-after-load 'php-mode
-  '(add-hook 'php-mode-hook 'drupal-mode-bootstrap))"
-  (when (apply 'derived-mode-p drupal-php-modes)
+mode-hook."
+  (when (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
     (drupal-detect-drupal-version)
     (when drupal-version
       (drupal-mode 1))
@@ -484,8 +490,10 @@ mode-hook, i.e.
       (drupal-drush-mode 1))))
 
 ;;;###autoload
-(eval-after-load 'php-mode
-  '(add-hook 'php-mode-hook #'drupal-mode-bootstrap))
+(dolist (mode (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
+  (when (intern (concat (symbol-name mode) "-hook"))
+    (message "Adding Drupal bootstrap to %s." (concat (symbol-name mode) "-hook") )
+    (add-hook (intern (concat (symbol-name mode) "-hook")) #'drupal-mode-bootstrap)))
 
 ;;;###autoload
 (progn
