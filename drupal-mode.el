@@ -492,7 +492,6 @@ mode-hook."
 ;;;###autoload
 (dolist (mode (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
   (when (intern (concat (symbol-name mode) "-hook"))
-    (message "Adding Drupal bootstrap to %s." (concat (symbol-name mode) "-hook") )
     (add-hook (intern (concat (symbol-name mode) "-hook")) #'drupal-mode-bootstrap)))
 
 ;;;###autoload
