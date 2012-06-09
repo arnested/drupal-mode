@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'gtags)
+(require 'drupal/emacs-drush)
 
 (defun drupal/gtags-enable ()
   "Setup rootdir for gtags to be DRUPAL_ROOT."

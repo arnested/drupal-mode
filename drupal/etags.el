@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'etags)
+(require 'drupal/emacs-drush)
 
 (defun drupal/etags-enable ()
   "Setup TAGS file for etags if it exists in DRUPAL_ROOT."

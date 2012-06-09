@@ -133,6 +133,14 @@ support in Emacs then Drupal mode will set `gtags-rootdir` to your
 DRUPAL_ROOT.
 
 
+### Drush utilities for Emacs users
+
+If
+[Drush utilities for Emacs users](http://drupal.org/project/emacs_drush)
+is installed Drupal mode will update existing tag files in your
+DRUPAL_ROOT after saving a buffer.
+
+
 ### ispell
 
 If ispell.el is loaded in Emacs then Drupal mode will set the language
