@@ -131,7 +131,7 @@ Include path to the executable if it is not in your $PATH."
   :group 'drupal-drush)
 
 ;;;###autoload
-(defcustom drupal-php-modes (list 'php-mode)
+(defcustom drupal-php-modes (list 'php-mode 'web-mode)
   "Major modes to consider PHP in Drupal mode."
   :type '(repeat symbol)
   :group 'drupal)
@@ -218,8 +218,9 @@ Include path to the executable if it is not in your $PATH."
 
   ;; Stuff special for php-mode buffers.
   (when (apply 'derived-mode-p drupal-php-modes)
-    (c-add-language 'drupal-mode 'c-mode)
-    (c-set-style "drupal")))
+    (when (derived-mode-p 'c-mode)
+      (c-add-language 'drupal-mode 'c-mode)
+      (c-set-style "drupal"))))
 
 ;;;###autoload
 (define-minor-mode drupal-drush-mode
@@ -564,8 +565,11 @@ mode-hook."
 
 ;;;###autoload
 (progn
-  (add-to-list 'auto-mode-alist '("\\.\\(module\\|test\\|install\\|theme\\|tpl\\.php\\)$" . php-mode))
-  (add-to-list 'auto-mode-alist '("\\.info$" . conf-windows-mode)))
+  (add-to-list 'auto-mode-alist '("\\.\\(module\\|test\\|install\\|theme\\)\\'" . php-mode))
+  (add-to-list 'auto-mode-alist '("\\.info\\'" . conf-windows-mode))
+  (when (fboundp 'web-mode)
+    (require 'php-mode)
+    (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))))
 
 
 ;; Load support for various Emacs features if necessary.
