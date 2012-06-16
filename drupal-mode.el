@@ -164,9 +164,21 @@ Include path to the executable if it is not in your $PATH."
 (make-variable-buffer-local 'drupal-rootdir)
 (put 'drupal-rootdir 'safe-local-variable 'string-or-null-p)
 
-(defvar drupal-module nil "Drupal module name if auto detected.")
+(defvar drupal-module nil "Drupal module short name if auto detected.")
 (make-variable-buffer-local 'drupal-module)
 (put 'drupal-module 'safe-local-variable 'string-or-null-p)
+
+(defvar drupal-module-name nil "Drupal module name if auto detected.")
+(make-variable-buffer-local 'drupal-module-name)
+(put 'drupal-module-name 'safe-local-variable 'string-or-null-p)
+
+(defvar drupal-module-version nil "Drupal module version if auto detected.")
+(make-variable-buffer-local 'drupal-module-version)
+(put 'drupal-module-version 'safe-local-variable 'string-or-null-p)
+
+(defvar drupal-project nil "Drupal project name if auto detected.")
+(make-variable-buffer-local 'drupal-project)
+(put 'drupal-project 'safe-local-variable 'string-or-null-p)
 
 (defvar drupal-mode-map
   (let ((map (make-sparse-keymap)))
@@ -286,6 +298,11 @@ of the project)."
   [menu-bar drupal separator]
   '("--"))
 (define-key drupal-mode-map
+  [menu-bar drupal drupal-project]
+  `(menu-item (concat "Module: " (or drupal-module-name drupal-module)) ,(make-sparse-keymap)
+              :visible drupal-module
+              :enable drupal-project))
+(define-key drupal-mode-map
   [menu-bar drupal customize]
   '("Customize Drupal Mode" . (lambda () (interactive) (customize-group 'drupal))))
 (define-key drupal-mode-map
@@ -299,6 +316,23 @@ of the project)."
   [menu-bar drupal cache-clear]
   '(menu-item "Clear all caches" drupal-drush-cache-clear
               :enable (and drupal-rootdir drupal-drush-program)))
+
+(define-key drupal-mode-map
+  [menu-bar drupal drupal-project drupal-project-bugs]
+  '(menu-item "Bug reports" (lambda () (interactive) (browse-url (concat "http://drupal.org/project/issues/" drupal-project "?categories=bug")))))
+(define-key drupal-mode-map
+  [menu-bar drupal drupal-project drupal-project-issues]
+  '(menu-item "Issues" (lambda () (interactive) (browse-url (concat "http://drupal.org/project/issues/" drupal-project "?categories=All")))))
+(define-key drupal-mode-map
+  [menu-bar drupal drupal-project drupal-project-home]
+  '(menu-item "Project page" (lambda () (interactive) (browse-url (concat "http://drupal.org/project/" drupal-project)))))
+(define-key drupal-mode-map
+  [menu-bar drupal drupal-project drupal-project-separator]
+  '("--"))
+(define-key drupal-mode-map
+  [menu-bar drupal drupal-project drupal-project-nameversion]
+  '(menu-item (concat (or drupal-module-name drupal-module) " " drupal-version) nil
+              :enable nil))
 
 
 
@@ -406,18 +440,37 @@ the location of DRUPAL_ROOT."
                 (setq drupal-version (match-string-no-properties 2))))))))
     (hack-local-variables))
   (let ((module (drupal-locate-dominating-module buffer-file-name t))
-        (version drupal-version))
+        (version drupal-version)
+        (module-name nil)
+        (module-version nil)
+        (project nil))
     (when module
-      (when (not drupal-version)
-        (with-current-buffer (find-file-noselect module t)
-          (save-excursion
-            (widen)
-            (goto-char (point-min))
-            (re-search-forward "core *= *\"?\\(.+\\)\"?" nil t)
-            (setq version (match-string-no-properties 1)))))
+      (with-current-buffer (find-file-noselect module t)
+        (save-excursion
+          (widen)
+          (goto-char (point-min))
+          (when (and (not drupal-version)
+                     (re-search-forward "^core *=" nil t))
+            (re-search-forward " *\"?\\([^\"]+\\)\"?" (point-at-eol) t)
+            (setq version (match-string-no-properties 1)))
+          (goto-char (point-min))
+          (when (re-search-forward "^name *=" nil t)
+            (re-search-forward " *\"?\\([^\"]+\\)\"?" (point-at-eol) t)
+            (setq module-name (match-string-no-properties 1)))
+          (goto-char (point-min))
+          (when (re-search-forward "^version *=" nil t)
+            (re-search-forward " *\"?\\([^\"]+\\)\"?" (point-at-eol) t)
+            (setq module-version (match-string-no-properties 1)))
+          (goto-char (point-min))
+          (when (re-search-forward "^project *=" nil t)
+            (re-search-forward " *\"?\\([^\"]+\\)\"?" (point-at-eol) t)
+            (setq project (match-string-no-properties 1)))))
       (dir-locals-set-class-variables 'drupal-module `((nil . ((drupal-module . ,(file-name-nondirectory
                                                                                   (file-name-sans-extension module)))
-                                                               (drupal-version . ,version)))))
+                                                               (drupal-version . ,version)
+                                                               (drupal-module-name . ,module-name)
+                                                               (drupal-module-version . ,module-version)
+                                                               (drupal-project . ,project)))))
       (dir-locals-set-directory-class (file-name-directory module) 'drupal-module)))
   (hack-local-variables)
   drupal-version)
