@@ -331,7 +331,7 @@ of the project)."
   '("--"))
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-nameversion]
-  '(menu-item (concat (or drupal-module-name drupal-module) " " drupal-version) nil
+  '(menu-item (concat (or drupal-module-name drupal-module) " " drupal-module-version) nil
               :enable nil))
 
 
