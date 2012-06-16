@@ -38,7 +38,18 @@
     ;; `gtags-completing-gtags' so that inserting hooks will do
     ;; completion based on gtags.
     (setq drupal-symbol-collection #'(lambda() (gtags-completing-gtags "" nil t)))
+    (setq drupal-get-function-args #'drupal/gtags-get-function-args)
     (gtags-mode 1)))
+
+(defun drupal/gtags-get-function-args (symbol &optional version)
+  "Get function arguments from GNU GLOBAL."
+  (when (and (boundp 'drupal-rootdir)
+             (file-exists-p (concat drupal-rootdir "GTAGS")))
+    (with-temp-buffer
+      (call-process gtags-global-command nil t nil "-x" symbol)
+      (goto-char (point-min))
+      (search-forward-regexp ".*(\\(.*\\)).*" nil t)
+      (match-string 1))))
 
 (add-hook 'drupal-mode-hook #'drupal/gtags-enable)
 

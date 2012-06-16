@@ -374,6 +374,18 @@ should save your files with unix style end of line."
 Used by `drupal-insert-hook' to provide completions on hooks.")
 (make-variable-buffer-local 'drupal-symbol-collection)
 
+(defvar drupal-get-function-args nil
+  "A function returning the function arguments for a Drupal function.
+Used by `drupal-insert-hook' to fill in arguments on hooks.
+
+The specified function should take two arguments: the function to
+find arguments for and the drupal major version.
+
+See `drupal-get-function-args' (slow) and
+`drupal/gtags-get-function-args' for functions returning Drupal
+function arguments.")
+(make-variable-buffer-local 'drupal-get-function-args)
+
 (define-skeleton drupal-insert-hook
   "Insert Drupal hook function skeleton."
   nil
@@ -386,7 +398,7 @@ Used by `drupal-insert-hook' to provide completions on hooks.")
   "/**\n"
   " * Implements " v1 "().\n"
   " */\n"
-  "function " (replace-regexp-in-string "hook" (drupal-module-name) v1) "(" @ - ") {\n"
+  "function " (replace-regexp-in-string "hook" (drupal-module-name) v1) "(" (funcall drupal-get-function-args v1 (drupal-major-version)) ") {\n"
   "  " @ _ "\n"
   "}\n")
 
@@ -413,6 +425,20 @@ Defaults to one blank line if optional argument NUM is not specified."
                       (when (looking-back (concat "
 \\{" (number-to-string var) "\\}") (line-beginning-position (- var)))
                         (setq result (+ 1 result))))))))
+
+(defun drupal-get-function-args (symbol &optional version)
+  "Get function arguments from `drupal-search-url'.
+It is really slow to download `drupal-search-url'. You should
+probably not use this. Have a look at using GNU GLOBAL / Gtags
+instead."
+  (unless version
+    (setq version (drupal-detect-drupal-version)))
+  (with-temp-buffer
+    (url-insert-file-contents (format-spec drupal-search-url `((?v . ,version)
+                                                               (?s . ,symbol))))
+    (search-forward "<tr class=\"active\">" nil t)
+    (search-forward-regexp (concat symbol "(\\(.*\\))") nil t)
+    (match-string-no-properties 1)))
 
 
 
