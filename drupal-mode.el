@@ -347,6 +347,7 @@ Used by `drupal-insert-hook' to provide completions on hooks.")
                                  (funcall drupal-symbol-collection)
                                drupal-symbol-collection)
                              nil nil "hook_"))
+  (drupal-ensure-newline)
   "/**\n"
   " * Implements " v1 "().\n"
   " */\n"
@@ -357,12 +358,26 @@ Used by `drupal-insert-hook' to provide completions on hooks.")
 (define-skeleton drupal-insert-function
   "Insert Drupal function skeleton."
   nil
+  (drupal-ensure-newline)
   "/**\n"
   " * " @ "\n"
   " */\n"
   "function " (drupal-module-name) "_" @ - "(" @ ") {\n"
   "  " @ _ "\n"
   "}\n")
+
+(defun drupal-ensure-newline (&optional num)
+  "Ensure (NUM) blank lines before point.
+Ensures there is NUM blank lines before point - if not it will insert them.
+Defaults to one blank line if optional argument NUM is not specified."
+  (unless num
+    (setq num 1))
+  (let ((result 0)
+        (num (+ 2 num)))
+    (newline (- num (dotimes (var num result)
+                      (when (looking-back (concat "
+\\{" (number-to-string var) "\\}") (line-beginning-position (- var)))
+                        (setq result (+ 1 result))))))))
 
 
 
