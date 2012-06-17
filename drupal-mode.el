@@ -398,7 +398,7 @@ function arguments.")
   "/**\n"
   " * Implements " v1 "().\n"
   " */\n"
-  "function " (replace-regexp-in-string "hook" (drupal-module-name) v1) "(" (funcall drupal-get-function-args v1 (drupal-major-version)) ") {\n"
+  "function " (replace-regexp-in-string "hook" (drupal-module-name) v1) "(" (when drupal-get-function-args (funcall drupal-get-function-args v1 (drupal-major-version))) ") {\n"
   "  " @ _ "\n"
   "}\n")
 
@@ -434,11 +434,12 @@ instead."
   (unless version
     (setq version (drupal-detect-drupal-version)))
   (with-temp-buffer
-    (url-insert-file-contents (format-spec drupal-search-url `((?v . ,version)
-                                                               (?s . ,symbol))))
-    (search-forward "<tr class=\"active\">" nil t)
-    (search-forward-regexp (concat symbol "(\\(.*\\))") nil t)
-    (match-string-no-properties 1)))
+    (ignore-errors
+      (url-insert-file-contents (format-spec drupal-search-url `((?v . ,version)
+                                                                 (?s . ,symbol))))
+      (search-forward "<tr class=\"active\">" nil t)
+      (search-forward-regexp (concat symbol "(\\(.*\\))") nil t)
+      (match-string-no-properties 1))))
 
 
 
