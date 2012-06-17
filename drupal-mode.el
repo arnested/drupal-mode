@@ -398,7 +398,7 @@ function arguments.")
   "/**\n"
   " * Implements " v1 "().\n"
   " */\n"
-  "function " (replace-regexp-in-string "hook" (drupal-module-name) v1) "(" (when drupal-get-function-args (funcall drupal-get-function-args v1 (drupal-major-version))) ") {\n"
+  "function " (replace-regexp-in-string "^hook" (drupal-module-name) v1) "(" (when drupal-get-function-args (funcall drupal-get-function-args v1 (drupal-major-version))) ") {\n"
   "  " @ _ "\n"
   "}\n")
 
