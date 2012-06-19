@@ -6,7 +6,7 @@
 ;; URL: https://github.com/arnested/drupal-mode
 ;; Created: January 17, 2012
 ;; Version: 0.2.0
-;; Package-Requires: ((php-mode "1.5.0"))
+;; Package-Requires: ((php-mode "1.5.0") (pos-tip "0.4.5"))
 ;; Keywords: programming, php, drupal
 
 ;; This file is part of Drupal mode.
@@ -35,6 +35,7 @@
 
 (require 'php-mode)
 (require 'format-spec)
+(autoload 'pos-tip-show "pos-tip")
 
 
 
@@ -130,6 +131,11 @@ Include path to the executable if it is not in your $PATH."
   :link '(variable-link drupal-drush-program)
   :group 'drupal-drush)
 
+(defcustom drupal-show-function-arguments-tooltip-delay 5
+  "Show function arguments tooltip after a delay (seconds)."
+  :type '(integer)
+  :group 'drupal)
+
 ;;;###autoload
 (defcustom drupal-php-modes (list 'php-mode 'web-mode)
   "Major modes to consider PHP in Drupal mode."
@@ -218,6 +224,12 @@ Include path to the executable if it is not in your $PATH."
 
   ;; Stuff special for php-mode buffers.
   (when (apply 'derived-mode-p drupal-php-modes)
+    ;; Show function arguments from GNU GLOBAL for function at point
+    ;; after a short delay of idle time.
+    (when drupal-get-function-args
+      (run-with-idle-timer drupal-show-function-arguments-tooltip-delay t 'drupal-get-function-args-at-point))
+
+    ;; Setup cc-mode style stuff.
     (when (derived-mode-p 'c-mode)
       (c-add-language 'drupal-mode 'c-mode)
       (c-set-style "drupal"))))
@@ -440,6 +452,15 @@ instead."
       (search-forward "<tr class=\"active\">" nil t)
       (search-forward-regexp (concat symbol "(\\(.*\\))") nil t)
       (match-string-no-properties 1))))
+
+(defun drupal-get-function-args-at-point ()
+  "Show function arguments for function at point."
+  (interactive)
+  (when drupal-get-function-args
+    (let* ((symbol (php-get-pattern))
+           (args (funcall drupal-get-function-args symbol)))
+      (when args
+        (pos-tip-show (format "%s(%s)" symbol args))))))
 
 
 
