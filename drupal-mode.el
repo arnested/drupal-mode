@@ -200,6 +200,23 @@ Include path to the executable if it is not in your $PATH."
     map)
   "Keymap for `drupal-drush-mode'")
 
+(defvar drupal-symbol-collection nil
+  "A collection or a function returning a collection of Drupal symbols.
+Used by `drupal-insert-hook' to provide completions on hooks.")
+(make-variable-buffer-local 'drupal-symbol-collection)
+
+(defvar drupal-get-function-args nil
+  "A function returning the function arguments for a Drupal function.
+Used by `drupal-insert-hook' to fill in arguments on hooks.
+
+The specified function should take two arguments: the function to
+find arguments for and the drupal major version.
+
+See `drupal-get-function-args' (slow) and
+`drupal/gtags-get-function-args' for functions returning Drupal
+function arguments.")
+(make-variable-buffer-local 'drupal-get-function-args)
+
 
 
 ;;;###autoload
@@ -381,22 +398,6 @@ should save your files with unix style end of line."
                                           (?s . ,symbol))))))))
 
 
-(defvar drupal-symbol-collection nil
-  "A collection or a function returning a collection of Drupal symbols.
-Used by `drupal-insert-hook' to provide completions on hooks.")
-(make-variable-buffer-local 'drupal-symbol-collection)
-
-(defvar drupal-get-function-args nil
-  "A function returning the function arguments for a Drupal function.
-Used by `drupal-insert-hook' to fill in arguments on hooks.
-
-The specified function should take two arguments: the function to
-find arguments for and the drupal major version.
-
-See `drupal-get-function-args' (slow) and
-`drupal/gtags-get-function-args' for functions returning Drupal
-function arguments.")
-(make-variable-buffer-local 'drupal-get-function-args)
 
 (define-skeleton drupal-insert-hook
   "Insert Drupal hook function skeleton."
