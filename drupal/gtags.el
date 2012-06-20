@@ -49,7 +49,7 @@
       (ignore-errors
         (call-process gtags-global-command nil t nil "-x" symbol)
         (goto-char (point-min))
-        (search-forward-regexp ".*(\\(.*\\)).*" nil t)
+        (search-forward-regexp "[^(]*(\\(.*\\))[^)]*" nil t)
         (match-string-no-properties 1)))))
 
 (add-hook 'drupal-mode-hook #'drupal/gtags-enable)
