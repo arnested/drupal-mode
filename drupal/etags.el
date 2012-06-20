@@ -35,6 +35,7 @@
     ;; Set `tags-file-name' to the TAGS file located in
     ;; `drupal-rootdir'.
     (setq tags-file-name (concat drupal-rootdir "TAGS"))
+    (tags-completion-table)
 
     ;; Set `drupal-symbol-collection' to `tags-completion-table' so
     ;; that inserting hooks will do completion based on etags.
