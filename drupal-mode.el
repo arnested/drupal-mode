@@ -212,7 +212,8 @@ Used by `drupal-insert-hook' to fill in arguments on hooks.
 The specified function should take two arguments: the function to
 find arguments for and the drupal major version.
 
-See `drupal-get-function-args' (slow) and
+See `drupal-get-function-args' (slow)
+`drupal/etags-get-function-args' and
 `drupal/gtags-get-function-args' for functions returning Drupal
 function arguments.")
 (make-variable-buffer-local 'drupal-get-function-args)
