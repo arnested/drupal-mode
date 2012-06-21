@@ -462,7 +462,9 @@ instead."
     (let* ((symbol (php-get-pattern))
            (args (funcall drupal-get-function-args symbol)))
       (when args
-        (pos-tip-show (format "%s(%s)" symbol args))))))
+        (if (window-system)
+            (pos-tip-show (format "%s(%s)" symbol args))
+          (message "%s" (format "%s(%s)" symbol args)))))))
 
 
 
