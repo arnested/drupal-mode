@@ -182,10 +182,10 @@ Include path to the executable if it is not in your $PATH."
 
 (defvar drupal-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "\C-cdf" #'drupal-search-documentation)
-    (define-key map "\C-cdc" #'drupal-drush-cache-clear)
-    (define-key map "\C-cdih" #'drupal-insert-hook)
-    (define-key map "\C-cdif" #'drupal-insert-function)
+    (define-key map "\C-c\C-v\C-d" #'drupal-search-documentation)
+    (define-key map "\C-c\C-v\C-c" #'drupal-drush-cache-clear)
+    (define-key map "\C-c\C-v\C-h" #'drupal-insert-hook)
+    (define-key map "\C-c\C-v\C-f" #'drupal-insert-function)
     map)
   "Keymap for `drupal-mode'")
 
