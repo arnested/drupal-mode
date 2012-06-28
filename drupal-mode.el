@@ -241,7 +241,7 @@ function arguments.")
     (when (and drupal-get-function-args
                (fboundp 'eldoc-mode))
       (set (make-local-variable 'eldoc-documentation-function)
-           'drupal-eldoc-documentation-function)
+           #'drupal-eldoc-documentation-function)
       (eldoc-mode 1))
 
     ;; Setup cc-mode style stuff.
