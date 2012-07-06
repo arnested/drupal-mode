@@ -457,8 +457,10 @@ instead."
   (when drupal-get-function-args
     (let* ((symbol (php-get-pattern))
            (args (when symbol (funcall drupal-get-function-args symbol))))
-      (when args
-        (message "%s: (%s)" symbol args)))))
+      (if args
+          (format "%s (%s)" symbol args)
+        (when (fboundp 'php-extras-eldoc-documentation-function)
+          (php-extras-eldoc-documentation-function))))))
 
 
 
