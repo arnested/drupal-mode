@@ -585,10 +585,11 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
 If major version number is 4 - return both major and minor."
   (unless version
     (setq version (drupal-detect-drupal-version)))
-  (let ((version-list (split-string version "\\.")))
-    (if (= (string-to-number (car version-list)) 4)
-        (format "%s.%s" (car version-list) (cadr version-list))
-      (car version-list))))
+  (when version
+    (let ((version-list (split-string version "\\.")))
+      (if (= (string-to-number (car version-list)) 4)
+          (format "%s.%s" (car version-list) (car (cdr version-list)))
+        (car version-list)))))
 
 ;;;###autoload
 (defun drupal-mode-bootstrap ()
