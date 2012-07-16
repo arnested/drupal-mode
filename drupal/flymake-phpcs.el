@@ -69,7 +69,7 @@ so no need to highlight it twice."
     ;; flymake-phpcs initialize.
     (make-local-variable 'flymake-allowed-file-name-masks)
     (add-to-list 'flymake-allowed-file-name-masks
-                 `(,(concat "\\." (file-name-extension (buffer-file-name)) "\\'") flymake-phpcs-init))
+                 `(,(concat "\\." (file-name-extension (or buffer-file-name (buffer-name))) "\\'") flymake-phpcs-init))
     (flymake-mode 1)))
 
 (add-hook 'drupal-mode-hook #'drupal/flymake-phpcs-enable)

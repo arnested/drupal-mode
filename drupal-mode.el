@@ -478,7 +478,7 @@ the location of DRUPAL_ROOT."
   (when (or (not drupal-version)
             (not drupal-rootdir))
     (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/includes/bootstrap.inc"))
-      (let ((here (or buffer-file-name dired-directory)))
+      (let ((here (or buffer-file-name default-directory)))
         (when here
           (let ((dir (locate-dominating-file here file)))
             (when dir
@@ -492,7 +492,7 @@ the location of DRUPAL_ROOT."
                     (dir-locals-set-directory-class dir 'drupal-site)))
                 (setq drupal-version (match-string-no-properties 2))))))))
     (hack-local-variables))
-  (let ((module (drupal-locate-dominating-module buffer-file-name t))
+  (let ((module (drupal-locate-dominating-module (or buffer-file-name default-directory) t))
         (version drupal-version)
         (module-name nil)
         (module-version nil)
@@ -608,7 +608,7 @@ mode-hook."
     (drupal-detect-drupal-version)
     (when drupal-version
       (drupal-mode 1))
-    (when (string-match "drush" buffer-file-name)
+    (when (string-match "drush" (or buffer-file-name default-directory))
       (drupal-drush-mode 1))))
 
 ;;;###autoload
