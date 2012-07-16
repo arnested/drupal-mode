@@ -30,14 +30,25 @@
 (define-auto-insert '("\\.module" . "Drupal module file") 'drupal/autoinsert-insert-module-skeleton)
 
 (define-skeleton drupal/autoinsert-insert-info-skeleton
-  "Drupal info skeleton."
+  "Drupal info file skeleton."
   nil
-  "name = " @ - "\n"
-  "description = " @ "\n"
-  "core = " (drupal-major-version) ".x\n")
+  '(setq v1 (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))
+  '(setq v2 (if (drupal-major-version) (>= (string-to-number (drupal-major-version)) 7) t))
+  "name = " @ - (upcase-initials (replace-regexp-in-string "[-_\\.]+" " " v1)) \n
+  "description = " @ \n
+  "core = " @ (drupal-major-version) & ".x" "\n"
+  (when v2 "; stylesheets[all][] = ") & @ (when v2 "css/") & v1 & ".base.css\n"
+  (when v2 "; scripts[] = ") & @ (when v2 "scripts/") & v1 & ".js\n"
+  (when v2 "; files[] = ") & @ (when v2 v1) & ".test\n"
+  "; dependencies" (when v2 "[]") " = " @ "\n"
+  "; package = " @ "\n"
+  "; php = " @ "\n"
+  (when v2 "; configure = ") & @ (when v2 "admin/config/something/") & v1 & "\n"
+  (when v2 "; required = ") & @ (when v2 "TRUE\n")
+  (when v2 "; hidden = ") & @ (when v2 "TRUE\n"))
 
 (define-skeleton drupal/autoinsert-insert-module-skeleton
-  "Drupal module skeleton."
+  "Drupal module file skeleton."
   nil
   "<?php\n"
   "\n"
