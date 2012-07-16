@@ -83,7 +83,7 @@ This behavior can be customized be the variable
 ### Search documentation
 
 You can search Drupal documentation for the symbol at point by issuing
-`C-c d f` or `M-x drupal-search-documentation` or from the Drupal
+`C-c C-v C-d` or `M-x drupal-search-documentation` or from the Drupal
 menu entry.
 
 Files that are part of a Drupal project will try to identify the used
@@ -103,7 +103,7 @@ setting for api.drupalcontrib.org) and `drupal-drush-search-url`.
 ### Clearing all caches
 
 If Drush is installed you can issue a `drush cc all` from within Emacs
-by issuing `C-c d c` or `M-x drupal-drush-cache-clear` or from the
+by issuing `C-c C-v C-c` or `M-x drupal-drush-cache-clear` or from the
 Drupal menu entry.
 
 
