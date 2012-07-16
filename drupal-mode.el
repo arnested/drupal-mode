@@ -386,14 +386,17 @@ should save your files with unix style end of line."
   (interactive)
   (let ((symbol (symbol-at-point)))
     (when symbol
-      (if (and drupal-drush-program
-               (string-match "drush" (symbol-name symbol)))
-          (browse-url
-           (format-spec drupal-drush-search-url `((?v . ,(replace-regexp-in-string ".*-dev" "master" (replace-regexp-in-string "\.[0-9]+\\'" ".x" drupal-drush-version)))
-                                                  (?s . ,symbol))))
+      (cond
+       ((and (boundp 'php-extras-function-arguments)
+             (gethash (symbol-name symbol) php-extras-function-arguments))
+        (php-search-documentation))
+       ((and drupal-drush-program (string-match "drush" (symbol-name symbol)))
         (browse-url
-         (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
-                                          (?s . ,symbol))))))))
+         (format-spec drupal-drush-search-url `((?v . ,(replace-regexp-in-string ".*-dev" "master" (replace-regexp-in-string "\.[0-9]+\\'" ".x" drupal-drush-version)))
+                                                (?s . ,symbol)))))
+       (t (browse-url
+           (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
+                                            (?s . ,symbol)))))))))
 
 
 
@@ -457,10 +460,11 @@ instead."
   (when drupal-get-function-args
     (let* ((symbol (php-get-pattern))
            (args (when symbol (funcall drupal-get-function-args symbol))))
-      (if args
-          (format "%s (%s)" symbol args)
-        (when (fboundp 'php-extras-eldoc-documentation-function)
-          (php-extras-eldoc-documentation-function))))))
+      (cond
+       (args
+        (format "%s (%s)" symbol args))
+       ((fboundp 'php-extras-eldoc-documentation-function)
+        (php-extras-eldoc-documentation-function))))))
 
 
 
