@@ -517,7 +517,10 @@ the location of DRUPAL_ROOT."
           (goto-char (point-min))
           (when (re-search-forward "^project *=" nil t)
             (re-search-forward " *\"?\\([^\"]+\\)\"?" (point-at-eol) t)
-            (setq project (match-string-no-properties 1)))))
+            (setq project (match-string-no-properties 1)))
+          (when (and (string= project "drupal")
+                     (string= module-version "VERSION"))
+            (setq module-version version))))
       (dir-locals-set-class-variables 'drupal-module `((nil . ((drupal-module . ,(file-name-nondirectory
                                                                                   (file-name-sans-extension module)))
                                                                (drupal-version . ,version)
