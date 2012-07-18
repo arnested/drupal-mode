@@ -189,11 +189,6 @@ Include path to the executable if it is not in your $PATH."
     map)
   "Keymap for `drupal-mode'")
 
-(defvar drupal-drush-mode-map
-  (let ((map (make-sparse-keymap)))
-    map)
-  "Keymap for `drupal-drush-mode'")
-
 (defvar drupal-symbol-collection nil
   "A collection or a function returning a collection of Drupal symbols.
 Used by `drupal-insert-hook' to provide completions on hooks.")
@@ -248,17 +243,6 @@ function arguments.")
     (when (derived-mode-p 'c-mode)
       (c-add-language 'drupal-mode 'c-mode)
       (c-set-style "drupal"))))
-
-;;;###autoload
-(define-minor-mode drupal-drush-mode
-  "Advanced minor mode for Drupal Drush development.\n\n\\{drupal-drush-mode-map}"
-  :group 'drupal-drush
-  :init-value nil
-  :lighter " Drush"
-  :keymap drupal-drush-mode-map
-
-  ;; Currently only enables drupal-mode.
-  (drupal-mode 1))
 
 
 
@@ -609,10 +593,9 @@ The function is suitable for adding to the supported major modes
 mode-hook."
   (when (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
     (drupal-detect-drupal-version)
-    (when drupal-version
-      (drupal-mode 1))
-    (when (string-match "drush" (or buffer-file-name default-directory))
-      (drupal-drush-mode 1))))
+    (when (or drupal-version
+              (string-match "drush" (or buffer-file-name default-directory)))
+      (drupal-mode 1))))
 
 ;;;###autoload
 (dolist (mode (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
