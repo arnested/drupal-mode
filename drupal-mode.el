@@ -604,11 +604,8 @@ mode-hook."
 
 ;;;###autoload
 (progn
-  (add-to-list 'auto-mode-alist '("\\.\\(module\\|test\\|install\\|theme\\)\\'" . php-mode))
-  (add-to-list 'auto-mode-alist '("\\.info\\'" . conf-windows-mode))
-  (when (fboundp 'web-mode)
-    (require 'php-mode)
-    (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))))
+  (add-to-list 'auto-mode-alist '("\\.\\(module\\|test\\|install\\|tpl\\.php\\|theme\\)\\'" . php-mode))
+  (add-to-list 'auto-mode-alist '("\\.info\\'" . conf-windows-mode)))
 
 
 ;; Load support for various Emacs features if necessary.
