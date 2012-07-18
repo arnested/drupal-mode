@@ -32,11 +32,11 @@
     (let ((standards (with-output-to-string
                        (with-current-buffer standard-output
                          (call-process (executable-find flymake-phpcs-command) nil (list t nil) nil "-i")))))
-      (string-match
-       "\\(Drupal[^, 
+      (when (string-match
+             "\\(Drupal[^, 
 ]*\\)"
-       standards)
-      (match-string-no-properties 1 standards)))
+             standards)
+        (match-string-no-properties 1 standards))))
   "Name of Drupal coding standard rules for PHP CodeSniffer."
   :link '(url-link :tag "Drupal Code Sniffer" "http://drupal.org/project/drupalcs")
   :group 'drupal)
