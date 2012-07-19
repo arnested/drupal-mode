@@ -604,7 +604,7 @@ mode-hook."
 
 ;;;###autoload
 (progn
-  (add-to-list 'auto-mode-alist '("\\.\\(module\\|test\\|install\\|tpl\\.php\\|theme\\)\\'" . php-mode))
+  (add-to-list 'auto-mode-alist '("\\.\\(module\\|test\\|install\\|profile\\|tpl\\.php\\|theme\\)\\'" . php-mode))
   (add-to-list 'auto-mode-alist '("\\.info\\'" . conf-windows-mode)))
 
 
