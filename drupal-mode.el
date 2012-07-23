@@ -98,8 +98,10 @@ whitespace at the end."
                  (string :tag "Other" "http://example.com/api/search/%v/%s"))
   :link '(url-link :tag "api.drupalcontrib.org" "http://api.drupalcontrib.org")
   :link '(url-link :tag "api.drupal.org" "http://api.drupal.org")
-  :safe 'string-or-null-p
   :group 'drupal)
+
+;;;###autoload
+(put 'drupal-search-url 'safe-local-variable 'string-or-null-p)
 
 
 (defcustom drupal-drush-search-url "http://api.drush.org/api/search/%v/%s"
