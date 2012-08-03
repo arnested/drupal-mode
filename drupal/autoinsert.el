@@ -28,6 +28,7 @@
 
 (define-auto-insert '("\\.info" . "Drupal info file") 'drupal/autoinsert-insert-info-skeleton)
 (define-auto-insert '("\\.module" . "Drupal module file") 'drupal/autoinsert-insert-module-skeleton)
+(define-auto-insert '("\\.install" . "Drupal install file") 'drupal/autoinsert-insert-install-skeleton)
 
 (define-skeleton drupal/autoinsert-insert-info-skeleton
   "Drupal info file skeleton."
@@ -57,6 +58,17 @@
   " * " @ - "\n"
   " */\n"
   @ "\n")
+
+(define-skeleton drupal/autoinsert-insert-install-skeleton
+  "Drupal install file skeleton."
+  nil
+  "<?php\n"
+  "\n"
+  "/**\n"
+  " * @file\n"
+  " * Install, update and uninstall functions for the " (drupal-module-name) " module.\n"
+  " */\n"
+  @ - "\n")
 
 
 
