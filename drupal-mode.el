@@ -576,7 +576,7 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
                                           ;; Otherwise fall back to a very naive
                                           ;; way of guessing the module name.
                                           (file-name-nondirectory (file-name-sans-extension (buffer-file-name)))))))
-    (if (called-interactively-p)
+    (if (called-interactively-p 'any)
         (insert name)
       name)))
 
