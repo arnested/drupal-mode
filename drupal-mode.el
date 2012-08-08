@@ -191,6 +191,7 @@ Include path to the executable if it is not in your $PATH."
     (define-key map [(control c) (control v) (control h)] #'drupal-insert-hook)
     (define-key map [(control c) (control v) (control f)] #'drupal-insert-function)
     (define-key map [(control c) (control v) (control m)] #'drupal-module-name)
+    (define-key map [(control a)] #'drupal-mode-beginning-of-line)
     map)
   "Keymap for `drupal-mode'")
 
@@ -454,6 +455,35 @@ instead."
         (format "%s (%s)" symbol args))
        ((fboundp 'php-extras-eldoc-documentation-function)
         (php-extras-eldoc-documentation-function))))))
+
+(defun drupal-mode-beginning-of-line (&optional n)
+  "Move point to beginning of property value or to beginning of line.
+The prefix argument N is passed directly to `beginning-of-line'.
+
+This command is identical to `beginning-of-line' if not in a mode
+derived from `conf-mode'.
+
+If point is on a (non-continued) property line, move point to the
+beginning of the property value or the beginning of line,
+whichever is closer.  If point is already at beginning of line,
+move point to beginning of property value.  Therefore, repeated
+calls will toggle point between beginning of property value and
+beginning of line.
+
+Heavily based on `message-beginning-of-line' from Gnus."
+  (interactive "p")
+  (let ((zrs 'zmacs-region-stays))
+    (when (and (featurep 'xemacs) (interactive-p) (boundp zrs))
+      (set zrs t)))
+  (if (derived-mode-p 'conf-mode)
+      (let* ((here (point))
+	     (bol (progn (beginning-of-line n) (point)))
+	     (eol (point-at-eol))
+	     (eoh (re-search-forward "= *" eol t)))
+	(goto-char
+	 (if (and eoh (or (< eoh here) (= bol here)))
+	     eoh bol)))
+    (beginning-of-line n)))
 
 
 
