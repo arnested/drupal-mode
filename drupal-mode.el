@@ -36,6 +36,9 @@
 (require 'php-mode)
 (require 'format-spec)
 
+(eval-when-compile 
+  (require 'css-mode))
+
 
 
 ;; Customization
@@ -234,6 +237,11 @@ function arguments.")
 
   ;; Handle line ending and trailing white space.
   (add-hook 'before-save-hook #'drupal-convert-line-ending nil t)
+
+  ;; Stuff sppecial for css-mode buffers.
+  (when (apply 'derived-mode-p drupal-css-modes)
+    (when (derived-mode-p 'css-mode)
+      (set (make-local-variable 'css-indent-offset) 2)))
 
   ;; Stuff special for php-mode buffers.
   (when (apply 'derived-mode-p drupal-php-modes)
