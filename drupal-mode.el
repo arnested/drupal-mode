@@ -138,7 +138,7 @@ Include path to the executable if it is not in your $PATH."
   :group 'drupal-drush)
 
 ;;;###autoload
-(defcustom drupal-php-modes (list 'php-mode 'web-mode)
+(defcustom drupal-php-modes (list 'php-mode 'php+-mode 'web-mode)
   "Major modes to consider PHP in Drupal mode."
   :type '(repeat symbol)
   :group 'drupal)
