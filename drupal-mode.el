@@ -253,6 +253,11 @@ function arguments.")
            #'drupal-eldoc-documentation-function)
       (eldoc-mode 1))
 
+    ;; Set correct comment style for inline comments.
+    (setq comment-start "//")
+    (setq comment-padding " ")
+    (setq comment-end "")
+
     ;; Setup cc-mode style stuff.
     (when (derived-mode-p 'c-mode)
       (c-add-language 'drupal-mode 'c-mode)
