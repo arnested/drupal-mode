@@ -1,6 +1,6 @@
 ;;; drupal/gtags.el --- Drupal-mode support for gtags
 
-;; Copyright (C) 2012 Arne Jørgensen
+;; Copyright (C) 2012, 2013 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -28,6 +28,12 @@
 (require 'gtags)
 (require 'drupal/emacs-drush)
 
+(defvar drupal/gtags-global-command (if (boundp 'gtags-global-command)
+                                        gtags-global-command
+                                      (executable-find "global"))
+  "Name of the GNU GLOBAL `global' executable.
+Include path to the executable if it is not in your $PATH.")
+
 (defun drupal/gtags-enable ()
   "Setup rootdir for gtags to be DRUPAL_ROOT."
   (when (and (boundp 'drupal-rootdir)
@@ -47,7 +53,7 @@
              (file-exists-p (concat drupal-rootdir "GTAGS")))
     (with-temp-buffer
       (ignore-errors
-        (call-process gtags-global-command nil t nil "-x" symbol)
+        (call-process drupal/gtags-global-command nil t nil "-x" symbol)
         (goto-char (point-min))
         (search-forward-regexp "[^(]*(\\(.*\\))[^)]*" nil t)
         (match-string-no-properties 1)))))
