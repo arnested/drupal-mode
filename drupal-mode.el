@@ -403,6 +403,9 @@ should save your files with unix style end of line."
 
 
 
+(defvar drupal-form-id-history nil
+  "History of form_id's entered in `drupal-insert-hook'.")
+
 (define-skeleton drupal-insert-hook
   "Insert Drupal hook function skeleton."
   nil
@@ -411,14 +414,24 @@ should save your files with unix style end of line."
                                  (funcall drupal-symbol-collection)
                                drupal-symbol-collection)
                              nil nil "hook_"))
-  '(setq v2 (let ((case-fold-search nil))
-              (when (string-match "\\([A-Z][A-Z_]*[A-Z]\\)" v1)
-                (concat " for " (match-string 1 v1) "()"))))
+  '(setq v2 (let ((case-fold-search nil)
+                  (hook v1)
+                  (form-id nil)
+                  (form-id-placeholder nil))
+              (if (string-match "\\([A-Z][A-Z_]*[A-Z]\\)" hook)
+                  (progn
+                    (setq form-id-placeholder (match-string 1 hook))
+                    (setq form-id (read-string
+                                   (concat "Implements " hook "() for (default " form-id-placeholder "): ")
+                                   nil 'drupal-form-id-history form-id-placeholder))
+                    (setq v1 (concat hook "() for " form-id))
+                    (replace-regexp-in-string (regexp-quote form-id-placeholder) form-id hook t))
+                hook)))
   (drupal-ensure-newline)
   "/**\n"
-  " * Implements " v1 "()" v2 ".\n"
+  " * Implements " v1 "().\n"
   " */\n"
-  "function " (replace-regexp-in-string "^hook" (drupal-module-name) v1) "(" (when drupal-get-function-args (funcall drupal-get-function-args v1 (drupal-major-version))) ") {\n"
+  "function " (replace-regexp-in-string "^hook" (drupal-module-name) v2) "(" (when drupal-get-function-args (funcall drupal-get-function-args v1 (drupal-major-version))) ") {\n"
   "  " @ _ "\n"
   "}\n")
 
