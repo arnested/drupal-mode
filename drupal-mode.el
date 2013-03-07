@@ -1,6 +1,6 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012 Arne Jørgensen
+;; Copyright (C) 2012, 2013 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
@@ -411,9 +411,12 @@ should save your files with unix style end of line."
                                  (funcall drupal-symbol-collection)
                                drupal-symbol-collection)
                              nil nil "hook_"))
+  '(setq v2 (let ((case-fold-search nil))
+              (when (string-match "\\([A-Z][A-Z_]*[A-Z]\\)" v1)
+                (concat " for " (match-string 1 v1) "()"))))
   (drupal-ensure-newline)
   "/**\n"
-  " * Implements " v1 "().\n"
+  " * Implements " v1 "()" v2 ".\n"
   " */\n"
   "function " (replace-regexp-in-string "^hook" (drupal-module-name) v1) "(" (when drupal-get-function-args (funcall drupal-get-function-args v1 (drupal-major-version))) ") {\n"
   "  " @ _ "\n"
