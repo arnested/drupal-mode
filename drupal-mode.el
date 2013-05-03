@@ -628,12 +628,12 @@ and encoded suitable for use as function name prefixes.
 
 Used in `drupal-insert-hook' and `drupal-insert-function'."
   (interactive)
-  (let ((name (replace-regexp-in-string "-" "_"
-                                        (if drupal-module
-                                            drupal-module
-                                          ;; Otherwise fall back to a very naive
-                                          ;; way of guessing the module name.
-                                          (file-name-nondirectory (file-name-sans-extension (buffer-file-name)))))))
+  (let ((name (subst-char-in-string ?- ?_
+                                    (if drupal-module
+                                        drupal-module
+                                      ;; Otherwise fall back to a very naive
+                                      ;; way of guessing the module name.
+                                      (file-name-nondirectory (file-name-sans-extension (buffer-file-name)))))))
     (if (called-interactively-p 'any)
         (insert name)
       name)))
