@@ -1,6 +1,6 @@
 ;;; drupal/autoinsert.el --- Drupal-mode support for `auto-insert-mode'
 
-;; Copyright (C) 2012  Arne Jørgensen
+;; Copyright (C) 2012, 2013  Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; Keywords: 
@@ -29,6 +29,7 @@
 (define-auto-insert '("\\.info" . "Drupal info file") 'drupal/autoinsert-insert-info-skeleton)
 (define-auto-insert '("\\.module" . "Drupal module file") 'drupal/autoinsert-insert-module-skeleton)
 (define-auto-insert '("\\.install" . "Drupal install file") 'drupal/autoinsert-insert-install-skeleton)
+(define-auto-insert '("\\.test" . "Drupal test file") 'drupal/autoinsert-insert-test-skeleton)
 
 (define-skeleton drupal/autoinsert-insert-info-skeleton
   "Drupal info file skeleton."
@@ -69,6 +70,30 @@
   " * Install, update and uninstall functions for the " (drupal-module-name) " module.\n"
   " */\n"
   @ - "\n")
+
+(define-skeleton drupal/autoinsert-insert-test-skeleton
+  "Drupal test file skeleton."
+  nil
+  "<?php\n"
+  "\n"
+  "/**\n"
+  " * @file\n"
+  " * Tests for " (drupal-module-name) ".module.\n"
+  " */\n"
+  "\n"
+  "/**\n"
+  " * Helper class for module test cases.\n"
+  " */\n"
+  "class " (remove ?_ (capitalize (drupal-module-name))) "WebTestCase extends DrupalWebTestCase {\n"
+  @ - "\n"
+  "}\n"
+  "\n"
+  "/**\n"
+  " * Helper class for module test cases.\n"
+  " */\n"
+  "class " (remove ?_ (capitalize (drupal-module-name))) "UnitTestCase extends DrupalUnitTestCase {\n"
+  @ - "\n"
+  "}\n")
 
 
 
