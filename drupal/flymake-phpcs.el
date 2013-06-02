@@ -1,6 +1,6 @@
 ;;; drupal/flymake-phpcs.el --- Drupal-mode support for flymake-phpcs
 
-;; Copyright (C) 2012 Arne Jørgensen
+;; Copyright (C) 2012, 2013 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'flymake)
+(require 'flymake-phpcs)
 
 (defcustom drupal/flymake-phpcs-standard
   (ignore-errors

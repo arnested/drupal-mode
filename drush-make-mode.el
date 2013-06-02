@@ -26,6 +26,8 @@
 
 ;;; Code:
 
+(require 'bug-reference)
+
 ;;;###autoload
 (define-derived-mode drush-make-mode conf-windows-mode "Drush Make"
   "A major mode for editing drush make files.\n\n\\{drush-make-mode-map}"
