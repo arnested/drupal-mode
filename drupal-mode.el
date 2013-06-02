@@ -118,6 +118,7 @@ whitespace at the end."
   :group 'drupal-drush)
 
 
+;;;###autoload
 (defcustom drupal-drush-program (executable-find "drush")
   "Name of the Drush executable.
 Include path to the executable if it is not in your $PATH."
@@ -681,6 +682,8 @@ mode-hook."
 (eval-after-load 'gtags '(require 'drupal/gtags))
 (eval-after-load 'ispell '(require 'drupal/ispell))
 (eval-after-load 'flymake-phpcs '(require 'drupal/flymake-phpcs))
+;;;###autoload
+(eval-after-load 'pcomplete '(require 'drupal/pcomplete))
 ;;;###autoload
 (eval-after-load 'webjump '(require 'drupal/webjump))
 
