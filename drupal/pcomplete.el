@@ -29,16 +29,17 @@
 
 (defun drupal/pcomplete-drush-commands ()
   "Return the most common drush commands by parsing the drush output."
-  (with-temp-buffer
-    (call-process drupal-drush-program nil t nil
-                  "--early=includes/complete.inc")
-    (goto-char 0)
-    (let (commands)
-      (while (re-search-forward
-              "^[[:blank:]]*\\([@]?[[:word:]-.]+\\)"
-              nil t)
-        (push (match-string-no-properties 1) commands))
-      (sort commands #'string<))))
+  (when drupal-drush-program
+    (with-temp-buffer
+      (call-process drupal-drush-program nil t nil
+                    "--early=includes/complete.inc")
+      (goto-char 0)
+      (let (commands)
+        (while (re-search-forward
+                "^[[:blank:]]*\\([@]?[[:word:]-.]+\\)"
+                nil t)
+          (push (match-string-no-properties 1) commands))
+        (sort commands #'string<)))))
 
 (defvar drupal/pcomplete-drush-commands (drupal/pcomplete-drush-commands)
   "List of `drush' commands.")
