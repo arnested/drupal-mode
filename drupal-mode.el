@@ -132,7 +132,7 @@ Include path to the executable if it is not in your $PATH."
                                    "[\n\r]" ""
                                    (with-output-to-string
                                      (with-current-buffer standard-output
-                                       (call-process drupal-drush-program nil (list t nil) nil "--version" "--pipe")))))
+                                       (call-process drupal-drush-program nil (list t nil) nil "core-status" "drush-version" "--pipe")))))
   "Version number of the installed version Drush."
   :type 'string
   :link '(variable-link drupal-drush-program)
@@ -396,7 +396,7 @@ should save your files with unix style end of line."
         (php-search-documentation))
        ((and drupal-drush-program (string-match "drush" (symbol-name symbol)))
         (browse-url
-         (format-spec drupal-drush-search-url `((?v . ,(replace-regexp-in-string ".*-dev" "master" (replace-regexp-in-string "\.[0-9]+\\'" ".x" drupal-drush-version)))
+         (format-spec drupal-drush-search-url `((?v . ,(replace-regexp-in-string "\\([0-9]+\.\\).*\\'" "\\1x" drupal-drush-version))
                                                 (?s . ,symbol)))))
        (t (browse-url
            (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
