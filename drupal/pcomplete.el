@@ -47,12 +47,14 @@
 (defun drupal/pcomplete-drush-completion ()
   "Completion for `drush'."
   ;; Completion for the command argument.
-  (pcomplete-here* drupal/pcomplete-drush-commands)
+  (let ((pcomplete-try-first-hook (remove 'eshell-complete-host-reference
+                                        pcomplete-try-first-hook)))
+    (pcomplete-here* drupal/pcomplete-drush-commands)
   (cond
    ((pcomplete-match "help" 1)
     (pcomplete-here* drupal/pcomplete-drush-commands))
    (t
-    (while (pcomplete-here (pcomplete-entries))))))
+    (while (pcomplete-here (pcomplete-entries)))))))
 
 (defalias 'pcomplete/drush 'drupal/pcomplete-drush-completion)
 
