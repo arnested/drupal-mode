@@ -19,12 +19,12 @@
 
 .PHONY: all test clean install
 
-CARTON?=carton
+CASK?=cask
 EMACS?=emacs
 TAR?=bsdtar
 PANDOC?=pandoc --atx-headers
 
-VERSION?=$(shell $(CARTON) version)
+VERSION?=$(shell $(CASK) version)
 
 ARCHIVE_NAME=drupal-mode
 PACKAGE_NAME=$(ARCHIVE_NAME)-$(VERSION)
@@ -32,8 +32,8 @@ PACKAGE_NAME=$(ARCHIVE_NAME)-$(VERSION)
 all: $(PACKAGE_NAME).tar
 
 test:
-	$(CARTON) install
-	$(CARTON) exec $(EMACS) --no-site-file --no-site-lisp --batch -L $(PWD) -l drupal-tests -f ert-run-tests-batch-and-exit
+	$(CASK) install
+	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch -L $(PWD) -l drupal-tests -f ert-run-tests-batch-and-exit
 
 $(ARCHIVE_NAME).info: README.md
 	$(PANDOC) -t texinfo $^ | makeinfo -o $@
@@ -42,7 +42,7 @@ README: README.md
 	$(PANDOC) -t plain -o $@ $^
 
 $(ARCHIVE_NAME)-pkg.el: $(ARCHIVE_NAME).el
-	$(CARTON) package
+	$(CASK) package
 
 # create a tar ball in package.el format for uploading to http://marmalade-repo.org
 $(PACKAGE_NAME).tar: README $(ARCHIVE_NAME).el $(ARCHIVE_NAME)-pkg.el $(ARCHIVE_NAME).info dir drupal/*.el drupal-tests.el drush-make-mode.el
@@ -53,4 +53,4 @@ install: $(PACKAGE_NAME).tar
 
 clean:
 	$(RM) $(ARCHIVE_NAME).info $(ARCHIVE_NAME)-*.tar $(ARCHIVE_NAME)-pkg.el README
-	$(RM) -r elpa
+	$(RM) -r .cask

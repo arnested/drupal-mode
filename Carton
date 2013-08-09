@@ -1,3 +1,0 @@
-(package-file "drupal-mode.el")
-
-(source "marmalade" "http://marmalade-repo.org/packages/")
