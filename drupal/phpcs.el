@@ -26,7 +26,7 @@
 ;;; Code:
 
 (defcustom drupal/phpcs-standard
-  ; (ignore-errors
+  (ignore-errors
     (let ((standards (with-output-to-string
                        (with-current-buffer standard-output
                          ;; Flymake uses flymake-phpcs-command, while
@@ -37,8 +37,7 @@
              "\\(Drupal[^, 
 ]*\\)"
              standards)
-        (match-string-no-properties 1 standards)))
-;)
+        (match-string-no-properties 1 standards))))
   "Name of Drupal coding standard rules for PHP CodeSniffer.
 This can either be the name of an installed standard (to see
 installed standards run `phpcs -i') or it can be the file name of
