@@ -682,6 +682,7 @@ mode-hook."
 (eval-after-load 'gtags '(require 'drupal/gtags))
 (eval-after-load 'ispell '(require 'drupal/ispell))
 (eval-after-load 'flymake-phpcs '(require 'drupal/flymake-phpcs))
+(eval-after-load 'flycheck '(require 'drupal/flycheck))
 ;;;###autoload
 (eval-after-load 'pcomplete '(require 'drupal/pcomplete))
 ;;;###autoload

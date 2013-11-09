@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2012, 2013 Arne Jørgensen
 
-;; Author: Arne Jørgensen <arne@arnested.dk>
+;; Author: Thomas Fini Hansen <xen@xen.dk>
 
 ;; This file is part of Drupal mode.
 
@@ -25,45 +25,37 @@
 
 ;;; Code:
 
-(require 'flymake)
-(require 'flymake-phpcs)
 (require 'drupal/phpcs)
 
-(defcustom drupal/flymake-phpcs-dont-show-trailing-whitespace t
-  "Non-nil means don't highlight trailing whitespace when flymake-phpcs is in use.
-Flymake-phpcs will also highlight trailing whitespace as an error
+(defcustom drupal/flycheck-phpcs-dont-show-trailing-whitespace t
+  "Non-nil means don't highlight trailing whitespace when flycheck-phpcs is in use.
+Flycheck-phpcs will also highlight trailing whitespace as an error
 so no need to highlight it twice."
   :type `(choice 
           (const :tag "Yes" t)
           (const :tag "No" nil))
   :group 'drupal)
 
-(defun drupal/flymake-phpcs-enable ()
-  "Enable drupal-mode support for flymake-phpcs."
+(defun drupal/flycheck-hook ()
+  "Enable drupal-mode support for flycheck."
   (when (and (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes))
-             (executable-find flymake-phpcs-command)
+             (executable-find "phpcs")
              drupal/phpcs-standard)
     ;; Set the coding standard to "Drupal" (we checked that it is
     ;; supported above.
-    (set (make-local-variable 'flymake-phpcs-standard) drupal/phpcs-standard)
+    (set (make-local-variable 'flycheck-phpcs-standard) drupal/phpcs-standard)
 
-    ;; Flymake-phpcs will also highlight trailing whitespace as an
+    ;; Flycheck will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
-    (when drupal/flymake-phpcs-dont-show-trailing-whitespace
+    (when drupal/flycheck-phpcs-dont-show-trailing-whitespace
       (setq show-trailing-whitespace nil))
+    )
+)
 
-    ;; This is a php-mode file so add the extension to a buffer locale
-    ;; version of `flymake-allowed-file-name-masks' and make
-    ;; flymake-phpcs initialize.
-    (make-local-variable 'flymake-allowed-file-name-masks)
-    (add-to-list 'flymake-allowed-file-name-masks
-                 `(,(concat "\\." (file-name-extension (or buffer-file-name (buffer-name))) "\\'") flymake-phpcs-init))
-    (flymake-mode 1)))
-
-(add-hook 'drupal-mode-hook #'drupal/flymake-phpcs-enable)
+(add-hook 'drupal-mode-hook #'drupal/flycheck-hook)
 
 
 
-(provide 'drupal/flymake-phpcs)
+(provide 'drupal/flycheck)
 
-;;; drupal/flymake-phpcs.el ends here
+;;; drupal/flycheck.el ends here
