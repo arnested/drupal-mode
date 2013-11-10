@@ -53,7 +53,9 @@ so no need to highlight it twice."
     (set (make-local-variable 'flycheck-phpcs-standard) drupal/phpcs-standard)
 
     (when drupal/flycheck-phpcs-js-and-css
-      (if (apply 'derived-mode-p (append drupal-css-modes drupal-js-modes))
+      (if (and (apply 'derived-mode-p (append drupal-css-modes drupal-js-modes))
+               (flycheck-may-use-checker 'css-js-phpcs)
+               )
           (set (make-local-variable 'flycheck-checker) 'css-js-phpcs)
         )
       )
