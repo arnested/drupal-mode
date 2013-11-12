@@ -27,24 +27,7 @@
 
 (require 'flymake)
 (require 'flymake-phpcs)
-
-(defcustom drupal/flymake-phpcs-standard
-  (ignore-errors
-    (let ((standards (with-output-to-string
-                       (with-current-buffer standard-output
-                         (call-process (executable-find flymake-phpcs-command) nil (list t nil) nil "-i")))))
-      (when (string-match
-             "\\(Drupal[^, 
-]*\\)"
-             standards)
-        (match-string-no-properties 1 standards))))
-  "Name of Drupal coding standard rules for PHP CodeSniffer.
-This can either be the name of an installed standard (to see
-installed standards run `phpcs -i') or it can be the file name of
-a standard. Adding file name requires PHP CodeSniffer version
-1.3.4 or newer."
-  :link '(url-link :tag "Drupal Code Sniffer" "http://drupal.org/project/drupalcs")
-  :group 'drupal)
+(require 'drupal/phpcs)
 
 (defcustom drupal/flymake-phpcs-dont-show-trailing-whitespace t
   "Non-nil means don't highlight trailing whitespace when flymake-phpcs is in use.
@@ -59,10 +42,10 @@ so no need to highlight it twice."
   "Enable drupal-mode support for flymake-phpcs."
   (when (and (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes))
              (executable-find flymake-phpcs-command)
-             drupal/flymake-phpcs-standard)
+             drupal/phpcs-standard)
     ;; Set the coding standard to "Drupal" (we checked that it is
     ;; supported above.
-    (set (make-local-variable 'flymake-phpcs-standard) drupal/flymake-phpcs-standard)
+    (set (make-local-variable 'flymake-phpcs-standard) drupal/phpcs-standard)
 
     ;; Flymake-phpcs will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
