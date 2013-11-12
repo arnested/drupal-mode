@@ -1,4 +1,4 @@
-;;; drupal/flymake-phpcs.el --- Drupal-mode support for flymake-phpcs
+;;; drupal/phpcs.el --- Drupal-mode common support for flymake-phpcs and flycheck
 
 ;; Copyright (C) 2012, 2013 Arne Jørgensen
 
@@ -21,7 +21,7 @@
 
 ;;; Commentary:
 
-;; Enable drupal-mode support for flymake-phpcs.
+;; Enable drupal-mode common support for flymake-phpcs and flycheck.
 
 ;;; Code:
 
