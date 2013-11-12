@@ -27,6 +27,8 @@
 
 (require 'flymake)
 (require 'flymake-phpcs)
+
+(define-obsolete-variable-alias 'drupal/flymake-phpcs-standard 'drupal/phpcs-standard)
 (require 'drupal/phpcs)
 
 (defcustom drupal/flymake-phpcs-dont-show-trailing-whitespace t
