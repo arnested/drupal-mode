@@ -525,7 +525,7 @@ the location of DRUPAL_ROOT."
   (hack-local-variables)
   (when (or (not drupal-version)
             (not drupal-rootdir))
-    (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/includes/bootstrap.inc"))
+    (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/lib/Drupal.php"))
       (let ((here (or buffer-file-name default-directory)))
         (when here
           (let ((dir (locate-dominating-file here file)))
