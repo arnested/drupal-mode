@@ -80,7 +80,7 @@ See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
     ("\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): warning - \\(?4:.*\\)" warning))
   :modes '(css-mode js-mode)
   :predicate '(lambda ()
-                (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes))))
+                (and drupal/flycheck-phpcs-js-and-css (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes)))))
 (add-to-list 'flycheck-checkers 'css-js-phpcs)
 
 
