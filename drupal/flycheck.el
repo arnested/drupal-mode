@@ -50,7 +50,6 @@ so no need to highlight it twice."
              drupal/phpcs-standard)
     ;; Set the coding standard to "Drupal" (we checked that it is
     ;; supported above.
-    (set (make-local-variable 'flycheck-phpcs-standard) drupal/phpcs-standard)
 
     (when drupal/flycheck-phpcs-js-and-css
       (if (and (apply 'derived-mode-p (append drupal-css-modes drupal-js-modes))
@@ -59,6 +58,7 @@ so no need to highlight it twice."
           (set (make-local-variable 'flycheck-checker) 'css-js-phpcs)
         )
       )
+    (set 'flycheck-phpcs-standard drupal/phpcs-standard)
 
     ;; Flycheck will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
