@@ -46,7 +46,6 @@ so no need to highlight it twice."
 (defun drupal/flycheck-hook ()
   "Enable drupal-mode support for flycheck."
   (when (and (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes))
-             (executable-find "phpcs")
              drupal/phpcs-standard)
     ;; Set the coding standard to "Drupal" (we checked that it is
     ;; supported above.
