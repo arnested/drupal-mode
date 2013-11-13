@@ -49,7 +49,7 @@ so no need to highlight it twice."
              drupal/phpcs-standard)
     ;; Set the coding standard to "Drupal" (we checked that it is
     ;; supported above.
-    (set 'flycheck-phpcs-standard drupal/phpcs-standard)
+    (setq flycheck-phpcs-standard drupal/phpcs-standard)
 
     ;; Flycheck will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
