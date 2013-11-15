@@ -44,7 +44,8 @@
   ;; Setup and use `imenu' for building an index.
   (setq imenu-generic-expression
         '(("Libraries" "^libraries\\[\\([^]]+\\)\\]\\[download\\]\\[type\\] *=" 1)
-          ("Themes" "^projects\\[\\([^]]+\\)\\]\\[type\\] *= *theme" 1)                   ("Modules" "^projects\\[\\([^]]+\\)\\]\\[type\\] *= *module" 1)
+          ("Themes" "^projects\\[\\([^]]+\\)\\]\\[type\\] *= *theme" 1)
+          ("Modules" "^projects\\[\\([^]]+\\)\\]\\[type\\] *= *module" 1)
           ("Profiles" "^projects\\[\\([^]]+\\)\\]\\[type\\] *= *profile" 1)
           ("Sections" "^;;; \\(.*\\)" 1)))
   (setq imenu-sort-function #'imenu--sort-by-name)
