@@ -27,15 +27,6 @@
 
 (require 'drupal/phpcs)
 
-(defcustom drupal/flycheck-phpcs-dont-show-trailing-whitespace t
-  "Non-nil means don't highlight trailing whitespace when flycheck-phpcs is in use.
-Flycheck-phpcs will also highlight trailing whitespace as an error
-so no need to highlight it twice."
-  :type `(choice
-          (const :tag "Yes" t)
-          (const :tag "No" nil))
-  :group 'drupal)
-
 (defcustom drupal/flycheck-phpcs-js-and-css t
   "When Non-nil, override Flycheck to use PHPCS for checking CSS and JavaScript files instead of the checkers configured for css-mode and js-mode."
   :type `(choice
@@ -53,10 +44,7 @@ so no need to highlight it twice."
 
     ;; Flycheck will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
-    (when drupal/flycheck-phpcs-dont-show-trailing-whitespace
-      (setq show-trailing-whitespace nil))
-    )
-)
+    (drupal/phpcs-dont-show-trailing-whitespace)))
 
 (add-hook 'drupal-mode-hook #'drupal/flycheck-hook)
 

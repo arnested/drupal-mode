@@ -29,16 +29,8 @@
 (require 'flymake-phpcs)
 
 (define-obsolete-variable-alias 'drupal/flymake-phpcs-standard 'drupal/phpcs-standard)
+(define-obsolete-variable-alias 'drupal/flymake-phpcs-dont-show-trailing-whitespace 'drupal/phpcs-dont-show-trailing-whitespace)
 (require 'drupal/phpcs)
-
-(defcustom drupal/flymake-phpcs-dont-show-trailing-whitespace t
-  "Non-nil means don't highlight trailing whitespace when flymake-phpcs is in use.
-Flymake-phpcs will also highlight trailing whitespace as an error
-so no need to highlight it twice."
-  :type `(choice 
-          (const :tag "Yes" t)
-          (const :tag "No" nil))
-  :group 'drupal)
 
 (defun drupal/flymake-phpcs-enable ()
   "Enable drupal-mode support for flymake-phpcs."
@@ -51,8 +43,7 @@ so no need to highlight it twice."
 
     ;; Flymake-phpcs will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
-    (when drupal/flymake-phpcs-dont-show-trailing-whitespace
-      (setq show-trailing-whitespace nil))
+    (drupal/phpcs-dont-show-trailing-whitespace)
 
     ;; This is a php-mode file so add the extension to a buffer locale
     ;; version of `flymake-allowed-file-name-masks' and make

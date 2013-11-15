@@ -48,6 +48,22 @@ a standard. Adding file name requires PHP CodeSniffer version
 
 
 
+(defcustom drupal/phpcs-dont-show-trailing-whitespace t
+  "Non-nil means don't highlight trailing whitespace when Drupal Coder Sniffer is in use.
+Phpcs will also highlight trailing whitespace as an error so no
+need to highlight it twice."
+  :type `(choice
+          (const :tag "Yes" t)
+          (const :tag "No" nil))
+  :group 'drupal)
+
+(defun drupal/phpcs-dont-show-trailing-whitespace ()
+  "Turn of various trailing white space highlighting."
+  (when drupal/phpcs-dont-show-trailing-whitespace
+    (when (boundp 'whitespace-style)
+      (set (make-local-variable 'whitespace-style) (remove 'trailing whitespace-style)))
+    (setq show-trailing-whitespace nil)))
+
 (provide 'drupal/phpcs)
 
 ;;; drupal/phpcs.el ends here
