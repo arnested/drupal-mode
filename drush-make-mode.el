@@ -26,20 +26,67 @@
 
 ;;; Code:
 
-(require 'bug-reference)
+(require 'button-lock)
+
+(defcustom drupal-issue-url "https://drupal.org/node/%s"
+  "FIXME"
+  :group 'drupal)
+
+(defun drupal-browse-issue (nid)
+  "FIXME"
+  (interactive "nIssue: ")
+  (browse-url (format-spec drupal-issue-url `((?s . ,nid)))))
+
+(defun drupal-browse-issue-at-point ()
+  "FIXME"
+  (interactive "P")
+  (let ((nid (drupal-browse-issue-issue-at-point)))
+    (if nid
+	(drupal-browse-issue nid)
+      (error "No issue number found"))))
+
+(defun drupal-browse-issue-at-mouse (event)
+  "FIXME"
+  (interactive "e")
+  (save-excursion
+    (mouse-set-point event)
+    ;; This handles browse-url-new-window-flag properly
+    ;; when it gets no arg.
+    (drupal-browse-issue-at-point)))
+
+(defun drupal-browse-patch-at-mouse (event)
+  "FIXME"
+  (interactive "e")
+  (message "A")
+  (save-excursion
+    (mouse-set-point event)
+    (drupal-browse-patch-at-point)))
+
+(defun drupal-browse-patch-at-point ()
+  "FIXME"
+  (interactive)
+  (let ((patch (thing-at-point 'url)))
+    (browse-url-emacs patch)))
+
+(defun drupal-browse-issue-issue-at-point ()
+  (thing-at-point 'number))
 
 ;;;###autoload
 (define-derived-mode drush-make-mode conf-windows-mode "Drush Make"
   "A major mode for editing drush make files.\n\n\\{drush-make-mode-map}"
   :group 'drupal
 
-  ;; Use `bug-reference-mode' for linking issues and patches.
-  (set (make-local-variable 'bug-reference-url-format) "http://drupal.org/node/%s")
-  (set (make-local-variable 'bug-reference-bug-regexp) "\\(?:\\#\\(?2:[0-9]+\\)\\|\\[['\"]?\\(?2:[0-9]+\\)\\(['\"]?\\]\\)\\)")
-  (bug-reference-mode)
+  (button-lock-set-button "\\#\\([0-9]+\\)"
+                          'drupal-browse-issue-at-mouse
+                          :face 'link :grouping 1)
+  (button-lock-set-button "\\[['\"]?\\([0-9]+\\)['\"]?\\]"
+                          'drupal-browse-issue-at-mouse
+                          :face 'link :grouping 1)
+  (button-lock-set-button "\\[patch\\].*=.*\\(http.*\\)"
+                          'drupal-browse-patch-at-point
+                          :face 'link :grouping 1)
 
-  ;; Use `goto-address-mode' for link highlighting.
-  (goto-address-mode)
+  (button-lock-mode 1)
 
   ;; Setup and use `imenu' for building an index.
   (setq imenu-generic-expression
