@@ -46,19 +46,10 @@ so no need to highlight it twice."
 (defun drupal/flycheck-hook ()
   "Enable drupal-mode support for flycheck."
   (when (and (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes))
-             (executable-find "phpcs")
              drupal/phpcs-standard)
     ;; Set the coding standard to "Drupal" (we checked that it is
     ;; supported above.
-    (set (make-local-variable 'flycheck-phpcs-standard) drupal/phpcs-standard)
-
-    (when drupal/flycheck-phpcs-js-and-css
-      (if (and (apply 'derived-mode-p (append drupal-css-modes drupal-js-modes))
-               (flycheck-may-use-checker 'css-js-phpcs)
-               )
-          (set (make-local-variable 'flycheck-checker) 'css-js-phpcs)
-        )
-      )
+    (setq flycheck-phpcs-standard drupal/phpcs-standard)
 
     ;; Flycheck will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
@@ -88,11 +79,10 @@ See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
   '(("\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): error - \\(?4:.*\\)" error)
     ("\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): warning - \\(?4:.*\\)" warning))
   :modes '(css-mode js-mode)
-  :predicate #'(lambda ()
-                 (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes))))
-
+  :predicate (lambda ()
+               (and drupal/flycheck-phpcs-js-and-css (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes)))))
+(add-to-list 'flycheck-checkers 'css-js-phpcs)
 
 
 (provide 'drupal/flycheck)
-
 ;;; drupal/flycheck.el ends here
