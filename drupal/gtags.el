@@ -35,22 +35,22 @@
 Include path to the executable if it is not in your $PATH.")
 
 (defun drupal/gtags-enable ()
-  "Setup rootdir for gtags to be DRUPAL_ROOT."
-  (when (and (boundp 'drupal-rootdir)
-             (file-exists-p (concat drupal-rootdir "GTAGS")))
-    (setq gtags-rootdir drupal-rootdir)
+  "Setup rootdir for gtags."
+  (let ((dir (locate-dominating-file (buffer-file-name) "GTAGS")))
+    (when dir
+      (set (make-local-variable 'gtags-rootdir) dir)
 
-    ;; Set `drupal-symbol-collection' to a call to
-    ;; `gtags-completing-gtags' so that inserting hooks will do
-    ;; completion based on gtags.
-    (setq drupal-symbol-collection #'(lambda() (gtags-completing-gtags "" nil t)))
-    (setq drupal-get-function-args #'drupal/gtags-get-function-args)
-    (gtags-mode 1)))
+      ;; Set `drupal-symbol-collection' to a call to
+      ;; `gtags-completing-gtags' so that inserting hooks will do
+      ;; completion based on gtags.
+      (setq drupal-symbol-collection #'(lambda() (gtags-completing-gtags "" nil t)))
+      (setq drupal-get-function-args #'drupal/gtags-get-function-args)
+      (gtags-mode 1))))
 
 (defun drupal/gtags-get-function-args (symbol &optional version)
   "Get function arguments from GNU GLOBAL."
-  (when (and (boundp 'drupal-rootdir)
-             (file-exists-p (concat drupal-rootdir "GTAGS")))
+  (when (and (boundp 'gtags-rootdir)
+             (file-exists-p (concat gtags-rootdir "GTAGS")))
     (with-temp-buffer
       (ignore-errors
         (call-process drupal/gtags-global-command nil t nil "-x" symbol)

@@ -1,6 +1,6 @@
 ;;; drupal/emacs-drush.el --- Drupal-mode support for Drush utilities for Emacs users
 
-;; Copyright (C) 2012 Arne Jørgensen
+;; Copyright (C) 2012, 2013 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -47,11 +47,12 @@ Requires `Drush utilities for Emacs users' to be installed."
 (defun drupal/emacs-drush-run-after-save ()
   "Run drush etags/gtags on after-save-hook."
   (when (and drupal/emacs-drush-update-tags-after-save
-             (boundp 'drupal-rootdir)
              drupal-drush-program)
-    (when (file-exists-p (concat drupal-rootdir "TAGS"))
+    (when (and (boundp 'drupal/etags-rootdir)
+               (file-exists-p (concat drupal/etags-rootdir "TAGS")))
       (call-process drupal-drush-program nil 0 nil "etags"))
-    (when (file-exists-p (concat drupal-rootdir "GTAGS"))
+    (when (and (boundp 'gtags-rootdir)
+               (file-exists-p (concat gtags-rootdir "GTAGS")))
       (call-process drupal-drush-program nil 0 nil "gtags"))))
 
 (defun drupal/emacs-drush-enable ()

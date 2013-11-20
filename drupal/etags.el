@@ -1,6 +1,6 @@
 ;;; drupal/etags.el --- Drupal-mode support for etags
 
-;; Copyright (C) 2012 Arne Jørgensen
+;; Copyright (C) 2012, 2013 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -29,23 +29,25 @@
 (require 'drupal/emacs-drush)
 
 (defun drupal/etags-enable ()
-  "Setup TAGS file for etags if it exists in DRUPAL_ROOT."
-  (when (and (boundp 'drupal-rootdir)
-             (file-exists-p (concat drupal-rootdir "TAGS")))
-    ;; Set `tags-file-name' to the TAGS file located in
-    ;; `drupal-rootdir'.
-    (setq tags-file-name (concat drupal-rootdir "TAGS"))
-    (tags-completion-table)
+  "Setup TAGS file for etags if it exists."
+  (let ((dir (locate-dominating-file (buffer-file-name) "TAGS")))
+    (when dir
+      (set (make-local-variable 'drupal/etags-rootdir) dir)
 
-    ;; Set `drupal-symbol-collection' to `tags-completion-table' so
-    ;; that inserting hooks will do completion based on etags.
-    (setq drupal-get-function-args #'drupal/etags-get-function-args)
-    (setq drupal-symbol-collection #'tags-completion-table)))
+      ;; Set `tags-file-name' to the TAGS file located in
+      ;; `drupal-rootdir'.
+      (setq tags-file-name (concat drupal/etags-rootdir "TAGS"))
+      (tags-completion-table)
+
+      ;; Set `drupal-symbol-collection' to `tags-completion-table' so
+      ;; that inserting hooks will do completion based on etags.
+      (setq drupal-get-function-args #'drupal/etags-get-function-args)
+      (setq drupal-symbol-collection #'tags-completion-table))))
 
 (defun drupal/etags-get-function-args (symbol &optional version)
   "Get function arguments from etags TAGS."
-  (when (and (boundp 'drupal-rootdir)
-             (file-exists-p (concat drupal-rootdir "TAGS")))
+  (when (and (boundp 'drupal/etags-rootdir)
+             (file-exists-p (concat drupal/etags-rootdir "TAGS")))
     (with-current-buffer (find-tag-noselect symbol nil nil)
       (goto-char (point-min))
       (when (re-search-forward
