@@ -25,8 +25,7 @@
 
 ;;; Code:
 
-(require 'etags)
-(require 'drupal/emacs-drush)
+(defvar drupal/etags-rootdir nil "Root directory where etags TAGS file is present.")
 
 (defun drupal/etags-enable ()
   "Setup TAGS file for etags if it exists."

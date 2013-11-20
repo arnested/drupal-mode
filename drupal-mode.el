@@ -689,6 +689,9 @@ mode-hook."
 ;;;###autoload
 (eval-after-load 'webjump '(require 'drupal/webjump))
 
+(eval-after-load 'drupal/etags '(require 'drupal/emacs-drush))
+(eval-after-load 'drupal/gtags '(require 'drupal/emacs-drush))
+
 
 
 (provide 'drupal-mode)

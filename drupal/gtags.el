@@ -26,7 +26,6 @@
 ;;; Code:
 
 (require 'gtags)
-(require 'drupal/emacs-drush)
 
 (defvar drupal/gtags-global-command (if (boundp 'gtags-global-command)
                                         gtags-global-command
