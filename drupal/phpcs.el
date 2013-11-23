@@ -43,7 +43,7 @@ This can either be the name of an installed standard (to see
 installed standards run `phpcs -i') or it can be the file name of
 a standard. Adding file name requires PHP CodeSniffer version
 1.3.4 or newer."
-  :link '(url-link :tag "Drupal Code Sniffer" "http://drupal.org/project/drupalcs")
+  :link '(url-link :tag "Drupal Coder Sniffer" "https://drupal.org/node/1419980")
   :group 'drupal)
 
 
