@@ -195,6 +195,7 @@ Include path to the executable if it is not in your $PATH."
     (define-key map [(control c) (control v) (control h)] #'drupal-insert-hook)
     (define-key map [(control c) (control v) (control f)] #'drupal-insert-function)
     (define-key map [(control c) (control v) (control m)] #'drupal-module-name)
+    (define-key map [(control c) (control v) (control t)] #'drupal-wrap-string-in-t-function)
     (define-key map [(control a)] #'drupal-mode-beginning-of-line)
     map)
   "Keymap for `drupal-mode'")
@@ -420,6 +421,18 @@ buffer."
       (when (file-readable-p dd)
         (find-file-other-window dd)
         (auto-revert-tail-mode 1)))))
+
+(defun drupal-wrap-string-in-t-function ()
+  "If point is inside a string wrap the string in the t() function."
+  (interactive)
+  (when (eq (get-text-property (point) 'face) 'font-lock-string-face)
+    (save-excursion
+      (atomic-change-group
+        (search-backward-regexp "\\(\"\\|'\\)")
+        (insert "t(")
+        (forward-char)
+        (search-forward-regexp "\\(\"\\|'\\)")
+        (insert ")")))))
 
 
 
