@@ -393,7 +393,7 @@ should save your files with unix style end of line."
     (when symbol
       (cond
        ((and (boundp 'php-extras-function-arguments)
-             (hash-table-p 'php-extras-function-arguments)
+             (hash-table-p php-extras-function-arguments)
              (gethash (symbol-name symbol) php-extras-function-arguments))
         (php-search-documentation))
        ((and drupal-drush-program (string-match "drush" (symbol-name symbol)))
