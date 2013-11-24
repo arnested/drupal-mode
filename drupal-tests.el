@@ -1,6 +1,6 @@
-;;; drupal/ispell.el --- Drupal-mode support for ispell
+;;; drupal-tests.el --- ert tests for drupal-mode
 
-;; Copyright (C) 2012, 2013 Arne Jørgensen
+;; Copyright (C) 2012 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -21,23 +21,34 @@
 
 ;;; Commentary:
 
-;; Enable drupal-mode support for ispell.
+;; Drupal mode is an advanced minor mode for developing in Drupal.
 
 ;;; Code:
 
-(require 'ispell)
-
-(defun drupal/ispell-enable ()
-  "Set `ispell-local-dictionary' to `american'.
-Comments and names should use US English spelling (e.g., `color'
-not `colour') according to https://drupal.org/coding-standards."
-  (when (member "american" (ispell-valid-dictionary-list))
-    (setq ispell-local-dictionary "american")))
-
-(add-hook 'drupal-mode-hook #'drupal/ispell-enable)
+(require 'drupal-mode)
+(require 'ert)
 
 
 
-(provide 'drupal/ispell)
+(defun drupal-tests ()
+  "Run drupal-mode ERT test cases."
+  (interactive)
+  (ert "drupal-.*"))
 
-;;; drupal/ispell.el ends here
+
+
+(ert-deftest drupal-major-version-test ()
+  "Test `drupal-major-version'."
+  (should (equal (drupal-major-version "7.12") "7"))
+  (should (equal (drupal-major-version "6.1") "6"))
+  (should (equal (drupal-major-version "4.5.2") "4.5")))
+
+
+
+(provide 'drupal-tests)
+
+;; Local Variables:
+;; coding: utf-8
+;; End:
+
+;;; drupal-tests.el ends here

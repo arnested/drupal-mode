@@ -14,13 +14,13 @@ Besides giving access to general functionality in all modes
 major mode to enable functionality only for that particular major mode
 (i.e. adhering to Drupals PHP coding standards only in php-mode).
 
-Drupal mode will try not to enforce specific ways of working with
+Drupal mode will not try to enforce specific ways of working with
 Emacs on to you. Emacs can be extended in a million different ways and
 you should use the parts and extensions that fit *you* and *your*
 working habits.
 
-If Drupal mode recognizes you using an extension that it knows about
-it will adapt the extension to be useful in Drupal mode and with
+If Drupal mode recognizes you are using an extension that it knows
+about it will adapt the extension to be useful in Drupal mode and with
 Drupal. I.e. it will recognize if you have loaded etags support and
 setup your buffers to use the TAGS file in your DRUPAL_ROOT folder.
 
@@ -57,8 +57,8 @@ it is considered a bug!
 
 #### Fixing line endings
 
-If your files are not written with unix style line endings Drupal mode
-will ask your to convert them to unix style line endings on saving
+If your files are not written with Unix style line endings Drupal mode
+will ask your to convert them to Unix style line endings on saving
 buffers.
 
 This behavior can be customized be the variable
@@ -83,19 +83,19 @@ This behavior can be customized be the variable
 ### Search documentation
 
 You can search Drupal documentation for the symbol at point by issuing
-`C-c d f` or `M-x drupal-search-documentation` or from the Drupal
+`C-c C-v C-d` or `M-x drupal-search-documentation` or from the Drupal
 menu entry.
 
 Files that are part of a Drupal project will try to identify the used
 version of Drupal core and look up the documentation for the
 corresponding version at http://api.drupal.org.
 
-If the symbol at point is believed to be a drush command the
+If the symbol at point is believed to be a Drush command the
 documentation will be looked up at http://api.drush.org instead. If
 Drush is installed it will identify the version of Drush and look up
-the documentation for that version.
+the documentation for the installed version of Drush.
 
-You can change where to search for documentation be customizing
+You can change where to search for documentation by customizing
 `drupal-search-url` (besides api.drupal.org it also has a predefined
 setting for api.drupalcontrib.org) and `drupal-drush-search-url`.
 
@@ -103,15 +103,15 @@ setting for api.drupalcontrib.org) and `drupal-drush-search-url`.
 ### Clearing all caches
 
 If Drush is installed you can issue a `drush cc all` from within Emacs
-by issuing `C-c d c` or `M-x drupal-drush-cache-clear` or from the
+by issuing `C-c C-v C-c` or `M-x drupal-drush-cache-clear` or from the
 Drupal menu entry.
 
 
 ### Drush editing minor mode
 
-If the buffer you visit is believe to be a Drush command (we think it
-is its name or path contains "drush") we will also enter a Drush minor
-mode.
+If the buffer you visit is believed to be a Drush command (we think it
+is if its file name or path contains "drush") we will also enter a
+Drush minor mode.
 
 There is currently no functionality connected to `drupal-drush-mode`.
 
@@ -123,7 +123,7 @@ If you have generated a TAGS file in your DRUPAL_ROOT folder Drupal
 mode will setup all buffers running drupal-mode to set
 `tags-file-name` to point to that TAGS file.
 
-Etags is a builtin part of Emacs.
+Etags is a built-in part of Emacs.
 
 
 ### GNU Globals / gtags
@@ -133,13 +133,21 @@ support in Emacs then Drupal mode will set `gtags-rootdir` to your
 DRUPAL_ROOT.
 
 
+### Drush utilities for Emacs users
+
+If
+[Drush utilities for Emacs users](http://drupal.org/project/emacs_drush)
+is installed Drupal mode will update existing tag files in your
+DRUPAL_ROOT after saving a buffer.
+
+
 ### ispell
 
 If ispell.el is loaded in Emacs then Drupal mode will set the language
 of your Drupal mode buffers to `american` as stated in [Drupals coding
 standards](http://drupal.org/coding-standards).
 
-ispell.el is a builtin part of Emacs. A external program must be
+ispell.el is a built-in part of Emacs. An external program must be
 installed to run the actual spell checking,
 i.e. [ispell](http://www.gnu.org/software/ispell/),
 [aspell](http://aspell.net/), or
@@ -150,19 +158,15 @@ i.e. [ispell](http://www.gnu.org/software/ispell/),
 
 If support for
 [flymake-phpcs.el](https://github.com/illusori/emacs-flymake-phpcs) is
-loaded in emacs and you have installed
+loaded in Emacs and you have installed
 [Drupal Code Sniffer](http://drupal.org/project/drupalcs) rules then
 Drupal mode will enable flymake-phpcs under php-mode.
 
 For this to work you need:
 
 *    [PHP CodeSniffer](http://pear.php.net/package/PHP_CodeSniffer)
-*    [flymake-phpcs.el](https://github.com/illusori/emacs-flymake-phpcs)
+*    [flymake-phpcs.el](http://marmalade-repo.org/packages/flymake-phpcs)
 *    [Drupal Code Sniffer](http://drupal.org/project/drupalcs) rules
-
-Making all of them work together can be a bit of a puzzle. Especially
-notice the need to run `phpcs` through a wrapper you get with
-flymake-phpcs.el.
 
 
 ## Other takes on a Drupal mode
@@ -170,7 +174,7 @@ flymake-phpcs.el.
 There are quite a few attempts at writing a Drupal mode out in the
 wild:
 
-*    [Search Github for drupal-mode](https://github.com/search?type=Repositories&q=drupal-mode)
+*    [Search Github for drupal-mode](https://github.com/search?type=Repositories&q="drupal-mode")
 *     At drupal.org:
 	* http://drupal.org/sandbox/bartlantz/1405156
 	* http://drupal.org/project/emacs
@@ -183,4 +187,4 @@ All of them more or less based on
 
 Drupal mode is actively developed at
 [GitHub](https://github.com/arnested/drupal-mode).  Feature requests,
-ideas, bug reports, and pull request are more that welcome!
+ideas, bug reports, and pull request are more than welcome!
