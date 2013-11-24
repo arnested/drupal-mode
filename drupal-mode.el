@@ -403,6 +403,24 @@ should save your files with unix style end of line."
            (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
                                             (?s . ,symbol)))))))))
 
+(defun drupal-tail-drupal-debug-txt ()
+  "Tail drupal_debug.txt.
+If a drupal_debug.txt exists in the sites temporary directory
+visit it and enable `auto-revert-tail-mode' in the visiting
+buffer."
+  (interactive)
+  (when drupal-drush-program
+    (let* ((tmp (ignore-errors
+                  (replace-regexp-in-string
+                   "[\n\r]" ""
+                   (with-output-to-string
+                     (with-current-buffer standard-output
+                       (call-process drupal-drush-program nil (list t nil) nil "core-status" "temp" "--pipe" "--format=list" "--strict=0"))))))
+           (dd (concat tmp "/drupal_debug.txt")))
+      (when (file-readable-p dd)
+        (find-file-other-window dd)
+        (auto-revert-tail-mode 1)))))
+
 
 
 (defvar drupal-form-id-history nil
