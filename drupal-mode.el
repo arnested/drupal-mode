@@ -5,7 +5,7 @@
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
 ;; Created: January 17, 2012
-;; Version: 0.3.0
+;; Version: 0.3.1
 ;; Package-Requires: ((php-mode "1.5.0"))
 ;; Keywords: programming, php, drupal
 
@@ -393,7 +393,7 @@ should save your files with unix style end of line."
     (when symbol
       (cond
        ((and (boundp 'php-extras-function-arguments)
-             (hash-table-p 'php-extras-function-arguments)
+             (hash-table-p php-extras-function-arguments)
              (gethash (symbol-name symbol) php-extras-function-arguments))
         (php-search-documentation))
        ((and drupal-drush-program (string-match "drush" (symbol-name symbol)))
