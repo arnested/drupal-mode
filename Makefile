@@ -21,7 +21,7 @@
 
 CASK?=cask
 EMACS?=emacs
-TAR?=bsdtar
+TAR?=COPYFILE_DISABLE=1 bsdtar
 PANDOC?=pandoc --atx-headers
 
 VERSION?=$(shell $(CASK) version)
@@ -46,7 +46,7 @@ $(ARCHIVE_NAME)-pkg.el: $(ARCHIVE_NAME).el
 
 # create a tar ball in package.el format for uploading to http://marmalade-repo.org
 $(PACKAGE_NAME).tar: README $(ARCHIVE_NAME).el $(ARCHIVE_NAME)-pkg.el $(ARCHIVE_NAME).info dir drupal/*.el drupal-tests.el drush-make-mode.el
-	COPYFILE_DISABLE=1 $(TAR) -c -s "@^@$(PACKAGE_NAME)/@" -f $(PACKAGE_NAME).tar $^
+	$(TAR) -c -s "@^@$(PACKAGE_NAME)/@" -f $(PACKAGE_NAME).tar $^
 
 install: $(PACKAGE_NAME).tar
 	$(EMACS) --batch -l package -f package-initialize --eval "(package-install-file \"$(PWD)/$(PACKAGE_NAME).tar\")"
