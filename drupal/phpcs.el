@@ -34,7 +34,7 @@
                          ;; command. Check for both.
                          (call-process (or (and (boundp 'flymake-phpcs-command) (executable-find flymake-phpcs-command)) (executable-find "phpcs")) nil (list t nil) nil "-i")))))
       (when (string-match
-             "\\(Drupal[^, 
+             "\\(Drupal[^,
 ]*\\)"
              standards)
         (match-string-no-properties 1 standards))))

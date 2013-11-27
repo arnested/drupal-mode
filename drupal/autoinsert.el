@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012, 2013  Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
-;; Keywords: 
+;; Keywords:
 
 ;; This file is part of Drupal mode.
 
