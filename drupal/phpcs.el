@@ -60,8 +60,6 @@ need to highlight it twice."
 (defun drupal/phpcs-dont-show-trailing-whitespace ()
   "Turn of various trailing white space highlighting."
   (when drupal/phpcs-dont-show-trailing-whitespace
-    (when (boundp 'whitespace-style)
-      (set (make-local-variable 'whitespace-style) (remove 'trailing whitespace-style)))
     (setq show-trailing-whitespace nil)))
 
 (provide 'drupal/phpcs)
