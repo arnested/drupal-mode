@@ -36,7 +36,7 @@
 (require 'php-mode)
 (require 'format-spec)
 
-(eval-when-compile 
+(eval-when-compile
   (require 'css-mode))
 
 
@@ -62,7 +62,7 @@ If `Ask' ask the user whether to convert line endings.
 
 Drupal coding standards states that all text files should end in
 a single newline (\\n)."
-  :type `(choice 
+  :type `(choice
           :tag " we offer to change line endings if needed?"
           (const :tag "Always" t)
           (const :tag "Never" nil)
@@ -83,7 +83,7 @@ If `Default' do what the global setting is.
 
 Drupal coding standards states that lines should have no trailing
 whitespace at the end."
-  :type `(choice 
+  :type `(choice
           :tag "Whether to delete all the trailing whitespace."
           (const :tag "Always" always)
           (const :tag "Default" default)
@@ -538,12 +538,12 @@ Heavily based on `message-beginning-of-line' from Gnus."
       (set zrs t)))
   (if (derived-mode-p 'conf-mode)
       (let* ((here (point))
-	     (bol (progn (beginning-of-line n) (point)))
-	     (eol (point-at-eol))
-	     (eoh (re-search-forward "= *" eol t)))
-	(goto-char
-	 (if (and eoh (or (< eoh here) (= bol here)))
-	     eoh bol)))
+             (bol (progn (beginning-of-line n) (point)))
+             (eol (point-at-eol))
+             (eoh (re-search-forward "= *" eol t)))
+        (goto-char
+         (if (and eoh (or (< eoh here) (= bol here)))
+             eoh bol)))
     (beginning-of-line n)))
 
 
