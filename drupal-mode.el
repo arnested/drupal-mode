@@ -188,14 +188,23 @@ Include path to the executable if it is not in your $PATH."
 (make-variable-buffer-local 'drupal-project)
 (put 'drupal-project 'safe-local-variable 'string-or-null-p)
 
+(defvar drupal-mode-map-alist
+  '((?d . drupal-search-documentation)
+    (?c . drupal-drush-cache-clear)
+    (?h . drupal-insert-hook)
+    (?f . drupal-insert-function)
+    (?m . drupal-module-name)
+    (?t . drupal-wrap-string-in-t-function))
+  "Map of mnemonic keys and functions for keyboard shortcuts.
+See `drupal-mode-map'.")
+
 (defvar drupal-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map [(control c) (control v) (control d)] #'drupal-search-documentation)
-    (define-key map [(control c) (control v) (control c)] #'drupal-drush-cache-clear)
-    (define-key map [(control c) (control v) (control h)] #'drupal-insert-hook)
-    (define-key map [(control c) (control v) (control f)] #'drupal-insert-function)
-    (define-key map [(control c) (control v) (control m)] #'drupal-module-name)
-    (define-key map [(control c) (control v) (control t)] #'drupal-wrap-string-in-t-function)
+    ;; Iterate `drupal-mode-map-alist' and assign the functions to the
+    ;; mode map on C-c C-v C-`mnemonic-key'.
+    (dolist (elem drupal-mode-map-alist)
+      (define-key map `[(control c) (control v) (control ,(car elem))] (cdr elem)))
+
     (define-key map [(control a)] #'drupal-mode-beginning-of-line)
     map)
   "Keymap for `drupal-mode'")
