@@ -1,6 +1,6 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012, 2013 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
@@ -676,7 +676,7 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
                                         drupal-module
                                       ;; Otherwise fall back to a very naive
                                       ;; way of guessing the module name.
-                                      (file-name-nondirectory (file-name-sans-extension (buffer-file-name)))))))
+                                      (file-name-nondirectory (file-name-sans-extension (or buffer-file-name (buffer-name))))))))
     (if (called-interactively-p 'any)
         (insert name)
       name)))
