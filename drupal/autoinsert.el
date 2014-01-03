@@ -34,7 +34,7 @@
 (define-skeleton drupal/autoinsert-insert-info-skeleton
   "Drupal info file skeleton."
   nil
-  '(setq v1 (file-name-nondirectory (file-name-sans-extension (or buffer-file-name (buffer-name))))
+  '(setq v1 (file-name-nondirectory (file-name-sans-extension (or buffer-file-name (buffer-name)))))
   '(setq v2 (if (drupal-major-version) (>= (string-to-number (drupal-major-version)) 7) t))
   "name = " @ - (upcase-initials (replace-regexp-in-string "[-_\\.]+" " " v1)) \n
   "description = " @ \n
