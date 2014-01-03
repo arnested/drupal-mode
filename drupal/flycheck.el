@@ -67,8 +67,12 @@ See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
   ;; `https://github.com/lunaryorn/flycheck/issues/78' and URL
   ;; `https://github.com/lunaryorn/flycheck/issues/118'
   :error-patterns
-  ((error "\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): error - \\(?4:.*\\)")
-   (warning "\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): warning - \\(?4:.*\\)"))
+  ((error line-start
+          (file-name) ":" line ":" column ": error - " (message)
+          line-end)
+   (warning line-start
+            (file-name) ":" line ":" column ": warning - " (message)
+            line-end))
   :modes (css-mode js-mode)
   :predicate (lambda ()
                (and drupal/flycheck-phpcs-js-and-css (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes)))))
