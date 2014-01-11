@@ -1,6 +1,6 @@
 ;;; drupal/flymake-phpcs.el --- Drupal-mode support for flymake-phpcs
 
-;; Copyright (C) 2012, 2013 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -33,8 +33,8 @@
 (require 'drupal/phpcs)
 
 (defun drupal/flymake-phpcs-enable ()
-  "Enable drupal-mode support for flymake-phpcs."
-  (when (and (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes))
+  "Enable drupal-mode support for flymake-phpcs."(interactive)
+  (when (and (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
              (executable-find flymake-phpcs-command)
              drupal/phpcs-standard)
     ;; Set the coding standard to "Drupal" (we checked that it is
