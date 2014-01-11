@@ -35,7 +35,7 @@
 ;; Only available when `flymake' is the fork from
 ;; https://github.com/illusori/emacs-flymake.
 (when (boundp 'flymake-run-in-place)
-  (defcustom drupal/flymake-run-in-place t
+  (defcustom drupal/flymake-phpcs-run-in-place t
     "If nil, flymake will run on copies in `temporary-file-directory' rather
 than the same directory as the original file.
 
@@ -65,9 +65,9 @@ file (and thus on the remote machine), or in the same place as
     (set (make-local-variable 'flymake-phpcs-standard) drupal/phpcs-standard)
 
     ;; Set whether flymake runs in place.
-    (when (and (boundp 'drupal/flymake-run-in-place)
-               (not (eq drupal/flymake-run-in-place 'default)))
-      (set (make-local-variable 'flymake-run-in-place) drupal/flymake-run-in-place))
+    (when (and (boundp 'drupal/flymake-phpcs-run-in-place)
+               (not (eq drupal/flymake-phpcs-run-in-place 'default)))
+      (set (make-local-variable 'flymake-run-in-place) drupal/flymake-phpcs-run-in-place))
 
     ;; Flymake-phpcs will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
