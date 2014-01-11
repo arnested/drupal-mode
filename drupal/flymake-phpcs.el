@@ -49,8 +49,11 @@
     ;; version of `flymake-allowed-file-name-masks' and make
     ;; flymake-phpcs initialize.
     (make-local-variable 'flymake-allowed-file-name-masks)
-    (add-to-list 'flymake-allowed-file-name-masks
-                 `(,(concat "\\." (file-name-extension (or buffer-file-name (buffer-name))) "\\'") flymake-phpcs-init))
+    (let ((extension (file-name-extension (or buffer-file-name (buffer-name)))))
+      (when (string-match "\\.tpl\\.php\\'" (or buffer-file-name (buffer-name)))
+        (setq extension "tpl\\.php"))
+      (add-to-list 'flymake-allowed-file-name-masks
+                   `(,(concat "\\." extension "\\'") flymake-phpcs-init)))
     (flymake-mode 1)))
 
 (add-hook 'drupal-mode-hook #'drupal/flymake-phpcs-enable)
