@@ -1,6 +1,6 @@
 ;;; drupal/flycheck.el --- Drupal-mode support for flycheck and phpcs
 
-;; Copyright (C) 2012, 2013 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014 Arne Jørgensen
 
 ;; Author: Thomas Fini Hansen <xen@xen.dk>
 
@@ -25,6 +25,9 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'flycheck))
+
 (require 'drupal/phpcs)
 
 (defcustom drupal/flycheck-phpcs-js-and-css t
@@ -48,27 +51,32 @@
 
 (add-hook 'drupal-mode-hook #'drupal/flycheck-hook)
 
-(flycheck-declare-checker css-js-phpcs
+(flycheck-define-checker css-js-phpcs
   "Check CSS and JavaScript  using PHP_CodeSniffer.
 
 PHP_CodeSniffer can be used to check non-PHP files, as exemplified by the
 Drupal code sniffer.
 
 See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
-  :command '("phpcs" "--report=emacs"
-             (option "--standard=" flycheck-phpcs-standard)
-             source)
+  :command ("phpcs" "--report=emacs"
+            (option "--standard=" flycheck-phpcs-standard)
+            source)
   ;; Though phpcs supports Checkstyle output which we could feed to
   ;; `flycheck-parse-checkstyle', we are still using error patterns here,
   ;; because PHP has notoriously unstable output habits.  See URL
   ;; `https://github.com/lunaryorn/flycheck/issues/78' and URL
   ;; `https://github.com/lunaryorn/flycheck/issues/118'
   :error-patterns
-  '(("\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): error - \\(?4:.*\\)" error)
-    ("\\(?1:.*\\):\\(?2:[0-9]+\\):\\(?3:[0-9]+\\): warning - \\(?4:.*\\)" warning))
-  :modes '(css-mode js-mode)
+  ((error line-start
+          (file-name) ":" line ":" column ": error - " (message)
+          line-end)
+   (warning line-start
+            (file-name) ":" line ":" column ": warning - " (message)
+            line-end))
+  :modes (css-mode js-mode)
   :predicate (lambda ()
                (and drupal/flycheck-phpcs-js-and-css (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes)))))
+
 (add-to-list 'flycheck-checkers 'css-js-phpcs)
 
 

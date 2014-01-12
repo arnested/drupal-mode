@@ -1,6 +1,6 @@
 ;;; drupal/gtags.el --- Drupal-mode support for gtags
 
-;; Copyright (C) 2012, 2013 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -35,7 +35,7 @@ Include path to the executable if it is not in your $PATH.")
 
 (defun drupal/gtags-enable ()
   "Setup rootdir for gtags."
-  (let ((dir (locate-dominating-file (buffer-file-name) "GTAGS")))
+  (let ((dir (locate-dominating-file (or buffer-file-name default-directory) "GTAGS")))
     (when dir
       (set (make-local-variable 'gtags-rootdir) dir)
 

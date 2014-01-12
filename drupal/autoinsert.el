@@ -1,9 +1,9 @@
 ;;; drupal/autoinsert.el --- Drupal-mode support for `auto-insert-mode'
 
-;; Copyright (C) 2012, 2013  Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014  Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
-;; Keywords: 
+;; Keywords:
 
 ;; This file is part of Drupal mode.
 
@@ -34,7 +34,7 @@
 (define-skeleton drupal/autoinsert-insert-info-skeleton
   "Drupal info file skeleton."
   nil
-  '(setq v1 (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))
+  '(setq v1 (file-name-nondirectory (file-name-sans-extension (or buffer-file-name (buffer-name)))))
   '(setq v2 (if (drupal-major-version) (>= (string-to-number (drupal-major-version)) 7) t))
   "name = " @ - (upcase-initials (replace-regexp-in-string "[-_\\.]+" " " v1)) \n
   "description = " @ \n
