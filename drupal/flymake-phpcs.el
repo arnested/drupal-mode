@@ -32,6 +32,9 @@
 (define-obsolete-variable-alias 'drupal/flymake-phpcs-dont-show-trailing-whitespace 'drupal/phpcs-dont-show-trailing-whitespace)
 (require 'drupal/phpcs)
 
+;; Silence byte compiler.
+(defvar flymake-phpcs-location)
+
 ;; Only available when `flymake' is the fork from
 ;; https://github.com/illusori/emacs-flymake.
 (when (or (boundp 'flymake-run-in-place)
@@ -76,7 +79,8 @@ file (and thus on the remote machine), or in the same place as
 
     ;; Flymake-phpcs will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
-    (drupal/phpcs-dont-show-trailing-whitespace)
+    (when (fboundp 'drupal/phpcs-dont-show-trailing-whitespace)
+      (drupal/phpcs-dont-show-trailing-whitespace))
 
     ;; This is a php-mode file so add the extension to a buffer locale
     ;; version of `flymake-allowed-file-name-masks' and make

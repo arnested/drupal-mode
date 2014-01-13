@@ -36,8 +36,8 @@
 (require 'php-mode)
 (require 'format-spec)
 
-(eval-when-compile
-  (require 'css-mode))
+;; Silence byte compiler.
+(defvar css-indent-level)
 
 
 

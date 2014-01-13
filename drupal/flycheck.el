@@ -25,9 +25,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'flycheck))
-
+(require 'flycheck)
 (require 'drupal/phpcs)
 
 (defcustom drupal/flycheck-phpcs-js-and-css t
@@ -47,7 +45,8 @@
 
     ;; Flycheck will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
-    (drupal/phpcs-dont-show-trailing-whitespace)))
+    (when (fboundp 'drupal/phpcs-dont-show-trailing-whitespace)
+      (drupal/phpcs-dont-show-trailing-whitespace))))
 
 (add-hook 'drupal-mode-hook #'drupal/flycheck-hook)
 
