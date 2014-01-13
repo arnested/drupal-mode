@@ -1,6 +1,6 @@
 # This file is part of Drupal mode.
 
-# Copyright (C) 2012, 2013 Arne Jørgensen
+# Copyright (C) 2012, 2013, 2014 Arne Jørgensen
 
 # Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -17,14 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Drupal mode.  If not, see <http://www.gnu.org/licenses/>.
 
-.PHONY: all test clean install
+.PHONY: all test clean install package
 
 CASK?=cask
 EMACS?=emacs
 TAR?=COPYFILE_DISABLE=1 bsdtar
 PANDOC?=pandoc --atx-headers
 
-VERSION?=$(shell $(CASK) version)
+ifeq ($(DEV), 1)
+	VERSION=$(shell git describe --long --always --dirty=-dev)
+else
+	VERSION?=$(shell $(CASK) version)
+endif
 
 ARCHIVE_NAME=drupal-mode
 PACKAGE_NAME=$(ARCHIVE_NAME)-$(VERSION)
@@ -44,9 +48,12 @@ README: README.md
 $(ARCHIVE_NAME)-pkg.el: $(ARCHIVE_NAME).el
 	$(CASK) package
 
+package: $(PACKAGE_NAME).tar
+
 # create a tar ball in package.el format for uploading to http://marmalade-repo.org
-$(PACKAGE_NAME).tar: README $(ARCHIVE_NAME).el $(ARCHIVE_NAME)-pkg.el $(ARCHIVE_NAME).info dir drupal/*.el drupal-tests.el drush-make-mode.el
-	$(TAR) -c -s "@^@$(PACKAGE_NAME)/@" -f $(PACKAGE_NAME).tar $^
+# @todo we can only add files already in git
+$(PACKAGE_NAME).tar: README.md $(ARCHIVE_NAME).el dir drupal/*.el drupal-tests.el drush-make-mode.el
+	git archive --worktree-attributes --format=tar --prefix=$(PACKAGE_NAME)/ --output=$(PACKAGE_NAME).tar -v $(VERSION)
 
 install: $(PACKAGE_NAME).tar
 	$(EMACS) --batch -l package -f package-initialize --eval "(package-install-file \"$(PWD)/$(PACKAGE_NAME).tar\")"
