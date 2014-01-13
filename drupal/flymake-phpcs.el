@@ -88,12 +88,75 @@ file (and thus on the remote machine), or in the same place as
     (if (fboundp 'flymake-phpcs-load)
         (flymake-phpcs-load)
       (make-local-variable 'flymake-allowed-file-name-masks)
-      (let ((extension (file-name-extension (or buffer-file-name (buffer-name)))))
-        (when (string-match "\\.tpl\\.php\\'" (or buffer-file-name (buffer-name)))
-          (setq extension "tpl\\.php"))
-        (add-to-list 'flymake-allowed-file-name-masks
-                     `(,(concat "\\." extension "\\'") flymake-phpcs-init)))
+      (setq flymake-allowed-file-name-masks '(("." drupal/flymake-phpcs-init)))
       (flymake-mode 1))))
+
+(defun drupal/flymake-phpcs-init ()
+  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                     (if (and (fboundp 'flymake-create-temp-intemp)
+                              (not flymake-run-in-place))
+                         'drupal/flymake-phpcs-create-temp-intemp
+                       'drupal/flymake-phpcs-create-temp-inplace)))
+         (local-file (file-relative-name temp-file
+                                         (file-name-directory buffer-file-name))))
+    (list flymake-phpcs-command
+          (append
+           (list local-file)
+           (if flymake-phpcs-standard
+               (list (concat "--standard="
+                             ;; Looking for "/" is hardly portable
+                             (if (string-match "/" flymake-phpcs-standard)
+                                 (expand-file-name flymake-phpcs-standard)
+                               flymake-phpcs-standard))))
+           (if flymake-phpcs-show-rule (list "-s"))))))
+
+(defun drupal/flymake-phpcs-create-temp-inplace (file-name &optional prefix)
+  "Return filename in the same directory as FILE-NAME for a
+temporary copy of the buffer editing FILE-NAME.
+
+Note that this function, despite its name, does not actually create a
+copy of the file: it only choses and returns a filename for the temp
+copy."
+  (unless (stringp file-name)
+    (error "Invalid file-name"))
+  (or prefix
+      (setq prefix "flymake"))
+  (let* ((extension (if (string-match "\\.tpl\\.php\\'" (or buffer-file-name (buffer-name)))
+                        ".tpl.php"
+                      (file-name-extension file-name t)))
+         (base-name (replace-regexp-in-string (concat (regexp-quote extension) "\\'") "" file-name))
+         (temp-name (file-truename (concat base-name "." prefix extension))))
+    (flymake-log 3 "create-temp-inplace: file=%s temp=%s" file-name temp-name)
+    temp-name))
+
+(defun drupal/flymake-phpcs-create-temp-intemp (file-name &optional prefix)
+  "Return filename in temporary directory for a temporary
+copy of the buffer editing FILE-NAME. This is a replacement for
+`flymake-create-temp-inplace'. The difference is that it gives
+a file name in `temporary-file-directory' instead of the same
+directory as FILE-NAME.
+
+For the use of PREFIX see that function.
+
+Note that not making the temporary file in another directory
+\(like here) will not work if the file you are checking depends
+relative paths to other files \(for the type of checks flymake
+makes).
+
+Note that this function, despite its name, does not actually create a
+copy of the file: it only choses and returns a filename for the temp
+copy."
+  (unless (stringp file-name)
+    (error "Invalid file-name"))
+  (or prefix
+      (setq prefix "flymake"))
+  (let* ((extension (if (string-match "\\.tpl\\.php\\'" (or buffer-file-name (buffer-name)))
+                        ".tpl.php"
+                      (file-name-extension file-name t)))
+         (base-name (file-name-nondirectory (replace-regexp-in-string (concat (regexp-quote extension) "\\'") "" file-name)))
+         (temp-name (file-truename (make-temp-file (concat base-name "." prefix) nil extension))))
+    (flymake-log 3 "create-temp-intemp: file=%s temp=%s" file-name temp-name)
+    temp-name))
 
 (add-hook 'drupal-mode-hook #'drupal/flymake-phpcs-enable)
 
