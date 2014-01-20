@@ -1,0 +1,6 @@
+.gitignore      export-ignore
+.gitattribute   export-ignore
+Cask            export-ignore
+Makefile        export-ignore
+CONTRIBUTING.md export-ignore
+README.md       export-ignore
