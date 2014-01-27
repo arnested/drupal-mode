@@ -1,11 +1,11 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012, 2013 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
 ;; Created: January 17, 2012
-;; Version: 0.3.1
+;; Version: 0.4.0
 ;; Package-Requires: ((php-mode "1.5.0"))
 ;; Keywords: programming, php, drupal
 
@@ -36,8 +36,8 @@
 (require 'php-mode)
 (require 'format-spec)
 
-(eval-when-compile 
-  (require 'css-mode))
+;; Silence byte compiler.
+(defvar css-indent-level)
 
 
 
@@ -62,7 +62,7 @@ If `Ask' ask the user whether to convert line endings.
 
 Drupal coding standards states that all text files should end in
 a single newline (\\n)."
-  :type `(choice 
+  :type `(choice
           :tag " we offer to change line endings if needed?"
           (const :tag "Always" t)
           (const :tag "Never" nil)
@@ -83,7 +83,7 @@ If `Default' do what the global setting is.
 
 Drupal coding standards states that lines should have no trailing
 whitespace at the end."
-  :type `(choice 
+  :type `(choice
           :tag "Whether to delete all the trailing whitespace."
           (const :tag "Always" always)
           (const :tag "Default" default)
@@ -98,6 +98,7 @@ whitespace at the end."
 %s is the search term."
   :type '(choice (const :tag "Api.drupal.org" "http://api.drupal.org/api/search/%v/%s")
                  (const :tag "Api.drupalcontrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
+                 (const :tag "Api.drupalize.me" "http://api.drupalize.me/api/search/%v/%s")
                  (string :tag "Other" "http://example.com/api/search/%v/%s"))
   :link '(url-link :tag "api.drupalcontrib.org" "http://api.drupalcontrib.org")
   :link '(url-link :tag "api.drupal.org" "http://api.drupal.org")
@@ -188,14 +189,23 @@ Include path to the executable if it is not in your $PATH."
 (make-variable-buffer-local 'drupal-project)
 (put 'drupal-project 'safe-local-variable 'string-or-null-p)
 
+(defvar drupal-mode-map-alist
+  '((?d . drupal-search-documentation)
+    (?c . drupal-drush-cache-clear)
+    (?h . drupal-insert-hook)
+    (?f . drupal-insert-function)
+    (?m . drupal-module-name)
+    (?t . drupal-wrap-string-in-t-function))
+  "Map of mnemonic keys and functions for keyboard shortcuts.
+See `drupal-mode-map'.")
+
 (defvar drupal-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map [(control c) (control v) (control d)] #'drupal-search-documentation)
-    (define-key map [(control c) (control v) (control c)] #'drupal-drush-cache-clear)
-    (define-key map [(control c) (control v) (control h)] #'drupal-insert-hook)
-    (define-key map [(control c) (control v) (control f)] #'drupal-insert-function)
-    (define-key map [(control c) (control v) (control m)] #'drupal-module-name)
-    (define-key map [(control c) (control v) (control t)] #'drupal-wrap-string-in-t-function)
+    ;; Iterate `drupal-mode-map-alist' and assign the functions to the
+    ;; mode map on C-c C-v C-`mnemonic-key'.
+    (dolist (elem drupal-mode-map-alist)
+      (define-key map `[(control c) (control v) (control ,(car elem))] (cdr elem)))
+
     (define-key map [(control a)] #'drupal-mode-beginning-of-line)
     map)
   "Keymap for `drupal-mode'")
@@ -538,15 +548,18 @@ Heavily based on `message-beginning-of-line' from Gnus."
       (set zrs t)))
   (if (derived-mode-p 'conf-mode)
       (let* ((here (point))
-	     (bol (progn (beginning-of-line n) (point)))
-	     (eol (point-at-eol))
-	     (eoh (re-search-forward "= *" eol t)))
-	(goto-char
-	 (if (and eoh (or (< eoh here) (= bol here)))
-	     eoh bol)))
+             (bol (progn (beginning-of-line n) (point)))
+             (eol (point-at-eol))
+             (eoh (re-search-forward "= *" eol t)))
+        (goto-char
+         (if (and eoh (or (< eoh here) (= bol here)))
+             eoh bol)))
     (beginning-of-line n)))
 
 
+
+(defvar drupal-local-variables (make-hash-table :test 'equal)
+  "Drupal local variables hash table.")
 
 ;; Detect Drupal and Drupal version
 (defun drupal-detect-drupal-version ()
@@ -554,7 +567,7 @@ Heavily based on `message-beginning-of-line' from Gnus."
 If part of a Drupal project also detect the version of Drupal and
 the location of DRUPAL_ROOT."
   (interactive)
-  (hack-local-variables)
+  (drupal-hack-local-variables)
   (when (or (not drupal-version)
             (not drupal-rootdir))
     (dolist (file '("modules/system/system.module" "includes/bootstrap.inc" "core/lib/Drupal.php"))
@@ -567,11 +580,11 @@ the location of DRUPAL_ROOT."
                   (widen)
                   (goto-char (point-min))
                   (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
-                    (dir-locals-set-class-variables 'drupal-site `((nil . ((drupal-version . ,(match-string-no-properties 2))
-                                                                           (drupal-rootdir . ,dir)))))
-                    (dir-locals-set-directory-class dir 'drupal-site)))
-                (setq drupal-version (match-string-no-properties 2))))))))
-    (hack-local-variables))
+                    (setq drupal-version (match-string-no-properties 2))
+                    (puthash dir `((drupal-version . ,drupal-version)
+                                   (drupal-rootdir . ,dir))
+                             drupal-local-variables)))))))))
+    (drupal-hack-local-variables))
   (let ((module (drupal-locate-dominating-module (or buffer-file-name default-directory) t))
         (version drupal-version)
         (module-name nil)
@@ -601,15 +614,30 @@ the location of DRUPAL_ROOT."
           (when (and (string= project "drupal")
                      (string= module-version "VERSION"))
             (setq module-version version))))
-      (dir-locals-set-class-variables 'drupal-module `((nil . ((drupal-module . ,(file-name-nondirectory
-                                                                                  (file-name-sans-extension module)))
-                                                               (drupal-version . ,version)
-                                                               (drupal-module-name . ,module-name)
-                                                               (drupal-module-version . ,module-version)
-                                                               (drupal-project . ,project)))))
-      (dir-locals-set-directory-class (file-name-directory module) 'drupal-module)))
-  (hack-local-variables)
+      (puthash (file-name-directory module) `((drupal-module . ,(file-name-nondirectory
+                                                                 (file-name-sans-extension module)))
+                                              (drupal-version . ,version)
+                                              (drupal-module-name . ,module-name)
+                                              (drupal-module-version . ,module-version)
+                                              (drupal-project . ,project))
+               drupal-local-variables)))
+  (drupal-hack-local-variables)
   drupal-version)
+
+(defun drupal-hack-local-variables ()
+  "Drupal hack `drupal-local-variables' as buffer local variables."
+  (interactive)
+  (let ((dir (or (file-name-directory buffer-file-name) default-directory))
+        matches)
+    (maphash (lambda (key value)
+               (when (string-match (concat "^" (regexp-quote key)) dir)
+                 (add-to-list 'matches key)))
+             drupal-local-variables)
+    (sort matches #'(lambda (a b) (> (string-width a) (string-width b))))
+    (dolist (elem matches)
+      (let ((vars (gethash elem drupal-local-variables)))
+        (dolist (var vars)
+          (set (make-local-variable (car var)) (cdr-safe var)))))))
 
 (defun drupal-locate-dominating-module (file &optional info-file-location)
   "Look up the directory hierarchy from FILE for a Drupal module root.
@@ -666,7 +694,7 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
                                         drupal-module
                                       ;; Otherwise fall back to a very naive
                                       ;; way of guessing the module name.
-                                      (file-name-nondirectory (file-name-sans-extension (buffer-file-name)))))))
+                                      (file-name-nondirectory (file-name-sans-extension (or buffer-file-name (buffer-name))))))))
     (if (called-interactively-p 'any)
         (insert name)
       name)))
