@@ -151,8 +151,8 @@ copy."
     (error "Invalid file-name"))
   (or prefix
       (setq prefix "flymake"))
-  (let* ((extension (if (string-match "\\.tpl\\.php\\'" (or buffer-file-name (buffer-name)))
-                        ".tpl.php"
+  (let* ((extension (if (string-match "\\.\\(api\\|tpl\\)\\.php\\'" (or buffer-file-name (buffer-name)))
+                        (match-string-no-properties 0)
                       (file-name-extension file-name t)))
          (base-name (file-name-nondirectory (replace-regexp-in-string (concat (regexp-quote extension) "\\'") "" file-name)))
          (temp-name (file-truename (make-temp-file (concat base-name "." prefix) nil extension))))
