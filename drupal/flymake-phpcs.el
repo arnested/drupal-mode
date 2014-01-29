@@ -99,7 +99,7 @@ file (and thus on the remote machine), or in the same place as
                          'drupal/flymake-phpcs-create-temp-intemp
                        'drupal/flymake-phpcs-create-temp-inplace)))
          (local-file (file-relative-name temp-file
-                                         (file-name-directory buffer-file-name))))
+                                         (file-name-directory (file-truename buffer-file-name)))))
     (list flymake-phpcs-command
           (append
            (list local-file)
