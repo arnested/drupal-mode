@@ -163,6 +163,36 @@ Include path to the executable if it is not in your $PATH."
   :type '(repeat symbol)
   :group 'drupal)
 
+(defcustom drupal-enable-auto-fill-mode t
+  "Whether to use `auto-fill-mode' Drupal PHP buffers.
+Drupal mode will only do auto fill in comments (auto filling code
+is not nice).
+
+If `Yes' enable `auto-fill-mode' in Drupal PHP mode buffers.
+If `No' don't enable `auto-fill-mode' in Drupal PHP mode buffers (`auto-fill-mode' can still be enabled by other settings)."
+  :type `(choice
+          :tag "Enable `auto-fill-mode'."
+          (const :tag "Yes" t)
+          (const :tag "No" nil))
+  :link '(variable-link comment-auto-fill-only-comments)
+  :group 'drupal)
+
+(defcustom drupal-paragraph-separate "^[ \t]*\\(\\(/[/\\*]+\\)\\|\\(\\*+/\\)\\|\\(\\*?\\)\\|\\(\\*?[ \t]*@[[:alpha:]]+\\([ \t]+.*\\)?\\)\\)[ \t]*$"
+  "Regexp for beginning of a line that separates paragraphs.
+In Drupal mode we extend the regular `paragraph-separate' so we
+will get better filling in Doxygen comments."
+  :type 'regexp
+  :link '(variable-link paragraph-separate)
+  :group 'drupal)
+
+(defcustom drupal-paragraph-start (default-value 'drupal-paragraph-separate)
+  "Regexp for beginning of a line that starts OR separates paragraphs.
+In Drupal mode we extend the regular `paragraph-start' so we will
+get better filling in Doxygen comments."
+  :type 'regexp
+  :link '(variable-link paragraph-start)
+  :group 'drupal)
+
 
 
 (defvar drupal-version nil "Drupal version as auto detected.")
@@ -273,7 +303,16 @@ function arguments.")
     ;; Setup cc-mode style stuff.
     (when (derived-mode-p 'c-mode)
       (c-add-language 'drupal-mode 'c-mode)
-      (c-set-style "drupal"))))
+      (c-set-style "drupal"))
+
+    ;; Use `auto-fill' only in comments.
+    (when drupal-enable-auto-fill-mode
+      (set (make-local-variable 'comment-auto-fill-only-comments) t)
+      (auto-fill-mode 1))
+
+    ;; Improve filling in Doxygen comments.
+    (set (make-local-variable 'paragraph-separate) drupal-paragraph-separate)
+    (set (make-local-variable 'paragraph-start) drupal-paragraph-start)))
 
 
 
