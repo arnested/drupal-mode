@@ -259,13 +259,15 @@ function arguments.")
 (make-variable-buffer-local 'drupal-get-function-args)
 
 
+(defvar drupal-mode-line " Drupal"
+  "Mode line")
 
 ;;;###autoload
 (define-minor-mode drupal-mode
   "Advanced minor mode for Drupal development.\n\n\\{drupal-mode-map}"
   :group 'drupal
   :init-value nil
-  :lighter " Drupal"
+  :lighter drupal-mode-line
   :keymap drupal-mode-map
 
   ;; Delete trailing white space.
@@ -357,7 +359,9 @@ of the project)."
         (with-temp-buffer
           (cd-absolute root)
           (message "Clearing all caches...")
-          (call-process drupal-drush-program nil nil nil "cache-clear" "all")
+          (if drupal-drush-site-alias
+              (call-process drupal-drush-program nil nil nil (concat "@" drupal-drush-site-alias) "cache-clear" "all")
+            (call-process drupal-drush-program nil nil nil "cache-clear" "all"))
           (message "Clearing all caches...done")))
     (message "Can't clear caches. No DRUPAL_ROOT and/or no drush command.")))
 
@@ -597,6 +601,9 @@ Heavily based on `message-beginning-of-line' from Gnus."
 (defvar drupal-local-variables (make-hash-table :test 'equal)
   "Drupal local variables hash table.")
 
+(defvar drupal-drush-site-alias nil
+  "Drush site-alias if detected.")
+
 ;; Detect Drupal and Drupal version
 (defun drupal-detect-drupal-version ()
   "Detect if the buffer is part of a Drupal project.
@@ -612,12 +619,20 @@ the location of DRUPAL_ROOT."
           (let ((dir (locate-dominating-file here file)))
             (when dir
               (with-temp-buffer
+                (when drupal-drush-program
+                  (let ((match (with-output-to-string
+                                 (with-current-buffer standard-output
+                                   (call-process drupal-drush-program nil (list t nil) nil "site-alias" "--fields=root,#name" "--format=csv")))))
+                    (when (and match
+                               (string-match (concat (regexp-quote (replace-regexp-in-string "/\\'" "" (file-truename dir))) "," "\\(.*\\)$") match))
+                      (set (make-local-variable 'drupal-drush-site-alias) (match-string-no-properties 1 match)))))
                 (insert-file-contents-literally (concat dir file))
                 (goto-char (point-min))
                 (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
                   (setq drupal-version (match-string-no-properties 2))
                   (puthash (expand-file-name dir) `((drupal-version . ,drupal-version)
-                                                    (drupal-rootdir . ,dir))
+                                                    (drupal-rootdir . ,dir)
+                                                    (drupal-drush-site-alias . ,drupal-drush-site-alias))
                            drupal-local-variables)))))))))
   (drupal-hack-local-variables)
   (let ((module (drupal-locate-dominating-module (or buffer-file-name default-directory) t))
@@ -656,6 +671,8 @@ the location of DRUPAL_ROOT."
                                                                    (drupal-project . ,project))
                  drupal-local-variables))))
   (drupal-hack-local-variables)
+  (when drupal-drush-site-alias
+    (set (make-local-variable 'drupal-mode-line) (concat (replace-regexp-in-string "@.*" "" drupal-mode-line) "@" drupal-drush-site-alias)))
   drupal-version)
 
 (defun drupal-hack-local-variables ()
