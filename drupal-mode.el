@@ -268,9 +268,6 @@ function arguments.")
   :lighter " Drupal"
   :keymap drupal-mode-map
 
-  ;; Detect drupal version, drupal root, etc.
-  (drupal-detect-drupal-version)
-
   ;; Delete trailing white space.
   (when (eq drupal-delete-trailing-whitespace 'always)
     (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))
@@ -546,7 +543,7 @@ It is really slow to download `drupal-search-url'. You should
 probably not use this. Have a look at using GNU GLOBAL / Gtags
 instead."
   (unless version
-    (setq version (drupal-detect-drupal-version)))
+    (setq version drupal-version))
   (with-temp-buffer
     (ignore-errors
       (url-insert-file-contents (format-spec drupal-search-url `((?v . ,version)
@@ -740,7 +737,7 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
   "Return major version number of version string.
 If major version number is 4 - return both major and minor."
   (unless version
-    (setq version (drupal-detect-drupal-version)))
+    (setq version drupal-version))
   (when version
     (let ((version-list (split-string version "\\.")))
       (if (= (string-to-number (car version-list)) 4)
