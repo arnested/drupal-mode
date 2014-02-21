@@ -672,7 +672,7 @@ the location of DRUPAL_ROOT."
                  drupal-local-variables))))
   (drupal-hack-local-variables)
   (when drupal-drush-site-alias
-    (set (make-local-variable 'drupal-mode-line) (concat (replace-regexp-in-string "@.*" "" drupal-mode-line) "@" drupal-drush-site-alias)))
+    (set (make-local-variable 'drupal-mode-line) (concat drupal-mode-line "@" drupal-drush-site-alias)))
   drupal-version)
 
 (defun drupal-hack-local-variables ()
