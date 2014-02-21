@@ -127,7 +127,7 @@ copy."
                         ".tpl.php"
                       (file-name-extension file-name t)))
          (base-name (replace-regexp-in-string (concat (regexp-quote extension) "\\'") "" file-name))
-         (temp-name (file-truename (concat base-name "." prefix extension))))
+         (temp-name (file-truename (concat base-name "._" prefix extension))))
     (flymake-log 3 "create-temp-inplace: file=%s temp=%s" file-name temp-name)
     temp-name))
 
@@ -156,7 +156,7 @@ copy."
                         (match-string-no-properties 0)
                       (file-name-extension file-name t)))
          (base-name (file-name-nondirectory (replace-regexp-in-string (concat (regexp-quote extension) "\\'") "" file-name)))
-         (temp-name (file-truename (make-temp-file (concat base-name "." prefix) nil extension))))
+         (temp-name (file-truename (make-temp-file (concat base-name "._" prefix) nil extension))))
     (flymake-log 3 "create-temp-intemp: file=%s temp=%s" file-name temp-name)
     temp-name))
 
