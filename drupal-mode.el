@@ -262,6 +262,9 @@ function arguments.")
 (defvar drupal-mode-line " Drupal"
   "Mode line")
 
+(defvar drupal-drush-site-alias nil
+  "Drush site-alias if detected.")
+
 ;;;###autoload
 (define-minor-mode drupal-mode
   "Advanced minor mode for Drupal development.\n\n\\{drupal-mode-map}"
@@ -600,9 +603,6 @@ Heavily based on `message-beginning-of-line' from Gnus."
 
 (defvar drupal-local-variables (make-hash-table :test 'equal)
   "Drupal local variables hash table.")
-
-(defvar drupal-drush-site-alias nil
-  "Drush site-alias if detected.")
 
 ;; Detect Drupal and Drupal version
 (defun drupal-detect-drupal-version ()
