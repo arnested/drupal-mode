@@ -38,7 +38,7 @@
 On `after-save-hook' run `drush etags' or `drush gtags'.
 
 Requires `Drush utilities for Emacs users' to be installed."
-  :type `(choice 
+  :type `(choice
           (const :tag "Yes" t)
           (const :tag "No" nil))
   :link '(url-link :tag "Drush utilities for Emacs users" "https://drupal.org/project/emacs_drush")
