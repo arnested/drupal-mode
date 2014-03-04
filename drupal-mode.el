@@ -388,6 +388,12 @@ of the project)."
   [menu-bar drupal manual]
   '("Drupal Mode manual" . drupal-mode-manual))
 (define-key drupal-mode-map
+    [menu-bar drupal insert-hook]
+  '("Insert hook implementation" . drupal-insert-hook))
+(define-key drupal-mode-map
+    [menu-bar drupal insert-function]
+  '("Insert function template" . drupal-insert-function))
+(define-key drupal-mode-map
   [menu-bar drupal search-documentation]
   '(menu-item "Search documentation" drupal-search-documentation
               :enable (apply 'derived-mode-p drupal-php-modes)))
