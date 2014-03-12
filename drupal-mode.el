@@ -5,7 +5,7 @@
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
 ;; Created: January 17, 2012
-;; Version: 0.4.1
+;; Version: 0.5.0
 ;; Package-Requires: ((php-mode "1.5.0"))
 ;; Keywords: programming, php, drupal
 
@@ -387,6 +387,12 @@ of the project)."
 (define-key drupal-mode-map
   [menu-bar drupal manual]
   '("Drupal Mode manual" . drupal-mode-manual))
+(define-key drupal-mode-map
+    [menu-bar drupal insert-hook]
+  '("Insert hook implementation" . drupal-insert-hook))
+(define-key drupal-mode-map
+    [menu-bar drupal insert-function]
+  '("Insert function template" . drupal-insert-function))
 (define-key drupal-mode-map
   [menu-bar drupal search-documentation]
   '(menu-item "Search documentation" drupal-search-documentation
@@ -774,6 +780,7 @@ mode-hook."
 (eval-after-load 'autoinsert '(require 'drupal/autoinsert))
 (eval-after-load 'etags '(require 'drupal/etags))
 (eval-after-load 'gtags '(require 'drupal/gtags))
+(eval-after-load 'ggtags '(require 'drupal/ggtags))
 (eval-after-load 'ispell '(require 'drupal/ispell))
 (eval-after-load 'flymake-phpcs '(require 'drupal/flymake-phpcs))
 (eval-after-load 'flycheck '(require 'drupal/flycheck))
