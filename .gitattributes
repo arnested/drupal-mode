@@ -4,3 +4,4 @@ Cask            export-ignore
 Makefile        export-ignore
 CONTRIBUTING.md export-ignore
 README.md       export-ignore
+drupal-mode.el  export-subst
