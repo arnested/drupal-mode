@@ -45,7 +45,7 @@ than the same directory as the original file.
 
 Drupal Coder Sniffer has some sniffs that will only work if run in place.
 
-Defaults to `t'. Set to `default' to use whatever
+Defaults to t. Set to `default' to use whatever
 `flymake-run-in-place' is set to.
 
 When editing a remote file via Tramp, this flag also has the side-effect of

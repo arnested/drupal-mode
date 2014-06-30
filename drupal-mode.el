@@ -74,7 +74,7 @@ a single newline (\\n)."
 (defcustom drupal-delete-trailing-whitespace 'always
   "Whether to delete all the trailing whitespace across Drupal buffers.
 All whitespace after the last non-whitespace character in a line is deleted.
-This respects narrowing, created by C-x n n and friends.
+This respects narrowing, created by \\[narrow-to-region] and friends.
 A formfeed is not considered whitespace by this function.
 
 If `Always' delete trailing whitespace across drupal mode buffers.
@@ -164,7 +164,7 @@ Include path to the executable if it is not in your $PATH."
   :group 'drupal)
 
 (defcustom drupal-enable-auto-fill-mode t
-  "Whether to use `auto-fill-mode' Drupal PHP buffers.
+  "Whether to use `auto-fill-mode' in Drupal PHP buffers.
 Drupal mode will only do auto fill in comments (auto filling code
 is not nice).
 

@@ -174,7 +174,7 @@ For this to work you need:
 There are quite a few attempts at writing a Drupal mode out in the
 wild:
 
-*    [Search Github for drupal-mode](https://github.com/search?type=Repositories&q="drupal-mode")
+*    [Search Github for drupal-mode](https://github.com/search?l=Emacs+Lisp&q=drupal&type=Repositories)
 *     At drupal.org:
 	* http://drupal.org/sandbox/bartlantz/1405156
 	* http://drupal.org/project/emacs
