@@ -282,6 +282,10 @@ function arguments.")
     (when (derived-mode-p 'css-mode)
       (set (make-local-variable 'css-indent-level) 2)))
 
+  ;; Stuff special for js-mode buffers.
+  (when (apply 'derived-mode-p drupal-js-modes)
+    (set (make-local-variable 'js-indent-level) 2))
+
   ;; Stuff special for php-mode buffers.
   (when (apply 'derived-mode-p drupal-php-modes)
     ;; Show function arguments from GNU GLOBAL for function at point
