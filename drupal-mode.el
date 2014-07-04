@@ -38,6 +38,7 @@
 
 ;; Silence byte compiler.
 (defvar css-indent-level)
+(defvar js-indent-level)
 
 
 
