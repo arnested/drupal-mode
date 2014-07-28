@@ -226,6 +226,7 @@ get better filling in Doxygen comments."
     (?h . drupal-insert-hook)
     (?f . drupal-insert-function)
     (?m . drupal-module-name)
+    (?e . drupal-drush-php-eval)
     (?t . drupal-wrap-string-in-t-function))
   "Map of mnemonic keys and functions for keyboard shortcuts.
 See `drupal-mode-map'.")
@@ -365,6 +366,19 @@ of the project)."
           (message "Clearing all caches...done")))
     (message "Can't clear caches. No DRUPAL_ROOT and/or no drush command.")))
 
+(defun drupal-drush-php-eval ()
+  "Evaluate active region with `drush php-eval'."
+  (interactive)
+  (when (and (use-region-p)
+             drupal-rootdir
+             drupal-drush-program)
+    (let ((root drupal-rootdir)
+          (code (buffer-substring (region-beginning) (region-end))))
+      (with-temp-buffer-window "*drush php-eval*" nil nil
+                               (message "PHP eval...")
+        (call-process drupal-drush-program nil t nil (concat "--root=" (expand-file-name root)) "php-eval" code)
+        (message "PHP eval...done")))))
+
 
 
 ;; Make a menu keymap (with a prompt string)
@@ -391,6 +405,10 @@ of the project)."
 (define-key drupal-mode-map
   [menu-bar drupal manual]
   '("Drupal Mode manual" . drupal-mode-manual))
+(define-key drupal-mode-map
+  [menu-bar drupal php-eval]
+  '(menu-item "PHP Evaluate active region" drupal-drush-php-eval
+              :enable (and (use-region-p) drupal-rootdir drupal-drush-program)))
 (define-key drupal-mode-map
     [menu-bar drupal insert-hook]
   '("Insert hook implementation" . drupal-insert-hook))
