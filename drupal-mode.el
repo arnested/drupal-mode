@@ -377,6 +377,7 @@ of the project)."
       (with-temp-buffer-window
        "*drush php-eval*" nil nil
        (message "PHP eval...")
+       (special-mode)
        (call-process drupal-drush-program nil t nil (concat "--root=" (expand-file-name root)) "php-eval" code)
        (message "PHP eval...done")))))
 
