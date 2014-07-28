@@ -360,9 +360,8 @@ of the project)."
            drupal-drush-program)
       (let ((root drupal-rootdir))
         (with-temp-buffer
-          (cd-absolute root)
           (message "Clearing all caches...")
-          (call-process drupal-drush-program nil nil nil "cache-clear" "all")
+          (call-process drupal-drush-program nil nil nil (concat "--root=" (expand-file-name root)) "cache-clear" "all")
           (message "Clearing all caches...done")))
     (message "Can't clear caches. No DRUPAL_ROOT and/or no drush command.")))
 
