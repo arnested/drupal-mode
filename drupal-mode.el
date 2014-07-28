@@ -374,10 +374,11 @@ of the project)."
              drupal-drush-program)
     (let ((root drupal-rootdir)
           (code (buffer-substring (region-beginning) (region-end))))
-      (with-temp-buffer-window "*drush php-eval*" nil nil
-                               (message "PHP eval...")
-        (call-process drupal-drush-program nil t nil (concat "--root=" (expand-file-name root)) "php-eval" code)
-        (message "PHP eval...done")))))
+      (with-temp-buffer-window
+       "*drush php-eval*" nil nil
+       (message "PHP eval...")
+       (call-process drupal-drush-program nil t nil (concat "--root=" (expand-file-name root)) "php-eval" code)
+       (message "PHP eval...done")))))
 
 
 
