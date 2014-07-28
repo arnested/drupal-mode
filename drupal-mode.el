@@ -466,13 +466,15 @@ If a drupal_debug.txt exists in the sites temporary directory
 visit it and enable `auto-revert-tail-mode' in the visiting
 buffer."
   (interactive)
-  (when drupal-drush-program
-    (let* ((tmp (ignore-errors
+  (when (and drupal-drush-program
+             drupal-rootdir)
+    (let* ((root drupal-rootdir)
+           (tmp (ignore-errors
                   (replace-regexp-in-string
                    "[\n\r]" ""
                    (with-output-to-string
                      (with-current-buffer standard-output
-                       (call-process drupal-drush-program nil (list t nil) nil "core-status" "temp" "--pipe" "--format=list" "--strict=0"))))))
+                       (call-process drupal-drush-program nil (list t nil) nil (concat "--root=" (expand-file-name root)) "core-status" "temp" "--pipe" "--format=list" "--strict=0"))))))
            (dd (concat tmp "/drupal_debug.txt")))
       (when (file-readable-p dd)
         (find-file-other-window dd)
