@@ -666,7 +666,7 @@ the location of DRUPAL_ROOT."
           (re-search-forward "[ \t]\"?\\([^\"]+\\)\"?" (point-at-eol) t)
           (setq version (match-string-no-properties 1)))
         (goto-char (point-min))
-        (when (re-search-forward "^name[ \t]=" nil t)
+        (when (re-search-forward "^name[ \t]*=" nil t)
           (re-search-forward "[ \t]*\"?\\([^\"]+\\)\"?" (point-at-eol) t)
           (setq module-name (match-string-no-properties 1)))
         (goto-char (point-min))
