@@ -527,7 +527,7 @@ buffer."
                              nil nil "hook_"))
   '(setq str v1)
   '(setq v2 (let ((hook v1)
-                  case-fold-search form-id form-id-placeholder)
+                  case-fold-search form-id form-id-placeholder upadte-id update-id-placeholder update-next-id)
               (if (string-match "\\([A-Z][A-Z_]*[A-Z]\\)" hook)
                   (progn
                     (setq form-id-placeholder (match-string 1 hook))
@@ -536,7 +536,13 @@ buffer."
                                    nil 'drupal-form-id-history form-id-placeholder))
                     (setq str (concat hook "() for " form-id))
                     (replace-regexp-in-string (regexp-quote form-id-placeholder) form-id hook t))
-                hook)))
+                (if (string-match "_\\(N\\)\\'" hook)
+                    (progn
+                      (setq update-id-placeholder (match-string 1 hook))
+                      (setq update-id (read-number
+                                       (concat "Implements " hook "(): ") (drupal-next-update-id)))
+                      (replace-regexp-in-string (regexp-quote update-id-placeholder) (number-to-string update-id) hook t))
+                  hook))))
   (drupal-ensure-newline)
   "/**\n"
   " * Implements " str "().\n"
@@ -544,6 +550,34 @@ buffer."
   "function " (replace-regexp-in-string "^hook" (drupal-module-name) v2) "(" (when drupal-get-function-args (funcall drupal-get-function-args v1 (drupal-major-version))) ") {\n"
   "  " @ _ "\n"
   "}\n")
+
+(defun drupal-next-update-id ()
+  "Find next update ID for hook_update_N().
+See https://api.drupal.org/api/drupal/modules%21system%21system.api.php/function/hook_update_N/7."
+  (let (existing-ids
+        next-id
+        (current-id 0)
+        ;; Lowest possible ID based current Drupal major-version and
+        ;; current module major version.
+        (lowest-possible-id (+ (* (string-to-number (drupal-major-version)) 1000)
+                               (* (string-to-number (drupal-module-major-version :default "1")) 100)
+                               1)))
+    ;; Locate existing ID's in current buffer.
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "_update_\\([0-9]+\\)(" nil t)
+        (add-to-list 'existing-ids (string-to-number (match-string-no-properties 1)))))
+    ;; Find the largest of the existing ID's (current ID).
+    (when existing-ids
+      (setq current-id (apply 'max existing-ids)))
+    ;; Bump ID to get next update ID.
+    (setq next-id (+ 1 current-id))
+    ;; If the next ID doesn't match current Drupal major-version and
+    ;; current module major version use ID based on current versions
+    ;; instead.
+    (when (< next-id lowest-possible-id)
+      (setq next-id lowest-possible-id))
+  next-id))
 
 (define-skeleton drupal-insert-function
   "Insert Drupal function skeleton."
@@ -764,6 +798,20 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
     (if (called-interactively-p 'any)
         (insert name)
       name)))
+
+(defun* drupal-module-major-version (&key version default)
+  "Return a modules major version number.
+If VERSION is not set derive it from the buffer local variable
+`drupal-major-version'.
+
+If VERSION (and `drupal-major-version') is nil return DEFAULT."
+  (when (null version)
+    (setq version (or drupal-module-version "")))
+  (let (major-version)
+    (if (string-match "[0-9x\\.]+-\\([0-9]+\\)\\..*" version)
+        (setq major-version (match-string-no-properties 1 version))
+      (setq major-version default))
+  major-version))
 
 (defun drupal-major-version (&optional version)
   "Return major version number of version string.
