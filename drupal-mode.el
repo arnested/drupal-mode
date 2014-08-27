@@ -164,6 +164,12 @@ Include path to the executable if it is not in your $PATH."
   :type '(repeat symbol)
   :group 'drupal)
 
+;;;###autoload
+(defcustom drupal-other-modes (list 'dired-mode)
+  "Other major modes that should enable Drupal mode."
+  :type '(repeat symbol)
+  :group 'drupal)
+
 (defcustom drupal-enable-auto-fill-mode t
   "Whether to use `auto-fill-mode' in Drupal PHP buffers.
 Drupal mode will only do auto fill in comments (auto filling code
@@ -727,7 +733,7 @@ the location of DRUPAL_ROOT."
 (defun drupal-hack-local-variables ()
   "Drupal hack `drupal-local-variables' as buffer local variables."
   (interactive)
-  (let ((dir (expand-file-name (or (file-name-directory buffer-file-name) default-directory)))
+  (let ((dir (expand-file-name (file-name-directory (or buffer-file-name default-directory))))
         matches)
     (maphash (lambda (key value)
                (when (string-match (concat "^" (regexp-quote key)) dir)
@@ -833,14 +839,14 @@ is a mode supported by `drupal-mode' (currently only
 
 The function is suitable for adding to the supported major modes
 mode-hook."
-  (when (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
+  (when (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes drupal-other-modes))
     (drupal-detect-drupal-version)
     (when (or drupal-version
               (string-match "drush" (or buffer-file-name default-directory)))
       (drupal-mode 1))))
 
 ;;;###autoload
-(dolist (mode (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
+(dolist (mode (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes drupal-other-modes))
   (when (intern (concat (symbol-name mode) "-hook"))
     (add-hook (intern (concat (symbol-name mode) "-hook")) #'drupal-mode-bootstrap)))
 
