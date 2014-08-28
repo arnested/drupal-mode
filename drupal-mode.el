@@ -99,7 +99,6 @@ whitespace at the end."
 %s is the search term."
   :type '(choice (const :tag "Api.drupal.org" "http://api.drupal.org/api/search/%v/%s")
                  (const :tag "Api.drupalcontrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
-                 (const :tag "Api.drupalize.me" "http://api.drupalize.me/api/search/%v/%s")
                  (string :tag "Other" "http://example.com/api/search/%v/%s"))
   :link '(url-link :tag "api.drupalcontrib.org" "http://api.drupalcontrib.org")
   :link '(url-link :tag "api.drupal.org" "http://api.drupal.org")
