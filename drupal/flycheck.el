@@ -51,7 +51,7 @@ checker runs those.
 See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
   :command ("phpcs" "--report=emacs"
             (option "--standard=" flycheck-phpcs-standard)
-            source)
+            source-inplace)
   ;; Though phpcs supports Checkstyle output which we could feed to
   ;; `flycheck-parse-checkstyle', we are still using error patterns here,
   ;; because PHP has notoriously unstable output habits.  See URL
@@ -67,7 +67,7 @@ See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
   ;; We'd prefer to just check drupal-mode, but flycheck global mode
   ;; finds the checker before we get a chance to set drupal-mode.
   :predicate (lambda ()
-               (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))))
+               (apply 'derived-mode-p (append drupal-css-modes drupal-js-modes drupal-info-modes))))
 
 ;; Append our custom checker.
 (add-to-list 'flycheck-checkers 'drupal-phpcs t)
