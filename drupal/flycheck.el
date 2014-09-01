@@ -51,7 +51,7 @@ checker runs those.
 See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
   :command ("phpcs" "--report=emacs"
             (option "--standard=" flycheck-phpcs-standard)
-            source)
+            source-inplace)
   ;; Though phpcs supports Checkstyle output which we could feed to
   ;; `flycheck-parse-checkstyle', we are still using error patterns here,
   ;; because PHP has notoriously unstable output habits.  See URL
