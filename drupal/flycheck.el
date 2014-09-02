@@ -50,7 +50,7 @@ checker runs those.
 
 See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
   :command ("phpcs" "--report=emacs"
-            (option "--standard=" flycheck-phpcs-standard)
+            (option "--standard=" flycheck-phpcs-standard concat)
             source-inplace)
   ;; Though phpcs supports Checkstyle output which we could feed to
   ;; `flycheck-parse-checkstyle', we are still using error patterns here,
