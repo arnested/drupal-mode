@@ -98,7 +98,7 @@ whitespace at the end."
 %v is the Drupal major version.
 %s is the search term."
   :type '(choice (const :tag "Api.drupal.org" "http://api.drupal.org/api/search/%v/%s")
-                 (const :tag "Api.drupalcontrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
+                 (const :tag "Drupalcontrib.org" "http://drupalcontrib.org/api/search/%v/%s")
                  (string :tag "Other" "http://example.com/api/search/%v/%s"))
   :link '(url-link :tag "api.drupalcontrib.org" "http://api.drupalcontrib.org")
   :link '(url-link :tag "api.drupal.org" "http://api.drupal.org")
