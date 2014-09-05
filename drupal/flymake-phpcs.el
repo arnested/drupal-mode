@@ -39,7 +39,7 @@
 ;; https://github.com/illusori/emacs-flymake.
 (when (or (boundp 'flymake-run-in-place)
           (fboundp 'flymake-phpcs-load))
-  (defcustom drupal/flymake-phpcs-run-in-place t
+  (defcustom drupal/flymake-phpcs-run-in-place 'auto
     "If nil, flymake will run on copies in `temporary-file-directory' rather
 than the same directory as the original file.
 
@@ -55,6 +55,7 @@ file (and thus on the remote machine), or in the same place as
     :type `(choice
             (const :tag "Yes" t)
             (const :tag "No" nil)
+            (const :tag "Auto" auto)
             (const :tag "Default" default))
     :link '(url-link :tag "Drupal Coder Sniffer" "https://drupal.org/project/coder")
     :group 'drupal))
@@ -77,7 +78,10 @@ file (and thus on the remote machine), or in the same place as
         (if drupal/flymake-phpcs-run-in-place
             (set (make-local-variable 'flymake-phpcs-location) 'inplace)
           (set (make-local-variable 'flymake-phpcs-location) 'tempdir)))
-      (set (make-local-variable 'flymake-run-in-place) drupal/flymake-phpcs-run-in-place))
+      (if (and (eq drupal/flymake-phpcs-run-in-place 'auto)
+                 (string-match "\\.info\\'" (or buffer-file-name (buffer-name))))
+          (set (make-local-variable 'flymake-run-in-place) t)
+        (set (make-local-variable 'flymake-run-in-place) nil)))
 
     ;; Flymake-phpcs will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
@@ -156,7 +160,8 @@ copy."
                         (match-string-no-properties 0)
                       (file-name-extension file-name t)))
          (base-name (file-name-nondirectory (replace-regexp-in-string (concat (regexp-quote extension) "\\'") "" file-name)))
-         (temp-name (file-truename (make-temp-file (concat base-name "._" prefix) nil extension))))
+         (temp-dir (file-truename (make-temp-file base-name t nil)))
+         (temp-name (file-truename (concat temp-dir "/" file-name))))
     (flymake-log 3 "create-temp-intemp: file=%s temp=%s" file-name temp-name)
     temp-name))
 
