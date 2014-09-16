@@ -479,7 +479,7 @@ should save your files with unix style end of line."
         ;; Older versions of `php-search-documentation' did not take arguments.
         (condition-case nil
             (php-search-documentation (symbol-name symbol))
-          (wrong-number-of-arguments (php-search-documentation))))
+          (wrong-number-of-arguments (with-no-warnings (php-search-documentation)))))
        ((and drupal-drush-program (string-match "drush" (symbol-name symbol)))
         (browse-url
          (format-spec drupal-drush-search-url `((?v . ,(replace-regexp-in-string "\\([0-9]+\.\\).*\\'" "\\1x" (replace-regexp-in-string ".*-dev" "master" drupal-drush-version)))
