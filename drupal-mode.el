@@ -458,7 +458,7 @@ According to https://drupal.org/coding-standards#indenting you
 should save your files with unix style end of line."
   (when (and drupal-mode
              drupal-convert-line-ending
-             (/= (coding-system-eol-type buffer-file-coding-system) 0))
+             (not (equal (coding-system-eol-type (or coding-system-for-write buffer-file-coding-system)) 0)))
     (if (or (eq drupal-convert-line-ending t)
             (y-or-n-p "Convert to unix style line endings?"))
         (progn
