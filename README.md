@@ -1,4 +1,5 @@
 # Drupal mode
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/arnested/drupal-mode?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Drupal mode is an advanced minor mode for developing in Drupal.
 
