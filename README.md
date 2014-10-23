@@ -32,7 +32,10 @@ below) and depend on a few through the packaging system
 ## Installation
 
 The easiest way to install Drupal mode is probably to install it via
-the ELPA archive at [Marmalade](http://marmalade-repo.org/packages/drupal-mode).
+the ELPA archive at
+[Marmalade](http://marmalade-repo.org/packages/drupal-mode) or
+[MELPA Stable](http://stable.melpa.org/#/drupal-mode) (if you want
+bleeding edge use regular [MELPA](http://melpa.org/#/drupal-mode)).
 
 ELPA (package.el) is part of Emacs 24. For Emacs 23 see
 [Marmalade](http://marmalade-repo.org) for installation instructions.
