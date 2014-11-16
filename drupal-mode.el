@@ -488,6 +488,7 @@ should save your files with unix style end of line."
            (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
                                             (?s . ,symbol)))))))))
 
+;;;###autoload
 (defun drupal-tail-drupal-debug-txt ()
   "Tail drupal_debug.txt.
 If a drupal_debug.txt exists in the sites temporary directory
@@ -506,7 +507,7 @@ buffer."
            (dd (concat tmp "/drupal_debug.txt")))
       (when (file-readable-p dd)
         (find-file-other-window dd)
-        (auto-revert-tail-mode 1)))))
+        (auto-revert-mode 1)))))
 
 (defun drupal-wrap-string-in-t-function ()
   "If point is inside a string wrap the string in the t() function."
