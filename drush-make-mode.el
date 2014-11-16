@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'bug-reference)
+(require 'imenu)
 
 ;;;###autoload
 (define-derived-mode drush-make-mode conf-windows-mode "Drush Make"
