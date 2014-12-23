@@ -33,6 +33,7 @@
 
 ;;; Code:
 
+(require 'cl)
 (require 'php-mode)
 (require 'format-spec)
 
