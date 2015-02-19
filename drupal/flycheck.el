@@ -33,7 +33,7 @@
   (when (and drupal-mode drupal/phpcs-standard)
     ;; Set the coding standard to "Drupal" (phpcs.el has checked that
     ;; it's supported).
-    (setq flycheck-phpcs-standard drupal/phpcs-standard)
+    (set (make-local-variable 'flycheck-phpcs-standard) drupal/phpcs-standard)
 
     ;; Flycheck will also highlight trailing whitespace as an
     ;; error so no need to highlight it twice.
