@@ -845,8 +845,10 @@ The function is suitable for adding to the supported major modes
 mode-hook."
   (when (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes drupal-other-modes))
     (drupal-detect-drupal-version)
-    (when (or drupal-version
-              (string-match "drush" (or buffer-file-name default-directory)))
+    (when (and
+           (or drupal-version
+               (string-match "drush" (or buffer-file-name default-directory)))
+           (not (string-match "vendor" (or buffer-file-name default-directory))))
       (drupal-mode 1))))
 
 ;;;###autoload
