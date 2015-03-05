@@ -170,6 +170,12 @@ Include path to the executable if it is not in your $PATH."
   :type '(repeat symbol)
   :group 'drupal)
 
+;;;###autoload
+(defcustom drupal-ignore-paths-regexp "\\(vendor\\|node_modules\\)"
+  "Don't enable Drupal mode per default in files whose path match this regexp."
+  :type 'regexp
+  :group 'drupal)
+
 (defcustom drupal-enable-auto-fill-mode t
   "Whether to use `auto-fill-mode' in Drupal PHP buffers.
 Drupal mode will only do auto fill in comments (auto filling code
@@ -848,7 +854,7 @@ mode-hook."
     (when (and
            (or drupal-version
                (string-match "drush" (or buffer-file-name default-directory)))
-           (not (string-match "vendor" (or buffer-file-name default-directory))))
+           (not (string-match drupal-ignore-paths-regexp (or buffer-file-name default-directory))))
       (drupal-mode 1))))
 
 ;;;###autoload
