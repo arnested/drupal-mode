@@ -1,6 +1,6 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012, 2013, 2014 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
@@ -559,6 +559,10 @@ buffer."
                                        (concat "Implements " hook "(): ") (drupal-next-update-id)))
                       (replace-regexp-in-string (regexp-quote update-id-placeholder) (number-to-string update-id) hook t))
                   hook))))
+  ;; User error if the hook is already inserted in the file.
+  (when (and (boundp 'imenu--index-alist)
+             (assoc (replace-regexp-in-string "^hook" (drupal-module-name) v2) (assoc "Named Functions" imenu--index-alist)))
+    (user-error "%s already exists in file." (replace-regexp-in-string "^hook" (drupal-module-name) v2)))
   (drupal-ensure-newline)
   "/**\n"
   " * Implements " str "().\n"
