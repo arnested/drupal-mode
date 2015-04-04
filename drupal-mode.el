@@ -563,6 +563,10 @@ buffer."
   (when (and (boundp 'imenu--index-alist)
              (assoc (replace-regexp-in-string "^hook" (drupal-module-name) v2) (assoc "Named Functions" imenu--index-alist)))
     (user-error "%s already exists in file." (replace-regexp-in-string "^hook" (drupal-module-name) v2)))
+  ;; User error if the hook is already inserted elsewhere.
+  (when (and drupal-get-function-args
+             (funcall drupal-get-function-args (replace-regexp-in-string "^hook" (drupal-module-name) v2)))
+    (user-error "%s already exists elsewhere." (replace-regexp-in-string "^hook" (drupal-module-name) v2)))
   (drupal-ensure-newline)
   "/**\n"
   " * Implements " str "().\n"
