@@ -333,16 +333,15 @@ function arguments.")
 
 ;; drupal style
 (defcustom drupal-style
-  '((c-basic-offset . 2)
+  '("php"
+    (c-basic-offset . 2)
     (fill-column . 80)
     (show-trailing-whitespace . t)
     (indent-tabs-mode . nil)
     (require-final-newline . t)
     (c-offsets-alist . ((arglist-close . 0)
                         (arglist-cont-nonempty . c-lineup-math)
-                        (arglist-intro . +)
-                        (case-label . +)
-                        (comment-intro . 0)))
+                        (arglist-intro . +)))
     (c-doc-comment-style . (php-mode . javadoc))
     (c-label-minimum-indentation . 1)
     (c-special-indent-hook . c-gnu-impose-minimum)
