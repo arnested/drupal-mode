@@ -1,11 +1,11 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012, 2013, 2014 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
 ;; Created: January 17, 2012
-;; Version: 0.5.0
+;; Version: 0.6.0
 ;; Package-Requires: ((php-mode "1.5.0"))
 ;; Keywords: programming, php, drupal
 
@@ -33,11 +33,13 @@
 
 ;;; Code:
 
+(require 'cl)
 (require 'php-mode)
 (require 'format-spec)
 
 ;; Silence byte compiler.
 (defvar css-indent-level)
+(defvar js-indent-level)
 
 
 
@@ -74,7 +76,7 @@ a single newline (\\n)."
 (defcustom drupal-delete-trailing-whitespace 'always
   "Whether to delete all the trailing whitespace across Drupal buffers.
 All whitespace after the last non-whitespace character in a line is deleted.
-This respects narrowing, created by C-x n n and friends.
+This respects narrowing, created by \\[narrow-to-region] and friends.
 A formfeed is not considered whitespace by this function.
 
 If `Always' delete trailing whitespace across drupal mode buffers.
@@ -97,8 +99,7 @@ whitespace at the end."
 %v is the Drupal major version.
 %s is the search term."
   :type '(choice (const :tag "Api.drupal.org" "http://api.drupal.org/api/search/%v/%s")
-                 (const :tag "Api.drupalcontrib.org" "http://api.drupalcontrib.org/api/search/%v/%s")
-                 (const :tag "Api.drupalize.me" "http://api.drupalize.me/api/search/%v/%s")
+                 (const :tag "Drupalcontrib.org" "http://drupalcontrib.org/api/search/%v/%s")
                  (string :tag "Other" "http://example.com/api/search/%v/%s"))
   :link '(url-link :tag "api.drupalcontrib.org" "http://api.drupalcontrib.org")
   :link '(url-link :tag "api.drupal.org" "http://api.drupal.org")
@@ -163,8 +164,20 @@ Include path to the executable if it is not in your $PATH."
   :type '(repeat symbol)
   :group 'drupal)
 
+;;;###autoload
+(defcustom drupal-other-modes (list 'dired-mode)
+  "Other major modes that should enable Drupal mode."
+  :type '(repeat symbol)
+  :group 'drupal)
+
+;;;###autoload
+(defcustom drupal-ignore-paths-regexp "\\(vendor\\|node_modules\\)"
+  "Don't enable Drupal mode per default in files whose path match this regexp."
+  :type 'regexp
+  :group 'drupal)
+
 (defcustom drupal-enable-auto-fill-mode t
-  "Whether to use `auto-fill-mode' Drupal PHP buffers.
+  "Whether to use `auto-fill-mode' in Drupal PHP buffers.
 Drupal mode will only do auto fill in comments (auto filling code
 is not nice).
 
@@ -225,6 +238,7 @@ get better filling in Doxygen comments."
     (?h . drupal-insert-hook)
     (?f . drupal-insert-function)
     (?m . drupal-module-name)
+    (?e . drupal-drush-php-eval)
     (?t . drupal-wrap-string-in-t-function))
   "Map of mnemonic keys and functions for keyboard shortcuts.
 See `drupal-mode-map'.")
@@ -282,16 +296,12 @@ function arguments.")
     (when (derived-mode-p 'css-mode)
       (set (make-local-variable 'css-indent-level) 2)))
 
+  ;; Stuff special for js-mode buffers.
+  (when (apply 'derived-mode-p drupal-js-modes)
+    (set (make-local-variable 'js-indent-level) 2))
+
   ;; Stuff special for php-mode buffers.
   (when (apply 'derived-mode-p drupal-php-modes)
-    ;; Show function arguments from GNU GLOBAL for function at point
-    ;; after a short delay of idle time.
-    (when (and drupal-get-function-args
-               (fboundp 'eldoc-mode))
-      (set (make-local-variable 'eldoc-documentation-function)
-           #'drupal-eldoc-documentation-function)
-      (eldoc-mode 1))
-
     ;; Set correct comment style for inline comments.
     (setq comment-start "//")
     (setq comment-padding " ")
@@ -315,16 +325,15 @@ function arguments.")
 
 ;; drupal style
 (defcustom drupal-style
-  '((c-basic-offset . 2)
+  '("php"
+    (c-basic-offset . 2)
     (fill-column . 80)
     (show-trailing-whitespace . t)
     (indent-tabs-mode . nil)
     (require-final-newline . t)
     (c-offsets-alist . ((arglist-close . 0)
                         (arglist-cont-nonempty . c-lineup-math)
-                        (arglist-intro . +)
-                        (case-label . +)
-                        (comment-intro . 0)))
+                        (arglist-intro . +)))
     (c-doc-comment-style . (php-mode . javadoc))
     (c-label-minimum-indentation . 1)
     (c-special-indent-hook . c-gnu-impose-minimum)
@@ -354,12 +363,26 @@ of the project)."
   (if (and drupal-rootdir
            drupal-drush-program)
       (let ((root drupal-rootdir))
-        (with-temp-buffer
-          (cd-absolute root)
-          (message "Clearing all caches...")
-          (call-process drupal-drush-program nil nil nil "cache-clear" "all")
-          (message "Clearing all caches...done")))
+        (message "Clearing all caches...")
+        (if (fboundp 'async-start-process)
+            (async-start-process "drush cache-clear all" drupal-drush-program '(lambda (process-object) (message "Clearing all caches...done")) (concat "--root=" (expand-file-name root)) "cache-clear" "all")
+          (call-process drupal-drush-program nil 0 nil (concat "--root=" (expand-file-name root)) "cache-clear" "all")))
     (message "Can't clear caches. No DRUPAL_ROOT and/or no drush command.")))
+
+(defun drupal-drush-php-eval ()
+  "Evaluate active region with `drush php-eval'."
+  (interactive)
+  (when (and (use-region-p)
+             drupal-rootdir
+             drupal-drush-program)
+    (let ((root drupal-rootdir)
+          (code (buffer-substring (region-beginning) (region-end))))
+      (with-temp-buffer-window
+       "*drush php-eval*" nil nil
+       (message "PHP eval...")
+       (special-mode)
+       (call-process drupal-drush-program nil t nil (concat "--root=" (expand-file-name root)) "php-eval" code)
+       (message "PHP eval...done")))))
 
 
 
@@ -387,6 +410,10 @@ of the project)."
 (define-key drupal-mode-map
   [menu-bar drupal manual]
   '("Drupal Mode manual" . drupal-mode-manual))
+(define-key drupal-mode-map
+  [menu-bar drupal php-eval]
+  '(menu-item "PHP Evaluate active region" drupal-drush-php-eval
+              :enable (and (use-region-p) drupal-rootdir drupal-drush-program)))
 (define-key drupal-mode-map
     [menu-bar drupal insert-hook]
   '("Insert hook implementation" . drupal-insert-hook))
@@ -429,7 +456,7 @@ According to https://drupal.org/coding-standards#indenting you
 should save your files with unix style end of line."
   (when (and drupal-mode
              drupal-convert-line-ending
-             (/= (coding-system-eol-type buffer-file-coding-system) 0))
+             (not (equal (coding-system-eol-type (or coding-system-for-write buffer-file-coding-system)) 0)))
     (if (or (eq drupal-convert-line-ending t)
             (y-or-n-p "Convert to unix style line endings?"))
         (progn
@@ -447,7 +474,10 @@ should save your files with unix style end of line."
        ((and (boundp 'php-extras-function-arguments)
              (hash-table-p php-extras-function-arguments)
              (gethash (symbol-name symbol) php-extras-function-arguments))
-        (php-search-documentation))
+        ;; Older versions of `php-search-documentation' did not take arguments.
+        (condition-case nil
+            (php-search-documentation (symbol-name symbol))
+          (wrong-number-of-arguments (with-no-warnings (php-search-documentation)))))
        ((and drupal-drush-program (string-match "drush" (symbol-name symbol)))
         (browse-url
          (format-spec drupal-drush-search-url `((?v . ,(replace-regexp-in-string "\\([0-9]+\.\\).*\\'" "\\1x" (replace-regexp-in-string ".*-dev" "master" drupal-drush-version)))
@@ -456,23 +486,26 @@ should save your files with unix style end of line."
            (format-spec drupal-search-url `((?v . ,(drupal-major-version drupal-version))
                                             (?s . ,symbol)))))))))
 
+;;;###autoload
 (defun drupal-tail-drupal-debug-txt ()
   "Tail drupal_debug.txt.
 If a drupal_debug.txt exists in the sites temporary directory
 visit it and enable `auto-revert-tail-mode' in the visiting
 buffer."
   (interactive)
-  (when drupal-drush-program
-    (let* ((tmp (ignore-errors
+  (when (and drupal-drush-program
+             drupal-rootdir)
+    (let* ((root drupal-rootdir)
+           (tmp (ignore-errors
                   (replace-regexp-in-string
-                   "[\n\r]" ""
+                   "[\n\r].*" ""
                    (with-output-to-string
                      (with-current-buffer standard-output
-                       (call-process drupal-drush-program nil (list t nil) nil "core-status" "temp" "--pipe" "--format=list" "--strict=0"))))))
+                       (call-process drupal-drush-program nil (list t nil) nil "core-status" "--fields=temp" "--pipe" "--format=list" "--strict=0"))))))
            (dd (concat tmp "/drupal_debug.txt")))
       (when (file-readable-p dd)
         (find-file-other-window dd)
-        (auto-revert-tail-mode 1)))))
+        (auto-revert-mode 1)))))
 
 (defun drupal-wrap-string-in-t-function ()
   "If point is inside a string wrap the string in the t() function."
@@ -501,7 +534,7 @@ buffer."
                              nil nil "hook_"))
   '(setq str v1)
   '(setq v2 (let ((hook v1)
-                  case-fold-search form-id form-id-placeholder)
+                  case-fold-search form-id form-id-placeholder upadte-id update-id-placeholder update-next-id)
               (if (string-match "\\([A-Z][A-Z_]*[A-Z]\\)" hook)
                   (progn
                     (setq form-id-placeholder (match-string 1 hook))
@@ -510,7 +543,21 @@ buffer."
                                    nil 'drupal-form-id-history form-id-placeholder))
                     (setq str (concat hook "() for " form-id))
                     (replace-regexp-in-string (regexp-quote form-id-placeholder) form-id hook t))
-                hook)))
+                (if (string-match "_\\(N\\)\\'" hook)
+                    (progn
+                      (setq update-id-placeholder (match-string 1 hook))
+                      (setq update-id (read-number
+                                       (concat "Implements " hook "(): ") (drupal-next-update-id)))
+                      (replace-regexp-in-string (regexp-quote update-id-placeholder) (number-to-string update-id) hook t))
+                  hook))))
+  ;; User error if the hook is already inserted in the file.
+  (when (and (boundp 'imenu--index-alist)
+             (assoc (replace-regexp-in-string "^hook" (drupal-module-name) v2) (assoc "Named Functions" imenu--index-alist)))
+    (user-error "%s already exists in file." (replace-regexp-in-string "^hook" (drupal-module-name) v2)))
+  ;; User error if the hook is already inserted elsewhere.
+  (when (and drupal-get-function-args
+             (funcall drupal-get-function-args (replace-regexp-in-string "^hook" (drupal-module-name) v2)))
+    (user-error "%s already exists elsewhere." (replace-regexp-in-string "^hook" (drupal-module-name) v2)))
   (drupal-ensure-newline)
   "/**\n"
   " * Implements " str "().\n"
@@ -518,6 +565,34 @@ buffer."
   "function " (replace-regexp-in-string "^hook" (drupal-module-name) v2) "(" (when drupal-get-function-args (funcall drupal-get-function-args v1 (drupal-major-version))) ") {\n"
   "  " @ _ "\n"
   "}\n")
+
+(defun drupal-next-update-id ()
+  "Find next update ID for hook_update_N().
+See https://api.drupal.org/api/drupal/modules%21system%21system.api.php/function/hook_update_N/7."
+  (let (existing-ids
+        next-id
+        (current-id 0)
+        ;; Lowest possible ID based current Drupal major-version and
+        ;; current module major version.
+        (lowest-possible-id (+ (* (string-to-number (drupal-major-version)) 1000)
+                               (* (string-to-number (drupal-module-major-version :default "1")) 100)
+                               1)))
+    ;; Locate existing ID's in current buffer.
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "_update_\\([0-9]+\\)(" nil t)
+        (add-to-list 'existing-ids (string-to-number (match-string-no-properties 1)))))
+    ;; Find the largest of the existing ID's (current ID).
+    (when existing-ids
+      (setq current-id (apply 'max existing-ids)))
+    ;; Bump ID to get next update ID.
+    (setq next-id (+ 1 current-id))
+    ;; If the next ID doesn't match current Drupal major-version and
+    ;; current module major version use ID based on current versions
+    ;; instead.
+    (when (< next-id lowest-possible-id)
+      (setq next-id lowest-possible-id))
+  next-id))
 
 (define-skeleton drupal-insert-function
   "Insert Drupal function skeleton."
@@ -636,20 +711,20 @@ the location of DRUPAL_ROOT."
         (insert-file-contents-literally module)
         (goto-char (point-min))
         (when (and (not drupal-version)
-                   (re-search-forward "^core *=" nil t))
-          (re-search-forward " *\"?\\([^\"]+\\)\"?" (point-at-eol) t)
+                   (re-search-forward "^core[ \t]*=" nil t))
+          (re-search-forward "[ \t]\"?\\([^\"]+\\)\"?" (point-at-eol) t)
           (setq version (match-string-no-properties 1)))
         (goto-char (point-min))
-        (when (re-search-forward "^name *=" nil t)
-          (re-search-forward " *\"?\\([^\"]+\\)\"?" (point-at-eol) t)
+        (when (re-search-forward "^name[ \t]*=" nil t)
+          (re-search-forward "[ \t]*\"?\\([^\"]+\\)\"?" (point-at-eol) t)
           (setq module-name (match-string-no-properties 1)))
         (goto-char (point-min))
-        (when (re-search-forward "^version *=" nil t)
-          (re-search-forward " *\"?\\([^\"]+\\)\"?" (point-at-eol) t)
+        (when (re-search-forward "^version[ \t]*=" nil t)
+          (re-search-forward "[ \t]*\"?\\([^\"]+\\)\"?" (point-at-eol) t)
           (setq module-version (match-string-no-properties 1)))
         (goto-char (point-min))
-        (when (re-search-forward "^project *=" nil t)
-          (re-search-forward " *\"?\\([^\"]+\\)\"?" (point-at-eol) t)
+        (when (re-search-forward "^project[ \t]*=" nil t)
+          (re-search-forward "[ \t]*\"?\\([^\"]+\\)\"?" (point-at-eol) t)
           (setq project (match-string-no-properties 1)))
         (when (and (string= project "drupal")
                    (string= module-version "VERSION"))
@@ -667,7 +742,7 @@ the location of DRUPAL_ROOT."
 (defun drupal-hack-local-variables ()
   "Drupal hack `drupal-local-variables' as buffer local variables."
   (interactive)
-  (let ((dir (expand-file-name (or (file-name-directory buffer-file-name) default-directory)))
+  (let ((dir (expand-file-name (file-name-directory (or buffer-file-name default-directory))))
         matches)
     (maphash (lambda (key value)
                (when (string-match (concat "^" (regexp-quote key)) dir)
@@ -739,6 +814,20 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
         (insert name)
       name)))
 
+(defun* drupal-module-major-version (&key version default)
+  "Return a modules major version number.
+If VERSION is not set derive it from the buffer local variable
+`drupal-major-version'.
+
+If VERSION (and `drupal-major-version') is nil return DEFAULT."
+  (when (null version)
+    (setq version (or drupal-module-version "")))
+  (let (major-version)
+    (if (string-match "[0-9x\\.]+-\\([0-9]+\\)\\..*" version)
+        (setq major-version (match-string-no-properties 1 version))
+      (setq major-version default))
+  major-version))
+
 (defun drupal-major-version (&optional version)
   "Return major version number of version string.
 If major version number is 4 - return both major and minor."
@@ -759,14 +848,16 @@ is a mode supported by `drupal-mode' (currently only
 
 The function is suitable for adding to the supported major modes
 mode-hook."
-  (when (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
+  (when (apply 'derived-mode-p (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes drupal-other-modes))
     (drupal-detect-drupal-version)
-    (when (or drupal-version
-              (string-match "drush" (or buffer-file-name default-directory)))
+    (when (and
+           (or drupal-version
+               (string-match "drush" (or buffer-file-name default-directory)))
+           (not (string-match drupal-ignore-paths-regexp (or buffer-file-name default-directory))))
       (drupal-mode 1))))
 
 ;;;###autoload
-(dolist (mode (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes))
+(dolist (mode (append drupal-php-modes drupal-css-modes drupal-js-modes drupal-info-modes drupal-other-modes))
   (when (intern (concat (symbol-name mode) "-hook"))
     (add-hook (intern (concat (symbol-name mode) "-hook")) #'drupal-mode-bootstrap)))
 
@@ -778,6 +869,7 @@ mode-hook."
 
 ;; Load support for various Emacs features if necessary.
 (eval-after-load 'autoinsert '(require 'drupal/autoinsert))
+(eval-after-load 'eldoc '(require 'drupal/eldoc))
 (eval-after-load 'etags '(require 'drupal/etags))
 (eval-after-load 'gtags '(require 'drupal/gtags))
 (eval-after-load 'ggtags '(require 'drupal/ggtags))
