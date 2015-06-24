@@ -1,0 +1,94 @@
+\input texinfo
+@comment %**start of header
+@setfilename drupal-mode.info
+@macro drupalmode {}
+Drupal mode
+@end macro
+@macro version {}
+0.5.0
+@end macro
+@settitle @drupalmode{} @version{}
+@documentencoding utf-8
+@comment %**end of header
+@copying
+This manual is for @drupalmode{} version @version{}
+An advanced Emacs minor mode for Drupal development.
+
+Copyright @copyright{} 2014
+Arne J@o{}rgensen
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.  A
+copy of the license is included in the section entitled ``GNU Free
+Documentation License.''
+@end quotation
+@end copying
+
+@dircategory Emacs
+@direntry
+* @drupalmode{}: (drupal-mode).     An advanced Emacs minor mode for Drupal development.
+@end direntry
+@dircategory Programming
+@direntry
+* @drupalmode{}: (drupal-mode).     An advanced Emacs minor mode for Drupal development.
+@end direntry
+
+@finalout
+@titlepage
+@title @drupalmode{}
+@subtitle An advanced Emacs minor mode for Drupal development.
+@author Arne Jørgensen
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+
+
+@node top
+@top @drupalmode{}
+
+Drupal mode is an advanced minor mode for developing in Drupal.
+
+The approach taken is somewhat different from other attempts at creating
+a Drupal mode.
+
+This mode is a minor mode and can be applied to all files in a Drupal
+project no matter what major mode they use - whether it be php-mode or
+something else.
+
+Besides giving access to general functionality in all modes
+(i.e. clearing cache through Drush) it will also adapt it self to the
+major mode to enable functionality only for that particular major mode
+(i.e. adhering to Drupals PHP coding standards only in php-mode).
+
+Drupal mode will not try to enforce specific ways of working with Emacs
+on to you. Emacs can be extended in a million different ways and you
+should use the parts and extensions that fit you and your working
+habits.
+
+If Drupal mode recognizes you are using an extension that it knows about
+it will adapt the extension to be useful in Drupal mode and with
+Drupal. I.e. it will recognize if you have loaded etags support and
+setup your buffers to use the TAGS file in your DRUPAL_ROOT folder.
+
+Drupal mode won't embed other libraries but will suggest some (see
+below) and depend on a few through the packaging system (i.e. php-mode).
+
+@c @node installation
+@c @up Installation
+
+The easiest way to install Drupal mode is probably to install it via the
+ELPA archive at Marmalade.
+
+ELPA (package.el) is part of Emacs 24. For Emacs 23 see Marmalade for
+installation instructions.
+
+
+
+@bye

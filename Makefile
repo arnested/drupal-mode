@@ -1,6 +1,6 @@
 # This file is part of Drupal mode.
 
-# Copyright (C) 2012, 2013 Arne Jørgensen
+# Copyright (C) 2012, 2013, 2014 Arne Jørgensen
 
 # Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -23,6 +23,7 @@ CASK?=cask
 EMACS?=emacs
 TAR?=COPYFILE_DISABLE=1 bsdtar
 PANDOC?=pandoc --atx-headers
+INSTALL_INFO?=install-info
 
 VERSION?=$(shell $(CASK) version)
 
@@ -35,8 +36,11 @@ test:
 	$(CASK) install
 	$(CASK) exec $(EMACS) --no-site-file --no-site-lisp --batch -L $(PWD) -l drupal-tests -f ert-run-tests-batch-and-exit
 
-$(ARCHIVE_NAME).info: README.md
-	$(PANDOC) -t texinfo $^ | makeinfo -o $@
+$(ARCHIVE_NAME).info: $(ARCHIVE_NAME).texi
+	$(MAKEINFO) $^
+
+dir: $(ARCHIVE_NAME).info
+	$(INSTALL_INFO) --dir=$@ $^
 
 README: README.md
 	$(PANDOC) -t plain -o $@ $^
@@ -49,8 +53,8 @@ $(PACKAGE_NAME).tar: README $(ARCHIVE_NAME).el $(ARCHIVE_NAME)-pkg.el $(ARCHIVE_
 	$(TAR) -c -s "@^@$(PACKAGE_NAME)/@" -f $(PACKAGE_NAME).tar $^
 
 install: $(PACKAGE_NAME).tar
-	$(EMACS) --batch -l package -f package-initialize --eval "(package-install-file \"$(PWD)/$(PACKAGE_NAME).tar\")"
+	$(EMACS) --batch  -l package -f package-initialize --eval "(package-install-file \"$(PWD)/$(PACKAGE_NAME).tar\")"
 
 clean:
-	$(RM) $(ARCHIVE_NAME).info $(ARCHIVE_NAME)-*.tar $(ARCHIVE_NAME)-pkg.el README
+	$(RM) $(ARCHIVE_NAME).info $(ARCHIVE_NAME)-*.tar $(ARCHIVE_NAME)-pkg.el README dir
 	$(RM) -r .cask
