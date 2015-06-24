@@ -302,14 +302,6 @@ function arguments.")
 
   ;; Stuff special for php-mode buffers.
   (when (apply 'derived-mode-p drupal-php-modes)
-    ;; Show function arguments from GNU GLOBAL for function at point
-    ;; after a short delay of idle time.
-    (when (and drupal-get-function-args
-               (fboundp 'eldoc-mode))
-      (set (make-local-variable 'eldoc-documentation-function)
-           #'drupal-eldoc-documentation-function)
-      (eldoc-mode 1))
-
     ;; Set correct comment style for inline comments.
     (setq comment-start "//")
     (setq comment-padding " ")
@@ -877,6 +869,7 @@ mode-hook."
 
 ;; Load support for various Emacs features if necessary.
 (eval-after-load 'autoinsert '(require 'drupal/autoinsert))
+(eval-after-load 'eldoc '(require 'drupal/eldoc))
 (eval-after-load 'etags '(require 'drupal/etags))
 (eval-after-load 'gtags '(require 'drupal/gtags))
 (eval-after-load 'ggtags '(require 'drupal/ggtags))
