@@ -371,10 +371,10 @@ of the project)."
   (if (and drupal-rootdir
            drupal-drush-program)
       (let ((root drupal-rootdir))
-        (with-temp-buffer
-          (message "Clearing all caches...")
-          (call-process drupal-drush-program nil nil nil (concat "--root=" (expand-file-name root)) "cache-clear" "all")
-          (message "Clearing all caches...done")))
+        (message "Clearing all caches...")
+        (if (fboundp 'async-start-process)
+            (async-start-process "drush cache-clear all" drupal-drush-program '(lambda (process-object) (message "Clearing all caches...done")) (concat "--root=" (expand-file-name root)) "cache-clear" "all")
+          (call-process drupal-drush-program nil 0 nil (concat "--root=" (expand-file-name root)) "cache-clear" "all")))
     (message "Can't clear caches. No DRUPAL_ROOT and/or no drush command.")))
 
 (defun drupal-drush-php-eval ()
