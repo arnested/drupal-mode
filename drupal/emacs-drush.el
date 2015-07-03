@@ -32,7 +32,7 @@
 ;;; Code:
 
 (defcustom drupal/emacs-drush-update-tags-after-save
-  (and (unless (boundp 'gtags-auto-update)
+  (and (unless (not (boundp 'gtags-auto-update))
          gtags-auto-update)
        drupal-drush-program
        (zerop (call-process drupal-drush-program nil nil nil "help" "etags")))
