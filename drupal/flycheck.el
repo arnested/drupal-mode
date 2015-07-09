@@ -74,7 +74,7 @@ See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
 ;; Add our checker as next-checker to checkers of all supported modes.
 (let ((modes (append drupal-css-modes drupal-js-modes drupal-info-modes)))
   (dolist (checker (flycheck-defined-checkers))
-          (dolist (mode (flycheck-checker-modes checker))
+          (dolist (mode (flycheck-checker-get checker 'modes))
                   (if (memq mode modes)
                       (flycheck-add-next-checker checker 'drupal-phpcs)))))
 
