@@ -36,6 +36,8 @@
 (require 'cl)
 (require 'php-mode)
 (require 'format-spec)
+(require 'json)
+(require 'sql)
 
 ;; Silence byte compiler.
 (defvar css-indent-level)
@@ -239,7 +241,8 @@ get better filling in Doxygen comments."
     (?f . drupal-insert-function)
     (?m . drupal-module-name)
     (?e . drupal-drush-php-eval)
-    (?t . drupal-wrap-string-in-t-function))
+    (?t . drupal-wrap-string-in-t-function)
+    (?s . drupal-drush-sql-cli))
   "Map of mnemonic keys and functions for keyboard shortcuts.
 See `drupal-mode-map'.")
 
@@ -428,6 +431,10 @@ of the project)."
   [menu-bar drupal cache-clear]
   '(menu-item "Clear all caches" drupal-drush-cache-clear
               :enable (and drupal-rootdir drupal-drush-program)))
+(define-key drupal-mode-map
+  [menu-bar drupal sql-cli]
+  '(menu-item "Open SQL shell" drupal-drush-sql-cli
+    :enable (and drupal-rootdir drupal-drush-program)))
 
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-bugs]
@@ -518,6 +525,50 @@ buffer."
         (forward-char)
         (search-forward-regexp "\\(\"\\|'\\)")
         (insert ")")))))
+
+(defun drupal-drush-sql-cli ()
+  "Run a SQL shell using \"drush sql-cli\" in a SQL-mode comint buffer."
+  (interactive)
+  (require 'sql)
+  (require 'json)
+  (let* ((json-object-type 'plist)
+         (config
+          (json-read-from-string
+           (with-temp-buffer
+             (call-process drupal-drush-program nil t nil
+                           "sql-conf" "--format=json")
+             (buffer-string)))))
+    (when (not config)
+      (error "No Drupal SQL configuration found."))
+    (destructuring-bind (&key database driver &allow-other-keys) config
+      (let ((sql-interactive-product
+             (drupal--db-driver-to-sql-product driver))
+            (start-buffer (current-buffer))
+            (sqli-buffer
+             (make-comint (format "SQL (%s)" database)
+                          drupal-drush-program nil "sql-cli")))
+        (with-current-buffer sqli-buffer
+          (sql-interactive-mode)
+          (set (make-local-variable 'sql-buffer)
+               (buffer-name (current-buffer)))
+
+          ;; Set `sql-buffer' in the start buffer
+          (with-current-buffer start-buffer
+            (when (derived-mode-p 'sql-mode)
+              (setq sql-buffer (buffer-name sqli-buffer))
+              (run-hooks 'sql-set-sqli-hook)))
+
+          ;; All done.
+          (run-hooks 'sql-login-hook)
+          (pop-to-buffer sqli-buffer))))))
+
+(defun drupal--db-driver-to-sql-product (driver)
+  "Translate a Drupal DB driver name into a sql-mode symbol."
+  (let ((driver (intern driver)))
+    (cond
+      ((eq driver 'pgsql) 'postgres)
+      ((assq driver sql-product-alist) driver)
+      (t 'ansi))))
 
 
 
