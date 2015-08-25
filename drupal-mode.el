@@ -529,8 +529,6 @@ buffer."
 (defun drupal-drush-sql-cli ()
   "Run a SQL shell using \"drush sql-cli\" in a SQL-mode comint buffer."
   (interactive)
-  (require 'sql)
-  (require 'json)
   (let* ((json-object-type 'plist)
          (config
           (json-read-from-string
