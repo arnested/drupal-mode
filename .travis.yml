@@ -10,7 +10,6 @@ env:
   - EVM_EMACS=emacs-24.2-bin
   - EVM_EMACS=emacs-24.4-bin
   - EVM_EMACS=emacs-24.5-bin
-  - EVM_EMACS=emacs-git-snapshot
 script:
   - emacs --version
   - make test
