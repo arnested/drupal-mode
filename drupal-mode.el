@@ -258,8 +258,16 @@ function arguments.")
 (make-variable-buffer-local 'drupal-get-function-args)
 
 
-(defvar drupal-mode-line " Drupal"
+
+(defvar drupal-mode-line
+  '(" Drupal"
+    (:eval (cond
+             (drupal-drush-site-alias
+              (concat " @" drupal-drush-site-alias))
+             (drupal-drush-site-url
+              (concat " [" drupal-drush-site-url "]")))))
   "Mode line")
+(put 'drupal-mode-line 'risky-local-variable t) ; necessary for (:eval ..)
 
 (defvar drupal-drush-site-alias nil
   "Drush site-alias if detected.")
@@ -692,8 +700,6 @@ the location of DRUPAL_ROOT."
                                                                    (drupal-project . ,project))
                  drupal-local-variables))))
   (drupal-hack-local-variables)
-  (when drupal-drush-site-alias
-    (set (make-local-variable 'drupal-mode-line) (concat drupal-mode-line "@" drupal-drush-site-alias)))
   drupal-version)
 
 (defun drupal-set-site (alias-or-url)
