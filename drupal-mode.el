@@ -233,6 +233,14 @@ get better filling in Doxygen comments."
 (make-variable-buffer-local 'drupal-project)
 (put 'drupal-project 'safe-local-variable 'string-or-null-p)
 
+(defvar drupal-drush-site-alias nil
+  "Drush site-alias if auto detected or set via `drupal-set-site'.")
+(make-variable-buffer-local 'drupal-drush-site-alias)
+
+(defvar drupal-drush-site-url nil
+  "Drupal base URL if set via `drupal-set-site'.")
+(make-variable-buffer-local 'drupal-drush-site-url)
+
 (defvar drupal-mode-map-alist
   '((?d . drupal-search-documentation)
     (?c . drupal-drush-cache-clear)
@@ -285,12 +293,6 @@ function arguments.")
               (concat " [" drupal-drush-site-url "]")))))
   "Mode line")
 (put 'drupal-mode-line 'risky-local-variable t) ; necessary for (:eval ..)
-
-(defvar drupal-drush-site-alias nil
-  "Drush site-alias if detected.")
-
-(defvar drupal-drush-site-url nil
-  "Base URL to pass to Drush as a \"--uri=\" argument.")
 
 ;;;###autoload
 (define-minor-mode drupal-mode
