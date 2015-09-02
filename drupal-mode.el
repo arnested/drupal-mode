@@ -854,12 +854,16 @@ the location of DRUPAL_ROOT."
     (drupal-set-dir-local-variable drupal-rootdir 'drupal-drush-site-url url)))
 
 (defun drupal-set-dir-local-variable (dir variable value)
-  (set (make-local-variable variable) value)
-  (let ((alist (copy-alist (gethash dir drupal-local-variables))))
+  (let* ((dir (expand-file-name (file-name-directory dir)))
+         (alist (copy-alist (gethash dir drupal-local-variables))))
     (puthash dir
              (cons `(,variable . ,value)
                    (assq-delete-all variable alist))
-             drupal-local-variables)))
+             drupal-local-variables)
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (when drupal-mode
+          (drupal-hack-local-variables))))))
 
 (defun drupal-read-site-alias-or-url ()
   (let* ((site-aliases
