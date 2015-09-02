@@ -792,18 +792,16 @@ the location of DRUPAL_ROOT."
           (let ((dir (locate-dominating-file here file)))
             (when dir
               (with-temp-buffer
-                (when drupal-drush-program
-                  (let ((match (drupal-drush-command-to-string "site-alias" "--fields=root,#name" "--format=csv")))
-                    (when (and match
-                               (string-match (concat (regexp-quote (replace-regexp-in-string "/\\'" "" (file-truename dir))) "," "\\(.*\\)$") match))
-                      (set (make-local-variable 'drupal-drush-site-alias) (match-string-no-properties 1 match)))))
                 (insert-file-contents-literally (concat dir file))
                 (goto-char (point-min))
                 (when (re-search-forward "\\(define('VERSION',\\|const VERSION =\\) +'\\(.+\\)'" nil t)
                   (setq drupal-version (match-string-no-properties 2))
+                  (setq drupal-drush-site-alias (car (drupal-dir-site-aliases dir))
+                        drupal-drush-site-url nil)
                   (puthash (expand-file-name dir) `((drupal-version . ,drupal-version)
                                                     (drupal-rootdir . ,dir)
-                                                    (drupal-drush-site-alias . ,drupal-drush-site-alias))
+                                                    (drupal-drush-site-alias . ,drupal-drush-site-alias)
+                                                    (drupal-drush-site-url . ,drupal-drush-site-url))
                            drupal-local-variables)))))))))
   (drupal-hack-local-variables)
   (let ((module (drupal-locate-dominating-module (or buffer-file-name default-directory) t))
@@ -865,8 +863,7 @@ the location of DRUPAL_ROOT."
 
 (defun drupal-read-site-alias-or-url ()
   (let* ((site-aliases
-          (split-string
-           (shell-command-to-string "drush site-alias")))
+          (drupal-dir-site-aliases drupal-rootdir))
          (site-dirs
           (when drupal-rootdir
             (cl-loop
@@ -903,6 +900,24 @@ the location of DRUPAL_ROOT."
                 (drupal-drush-site-url)
                 (t nil))))
     (completing-read "Work on site (URL or alias): " options nil t)))
+
+(defun drupal-dir-site-aliases (&optional dir)
+  "Return a list of all Drush site-aliases for DIR."
+  (let* ((json-object-type 'alist)
+         (aliases
+          (json-read-from-string
+           (drupal-drush-command-to-string "site-alias" "--format=json"))))
+    (if (stringp dir)
+        (cl-loop for (name . definition) in aliases
+                 for root = (assoc-default 'root definition)
+                 if (and root
+                         (null (assq 'remote-host definition))
+                         (not (member name '(self none)))
+                         (file-equal-p root dir))
+                 collect (symbol-name name))
+      (cl-loop for (name . _) in aliases
+               if (not (member name '("self" "none")))
+               collect (symbol-name name)))))
 
 (defun drupal-hack-local-variables ()
   "Drupal hack `drupal-local-variables' as buffer local variables."
