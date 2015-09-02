@@ -47,12 +47,13 @@
   "Get function arguments from etags TAGS."
   (when (and (boundp 'drupal/etags-rootdir)
              (file-exists-p (concat drupal/etags-rootdir "TAGS")))
-    (with-current-buffer (find-tag-noselect symbol nil nil)
-      (goto-char (point-min))
-      (when (re-search-forward
-             (format "function\\s-+%s\\s-*(\\([^{]*\\))" symbol)
-             nil t)
-        (match-string-no-properties 1)))))
+    (save-excursion
+     (with-current-buffer (find-tag-noselect symbol nil nil)
+       (goto-char (point-min))
+       (when (re-search-forward
+              (format "function\\s-+%s\\s-*(\\([^{]*\\))" symbol)
+              nil t)
+         (match-string-no-properties 1))))))
 
 (add-hook 'drupal-mode-hook #'drupal/etags-enable)
 

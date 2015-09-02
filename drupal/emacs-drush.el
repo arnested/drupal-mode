@@ -1,6 +1,6 @@
 ;;; drupal/emacs-drush.el --- Drupal-mode support for Drush utilities for Emacs users
 
-;; Copyright (C) 2012, 2013 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2015 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -32,7 +32,9 @@
 ;;; Code:
 
 (defcustom drupal/emacs-drush-update-tags-after-save
-  (and drupal-drush-program
+  (and (unless (not (boundp 'gtags-auto-update))
+         gtags-auto-update)
+       drupal-drush-program
        (zerop (call-process drupal-drush-program nil nil nil "help" "etags")))
   "Use `Drush utilities for Emacs users' to run etags/gtags after save.
 On `after-save-hook' run `drush etags' or `drush gtags'.
