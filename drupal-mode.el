@@ -380,11 +380,12 @@ of the project)."
   (interactive)
   (if (and drupal-rootdir
            drupal-drush-program)
-      (let ((root drupal-rootdir))
+      (progn
         (message "Clearing all caches...")
         (if (fboundp 'async-start-process)
-            (async-start-process "drush cache-clear all" drupal-drush-program '(lambda (process-object) (message "Clearing all caches...done")) (concat "--root=" (expand-file-name root)) "cache-clear" "all")
-          (drupal-call-drush-process nil 0 nil (concat "--root=" (expand-file-name root)) "cache-clear" "all")))
+            (drupal-call-drush-async (lambda (process-object) (message "Clearing all caches...done"))
+                                     "cache-clear" "all")
+          (drupal-call-drush-process nil 0 nil "cache-clear" "all")))
     (message "Can't clear caches. No DRUPAL_ROOT and/or no drush command.")))
 
 (defun drupal-drush-php-eval ()
@@ -393,13 +394,12 @@ of the project)."
   (when (and (use-region-p)
              drupal-rootdir
              drupal-drush-program)
-    (let ((root drupal-rootdir)
-          (code (buffer-substring (region-beginning) (region-end))))
+    (let ((code (buffer-substring (region-beginning) (region-end))))
       (with-temp-buffer-window
        "*drush php-eval*" nil nil
        (message "PHP eval...")
        (special-mode)
-       (call-process drupal-drush-program nil t nil (concat "--root=" (expand-file-name root)) "php-eval" code)
+       (drupal-call-drush-process nil t nil "php-eval" code)
        (message "PHP eval...done")))))
 
 (defun drupal-call-drush-process (infile destination display &rest args)
@@ -412,19 +412,30 @@ appropriate option is prepended to ARGUMENTS to make Drush
 operate on the specified site.  (See `drupal-set-site').
 
 INFILE, DESTINATION, and DISPLAY are passed unchanged to `call-process'."
-  (let ((full-args
-         (cond (drupal-drush-site-alias
-                (cons (concat "@" drupal-drush-site-alias) args))
-               (drupal-drush-site-url
-                (cons (concat "--uri=" drupal-drush-site-url) args))
-               (t args))))
-    (apply #'call-process drupal-drush-program infile destination display full-args)))
+  (apply #'call-process drupal-drush-program infile destination display
+         (drupal-drush-arguments args)))
+
+(defun drupal-call-drush-async (callback &rest args)
+  (let ((process-name (apply #'concat args)))
+    (apply #'async-start-process
+           process-name drupal-drush-program callback
+           (drupal-drush-arguments args))))
+
+(defun drupal-drush-arguments (args)
+  (if drupal-drush-site-alias
+      (push (concat "@" drupal-drush-site-alias) args)
+    (when drupal-rootdir
+      (push (concat "--root=" (expand-file-name drupal-rootdir)) args))
+    (when drupal-drush-site-url
+      (push (concat "--uri=" drupal-drush-site-url) args)))
+  args)
 
 (defun drupal-drush-command-to-string (&rest args)
   "Run a Drush command and return the output as a string."
-  (with-temp-buffer
-    (apply #'drupal-call-drush-process nil (list t nil) nil args)
-    (buffer-string)))
+  (let ((args (drupal-drush-arguments args)))
+    (with-temp-buffer
+      (apply #'call-process drupal-drush-program nil (list t nil) nil args)
+      (buffer-string))))
 
 
 
@@ -570,10 +581,7 @@ buffer."
   (let* ((json-object-type 'plist)
          (config
           (json-read-from-string
-           (with-temp-buffer
-             (call-process drupal-drush-program nil t nil
-                           "sql-conf" "--format=json")
-             (buffer-string)))))
+           (drupal-drush-command-to-string "sql-conf" "--format=json"))))
     (when (not config)
       (error "No Drupal SQL configuration found."))
     (destructuring-bind (&key database driver &allow-other-keys) config
@@ -581,8 +589,9 @@ buffer."
              (drupal--db-driver-to-sql-product driver))
             (start-buffer (current-buffer))
             (sqli-buffer
-             (make-comint (format "SQL (%s)" database)
-                          drupal-drush-program nil "sql-cli")))
+             (apply #'make-comint (format "SQL (%s)" database)
+                    drupal-drush-program nil
+                    (drupal-drush-arguments '("sql-cli")))))
         (with-current-buffer sqli-buffer
           (sql-interactive-mode)
           (set (make-local-variable 'sql-buffer)
