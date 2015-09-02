@@ -131,9 +131,8 @@ Include path to the executable if it is not in your $PATH."
 (defcustom drupal-drush-version (ignore-errors
                                   (replace-regexp-in-string
                                    "[\n\r]" ""
-                                   (with-output-to-string
-                                     (with-current-buffer standard-output
-                                       (call-process drupal-drush-program nil (list t nil) nil "core-status" "drush-version" "--pipe" "--format=list" "--strict=0")))))
+                                   (drupal-drush-command-to-string
+                                    "core-status" "drush-version" "--pipe" "--format=list" "--strict=0")))
   "Version number of the installed version Drush."
   :type 'string
   :link '(variable-link drupal-drush-program)
@@ -265,6 +264,9 @@ function arguments.")
 (defvar drupal-drush-site-alias nil
   "Drush site-alias if detected.")
 
+(defvar drupal-drush-site-url nil
+  "Base URL to pass to Drush as a \"--uri=\" argument.")
+
 ;;;###autoload
 (define-minor-mode drupal-mode
   "Advanced minor mode for Drupal development.\n\n\\{drupal-mode-map}"
@@ -362,11 +364,33 @@ of the project)."
         (with-temp-buffer
           (cd-absolute root)
           (message "Clearing all caches...")
-          (if drupal-drush-site-alias
-              (call-process drupal-drush-program nil nil nil (concat "@" drupal-drush-site-alias) "cache-clear" "all")
-            (call-process drupal-drush-program nil nil nil "cache-clear" "all"))
+          (drupal-call-drush-process nil nil nil "cache-clear" "all")
           (message "Clearing all caches...done")))
     (message "Can't clear caches. No DRUPAL_ROOT and/or no drush command.")))
+
+(defun drupal-call-drush-process (infile destination display &rest args)
+  "Specialized version of `call-process' for Drupal mode.
+
+Calls `drupal-drush-program' synchronously with ARGS.  If a
+site-alias or site URI is set via the variables
+`drupal-drush-site-alias' and `drupal-drush-site-url', an
+appropriate option is prepended to ARGUMENTS to make Drush
+operate on the specified site.  (See `drupal-set-site').
+
+INFILE, DESTINATION, and DISPLAY are passed unchanged to `call-process'."
+  (let ((full-args
+         (cond (drupal-drush-site-alias
+                (cons (concat "@" drupal-drush-site-alias) args))
+               (drupal-drush-site-url
+                (cons (concat "--uri=" drupal-drush-site-url) args))
+               (t args))))
+    (apply #'call-process drupal-drush-program infile destination display full-args)))
+
+(defun drupal-drush-command-to-string (&rest args)
+  "Run a Drush command and return the output as a string."
+  (with-temp-buffer
+    (apply #'drupal-call-drush-process nil (list t nil) nil args)
+    (buffer-string)))
 
 
 
@@ -467,9 +491,8 @@ buffer."
     (let* ((tmp (ignore-errors
                   (replace-regexp-in-string
                    "[\n\r]" ""
-                   (with-output-to-string
-                     (with-current-buffer standard-output
-                       (call-process drupal-drush-program nil (list t nil) nil "core-status" "temp" "--pipe" "--format=list" "--strict=0"))))))
+                   (drupal-drush-command-to-string
+                    "core-status" "temp" "--pipe" "--format=list" "--strict=0"))))
            (dd (concat tmp "/drupal_debug.txt")))
       (when (file-readable-p dd)
         (find-file-other-window dd)
@@ -620,9 +643,7 @@ the location of DRUPAL_ROOT."
             (when dir
               (with-temp-buffer
                 (when drupal-drush-program
-                  (let ((match (with-output-to-string
-                                 (with-current-buffer standard-output
-                                   (call-process drupal-drush-program nil (list t nil) nil "site-alias" "--fields=root,#name" "--format=csv")))))
+                  (let ((match (drupal-drush-command-to-string "site-alias" "--fields=root,#name" "--format=csv")))
                     (when (and match
                                (string-match (concat (regexp-quote (replace-regexp-in-string "/\\'" "" (file-truename dir))) "," "\\(.*\\)$") match))
                       (set (make-local-variable 'drupal-drush-site-alias) (match-string-no-properties 1 match)))))
@@ -674,6 +695,66 @@ the location of DRUPAL_ROOT."
   (when drupal-drush-site-alias
     (set (make-local-variable 'drupal-mode-line) (concat drupal-mode-line "@" drupal-drush-site-alias)))
   drupal-version)
+
+(defun drupal-set-site (alias-or-url)
+  "Switch between Drush site aliases or sites."
+  (interactive (list (drupal-read-site-alias-or-url)))
+  (let ((alias nil)
+        (url nil))
+    (if (string-match "\\`@\\(.*\\)\\'" alias-or-url)
+        (setq alias (match-string 1 alias-or-url))
+      (setq url alias-or-url))
+    (drupal-set-dir-local-variable drupal-rootdir 'drupal-drush-site-alias alias)
+    (drupal-set-dir-local-variable drupal-rootdir 'drupal-drush-site-url url)))
+
+(defun drupal-set-dir-local-variable (dir variable value)
+  (set (make-local-variable variable) value)
+  (let ((alist (copy-alist (gethash dir drupal-local-variables))))
+    (puthash dir
+             (cons `(,variable . ,value)
+                   (assq-delete-all variable alist))
+             drupal-local-variables)))
+
+(defun drupal-read-site-alias-or-url ()
+  (let* ((site-aliases
+          (split-string
+           (shell-command-to-string "drush site-alias")))
+         (site-dirs
+          (when drupal-rootdir
+            (cl-loop
+             for file in (directory-files
+                          (expand-file-name "sites" drupal-rootdir)
+                          t)
+             if (and (file-directory-p file)
+                     (not (member (file-name-base file)
+                                  '("all" "."))))
+             collect (file-name-base file))))
+         (sites-php-file
+          (expand-file-name "sites/sites.php" drupal-rootdir))
+         (site-urls
+          (when (file-exists-p sites-php-file)
+            (with-temp-buffer
+              (insert-file-contents sites-php-file)
+              (cl-loop
+               while (search-forward-regexp
+                      (rx "$sites["
+                          (or "\"" "'")
+                          (submatch (+ (not (any "'" "\""))))
+                          (or "\"" "'"))
+                      nil t)
+               collect (match-string 1)))))
+         (options
+          (append
+           site-dirs
+           site-urls
+           (cl-loop for alias in site-aliases
+                    collect (concat "@" alias))))
+         (default
+          (cond (drupal-drush-site-alias
+                 (concat "@" drupal-drush-site-alias))
+                (drupal-drush-site-url)
+                (t nil))))
+    (completing-read "Work on site (URL or alias): " options nil t)))
 
 (defun drupal-hack-local-variables ()
   "Drupal hack `drupal-local-variables' as buffer local variables."
