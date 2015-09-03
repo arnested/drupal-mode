@@ -777,6 +777,12 @@ Heavily based on `message-beginning-of-line' from Gnus."
 (defvar drupal-local-variables (make-hash-table :test 'equal)
   "Drupal local variables hash table.")
 
+(defvar drupal-site-alias-cache (make-hash-table :test 'equal)
+  "Cache table for `drupal-dir-site-aliases'.")
+
+(defvar drupal-inhibit-site-alias-cache nil
+  "When t, ignore cached values in `drupal-dir-site-aliases'")
+
 ;; Detect Drupal and Drupal version
 (defun drupal-detect-drupal-version ()
   "Detect if the buffer is part of a Drupal project.
@@ -843,8 +849,14 @@ the location of DRUPAL_ROOT."
   drupal-version)
 
 (defun drupal-set-site (alias-or-url)
-  "Switch between Drush site aliases or sites."
-  (interactive (list (drupal-read-site-alias-or-url)))
+  "Switch between Drush site aliases or sites.
+
+The list of site aliases is normally cached for speed.  With a
+prefix argument, ignore the cached value and query Drush for the
+list of site aliases matching the current directory."
+  (interactive
+   (let ((drupal-inhibit-site-alias-cache current-prefix-arg))
+     (list (drupal-read-site-alias-or-url drupal-rootdir))))
   (let ((alias nil)
         (url nil))
     (if (string-match "\\`@\\(.*\\)\\'" alias-or-url)
@@ -865,21 +877,30 @@ the location of DRUPAL_ROOT."
         (when drupal-mode
           (drupal-hack-local-variables))))))
 
-(defun drupal-read-site-alias-or-url ()
+(defun drupal-read-site-alias-or-url (dir)
+  (let ((options (drupal-dir-site-aliases-and-urls dir))
+        (default
+          (cond (drupal-drush-site-alias
+                 (concat "@" drupal-drush-site-alias))
+                (drupal-drush-site-url)
+                (t nil))))
+    (completing-read "Work on site (URL or alias): " options nil t)))
+
+(defun drupal-dir-site-aliases-and-urls (dir)
   (let* ((site-aliases
-          (drupal-dir-site-aliases drupal-rootdir))
+          (drupal-dir-site-aliases dir))
          (site-dirs
-          (when drupal-rootdir
+          (when dir
             (cl-loop
              for file in (directory-files
-                          (expand-file-name "sites" drupal-rootdir)
+                          (expand-file-name "sites" dir)
                           t)
              if (and (file-directory-p file)
                      (not (member (file-name-base file)
                                   '("all" "."))))
              collect (file-name-base file))))
          (sites-php-file
-          (expand-file-name "sites/sites.php" drupal-rootdir))
+          (expand-file-name "sites/sites.php" dir))
          (site-urls
           (when (file-exists-p sites-php-file)
             (with-temp-buffer
@@ -897,15 +918,21 @@ the location of DRUPAL_ROOT."
            site-dirs
            site-urls
            (cl-loop for alias in site-aliases
-                    collect (concat "@" alias))))
-         (default
-          (cond (drupal-drush-site-alias
-                 (concat "@" drupal-drush-site-alias))
-                (drupal-drush-site-url)
-                (t nil))))
-    (completing-read "Work on site (URL or alias): " options nil t)))
+                    collect (concat "@" alias)))))
+    options))
 
-(defun drupal-dir-site-aliases (&optional dir)
+(defun drupal-dir-site-aliases (dir)
+  (let* ((dir (file-truename dir))
+         (aliases
+          (if drupal-inhibit-site-alias-cache
+              nil
+            (gethash dir drupal-site-alias-cache))))
+    (unless aliases
+      (setq aliases (drupal-dir-site-aliases-1 dir))
+      (puthash dir aliases drupal-site-alias-cache))
+    aliases))
+
+(defun drupal-dir-site-aliases-1 (dir)
   "Return a list of all Drush site-aliases for DIR."
   (let* ((json-object-type 'alist)
          (aliases
