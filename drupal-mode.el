@@ -285,12 +285,12 @@ function arguments.")
 
 
 (defvar drupal-mode-line
-  '(" Drupal"
-    (:eval (cond
-             (drupal-drush-site-alias
-              (concat " @" drupal-drush-site-alias))
-             (drupal-drush-site-url
-              (concat " [" drupal-drush-site-url "]")))))
+  '(:eval (cond
+            (drupal-drush-site-alias
+             (concat " Drupal @" drupal-drush-site-alias))
+            (drupal-drush-site-url
+             (concat " Drupal [" drupal-drush-site-url "]"))
+            (t " Drupal")))
   "Mode line")
 (put 'drupal-mode-line 'risky-local-variable t) ; necessary for (:eval ..)
 
