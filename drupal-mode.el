@@ -249,6 +249,7 @@ get better filling in Doxygen comments."
     (?m . drupal-module-name)
     (?e . drupal-drush-php-eval)
     (?t . drupal-wrap-string-in-t-function)
+    (?a . drupal-set-site)
     (?s . drupal-drush-sql-cli))
   "Map of mnemonic keys and functions for keyboard shortcuts.
 See `drupal-mode-map'.")
@@ -466,6 +467,12 @@ INFILE, DESTINATION, and DISPLAY are passed unchanged to `call-process'."
   [menu-bar drupal manual]
   '("Drupal Mode manual" . drupal-mode-manual))
 (define-key drupal-mode-map
+    [menu-bar drupal drupal-set-site]
+  '("Switch site..." . drupal-set-site))
+(define-key drupal-mode-map
+    [menu-bar drupal drupal-set-site-submenu]
+  '(menu-item "Switch site to" nil :filter drupal-set-site-submenu))
+(define-key drupal-mode-map
   [menu-bar drupal php-eval]
   '(menu-item "PHP Evaluate active region" drupal-drush-php-eval
               :enable (and (use-region-p) drupal-rootdir drupal-drush-program)))
@@ -504,6 +511,24 @@ INFILE, DESTINATION, and DISPLAY are passed unchanged to `call-process'."
   [menu-bar drupal drupal-project drupal-project-nameversion]
   '(menu-item (concat (or drupal-module-name drupal-module) " " drupal-module-version) nil
               :enable nil))
+
+(defun drupal-set-site-submenu (&rest _)
+  "Return a submenu with items for each available Drupal site alias."
+  (let ((map (make-sparse-keymap)))
+    (dolist (alias-or-url (drupal-dir-site-aliases-and-urls drupal-rootdir))
+      (define-key map `[,(intern alias-or-url)]
+        `(menu-item ,alias-or-url
+                    (lambda () (interactive) (drupal-set-site ,alias-or-url))
+                    :button (:radio
+                             . (cond (drupal-drush-site-alias
+                                      (string=
+                                       (concat "@" drupal-drush-site-alias)
+                                       ,alias-or-url))
+                                     (drupal-drush-site-url
+                                      (string=
+                                       drupal-drush-site-url
+                                       ,alias-or-url)))))))
+    map))
 
 
 
@@ -863,7 +888,8 @@ list of site aliases matching the current directory."
         (setq alias (match-string 1 alias-or-url))
       (setq url alias-or-url))
     (drupal-set-dir-local-variable drupal-rootdir 'drupal-drush-site-alias alias)
-    (drupal-set-dir-local-variable drupal-rootdir 'drupal-drush-site-url url)))
+    (drupal-set-dir-local-variable drupal-rootdir 'drupal-drush-site-url url))
+  (force-mode-line-update t))
 
 (defun drupal-set-dir-local-variable (dir variable value)
   (let* ((dir (expand-file-name (file-name-directory dir)))
