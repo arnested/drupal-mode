@@ -64,10 +64,8 @@ See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
    (warning line-start
             (file-name) ":" line ":" column ": warning - " (message)
             line-end))
-  ;; We'd prefer to just check drupal-mode, but flycheck global mode
-  ;; finds the checker before we get a chance to set drupal-mode.
   :predicate (lambda ()
-               (apply 'derived-mode-p (append drupal-css-modes drupal-js-modes drupal-info-modes))))
+               (and drupal-mode drupal/phpcs-standard)))
 
 ;; Append our custom checker.
 (add-to-list 'flycheck-checkers 'drupal-phpcs t)
