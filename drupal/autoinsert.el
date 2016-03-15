@@ -30,6 +30,7 @@
 (define-auto-insert '("\\.module" . "Drupal module file") 'drupal/autoinsert-insert-module-skeleton)
 (define-auto-insert '("\\.install" . "Drupal install file") 'drupal/autoinsert-insert-install-skeleton)
 (define-auto-insert '("\\.test" . "Drupal test file") 'drupal/autoinsert-insert-test-skeleton)
+(define-auto-insert '("\\.api.php" . "Drupal API file") 'drupal/autoinsert-insert-api-skeleton)
 
 (define-skeleton drupal/autoinsert-insert-info-skeleton
   "Drupal info file skeleton."
@@ -94,6 +95,27 @@
   "class " (remove ?_ (capitalize (drupal-module-name))) "UnitTestCase extends DrupalUnitTestCase {\n"
   @ - "\n"
   "}\n")
+
+(define-skeleton drupal/autoinsert-insert-api-skeleton
+  "Drupal api.php file skeleton."
+  nil
+  "<?php\n"
+  "\n"
+  "/**\n"
+  " * @file\n"
+  " * Hooks provided by the " (drupal-module-name) " module.\n"
+  " */\n"
+  "\n"
+  "/**\n"
+  " * @addtogroup hooks\n"
+  " * @{\n"
+  " */\n"
+  "\n"
+  @ - "\n"
+  "\n"
+  "/**\n"
+  " * @} End of \"addtogroup hooks\".\n"
+  " */\n")
 
 
 
