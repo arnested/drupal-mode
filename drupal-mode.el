@@ -922,7 +922,7 @@ mode-hook."
 (eval-after-load 'eldoc '(require 'drupal/eldoc))
 (eval-after-load 'etags '(require 'drupal/etags))
 (eval-after-load 'gtags '(require 'drupal/gtags))
-(eval-after-load 'helm-gtags '(require 'drupal/gtags))
+(eval-after-load 'helm-gtags '(require 'drupal/helm-gtags))
 (eval-after-load 'ggtags '(require 'drupal/ggtags))
 (eval-after-load 'ispell '(require 'drupal/ispell))
 (eval-after-load 'flymake-phpcs '(require 'drupal/flymake-phpcs))
