@@ -1,6 +1,6 @@
 ;;; drupal/phpcs.el --- Drupal-mode common support for flymake-phpcs and flycheck
 
-;; Copyright (C) 2012, 2013 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2016 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -34,7 +34,7 @@
                          ;; command. Check for both.
                          (call-process (or (and (boundp 'flymake-phpcs-command) (executable-find flymake-phpcs-command)) (executable-find "phpcs")) nil (list t nil) nil "-i")))))
       (when (string-match
-             "\\(Drupal[^,
+             "\\(Drupal[^ ,
 ]*\\)"
              standards)
         (match-string-no-properties 1 standards))))
