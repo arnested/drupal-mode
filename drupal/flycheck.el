@@ -50,7 +50,7 @@ checker runs those.
 
 See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
   :command ("phpcs" "--report=emacs"
-            (option "--standard=" flycheck-phpcs-standard concat)
+            (option "--standard=" drupal/phpcs-standard concat)
             source-inplace)
   ;; Though phpcs supports Checkstyle output which we could feed to
   ;; `flycheck-parse-checkstyle', we are still using error patterns here,
@@ -64,17 +64,15 @@ See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
    (warning line-start
             (file-name) ":" line ":" column ": warning - " (message)
             line-end))
-  ;; We'd prefer to just check drupal-mode, but flycheck global mode
-  ;; finds the checker before we get a chance to set drupal-mode.
   :predicate (lambda ()
-               (apply 'derived-mode-p (append drupal-css-modes drupal-js-modes drupal-info-modes))))
+               (and drupal-mode drupal/phpcs-standard)))
 
 ;; Append our custom checker.
 (add-to-list 'flycheck-checkers 'drupal-phpcs t)
 ;; Add our checker as next-checker to checkers of all supported modes.
 (let ((modes (append drupal-css-modes drupal-js-modes drupal-info-modes)))
   (dolist (checker (flycheck-defined-checkers))
-          (dolist (mode (flycheck-checker-modes checker))
+          (dolist (mode (flycheck-checker-get checker 'modes))
                   (if (memq mode modes)
                       (flycheck-add-next-checker checker 'drupal-phpcs)))))
 

@@ -1,6 +1,6 @@
 ;;; drupal/autoinsert.el --- Drupal-mode support for `auto-insert-mode'
 
-;; Copyright (C) 2012, 2013, 2014  Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015, 2016  Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; Keywords:
@@ -30,6 +30,8 @@
 (define-auto-insert '("\\.module" . "Drupal module file") 'drupal/autoinsert-insert-module-skeleton)
 (define-auto-insert '("\\.install" . "Drupal install file") 'drupal/autoinsert-insert-install-skeleton)
 (define-auto-insert '("\\.test" . "Drupal test file") 'drupal/autoinsert-insert-test-skeleton)
+(define-auto-insert '("\\.api.php" . "Drupal API file") 'drupal/autoinsert-insert-api-skeleton)
+(define-auto-insert '("\\.variable.inc" . "Drupal variable module support file") 'drupal/autoinsert-insert-variable-module-skeleton)
 
 (define-skeleton drupal/autoinsert-insert-info-skeleton
   "Drupal info file skeleton."
@@ -94,6 +96,73 @@
   "class " (remove ?_ (capitalize (drupal-module-name))) "UnitTestCase extends DrupalUnitTestCase {\n"
   @ - "\n"
   "}\n")
+
+(define-skeleton drupal/autoinsert-insert-api-skeleton
+  "Drupal api.php file skeleton."
+  nil
+  "<?php\n"
+  "\n"
+  "/**\n"
+  " * @file\n"
+  " * Hooks provided by the " (drupal-module-name) " module.\n"
+  " */\n"
+  "\n"
+  "/**\n"
+  " * @addtogroup hooks\n"
+  " * @{\n"
+  " */\n"
+  "\n"
+  @ - "\n"
+  "\n"
+  "/**\n"
+  " * @} End of \"addtogroup hooks\".\n"
+  " */\n")
+
+(define-skeleton drupal/autoinsert-insert-variable-module-skeleton
+  "Drupal variable module support file."
+  nil
+  "<?php\n"
+  "\n"
+  "/**\n"
+  " * @file\n"
+  " * Variable module support for the " (drupal-module-name) " module.\n"
+  " */\n"
+  "\n"
+  "/**\n"
+  " * @addtogroup variables\n"
+  " * @{\n"
+  " */\n"
+  "\n"
+  "/**\n"
+  " * Implements hook_variable_info().\n"
+  " */\n"
+  "function " (drupal-module-name) "_variable_info($options) {\n"
+  "  $variables['" @ -  (drupal-module-name) "_some_variable'] = array(\n"
+  "    'type' => 'string',\n"
+  "    'title' => t('Some variable title', array(), $options),\n"
+  "    'default' => 'uid',\n"
+  "    'description' => t('Some variable description', array(), $options),\n"
+  "    'group' => '" (drupal-module-name) "',\n"
+  "  );\n"
+  "\n"
+  "  return $variables;\n"
+  "}\n"
+  "\n"
+  "/**\n"
+  " * Implements hook_variable_group_info().\n"
+  " */\n"
+  "function " (drupal-module-name) "_variable_group_info() {\n"
+  "  $groups['" (drupal-module-name) "'] = array(\n"
+  "    'title' => t('Some group title'),\n"
+  "    'description' => t('Some group description.'),\n"
+  "  );\n"
+  "\n"
+  "  return $groups;\n"
+  "}\n"
+  "\n"
+  "/**\n"
+  " * @} End of \"addtogroup variables\".\n"
+  " */\n")
 
 
 
