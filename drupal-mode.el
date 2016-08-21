@@ -347,7 +347,12 @@ According to https://drupal.org/coding-standards#indenting."
   :group 'drupal)
 
 (c-add-style "drupal" drupal-style)
-(add-to-list 'c-default-style '(drupal-mode . "drupal"))
+
+(if (and
+     (boundp 'c-default-style)
+     (stringp c-default-style))
+    (setq c-default-style `((drupal-mode . "drupal") (other . ,c-default-style)))
+  (add-to-list 'c-default-style '(drupal-mode . "drupal")))
 
 
 
