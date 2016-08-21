@@ -5,7 +5,7 @@
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
 ;; Created: January 17, 2012
-;; Version: 0.7.0
+;; Version: 0.7.1
 ;; Package-Requires: ((php-mode "1.5.0"))
 ;; Keywords: programming, php, drupal
 
@@ -347,7 +347,12 @@ According to https://drupal.org/coding-standards#indenting."
   :group 'drupal)
 
 (c-add-style "drupal" drupal-style)
-(add-to-list 'c-default-style '(drupal-mode . "drupal"))
+
+(if (and
+     (boundp 'c-default-style)
+     (stringp c-default-style))
+    (setq c-default-style `((drupal-mode . "drupal") (other . ,c-default-style)))
+  (add-to-list 'c-default-style '(drupal-mode . "drupal")))
 
 
 
