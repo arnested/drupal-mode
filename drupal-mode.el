@@ -340,6 +340,7 @@ function arguments.")
     (c-doc-comment-style . (php-mode . javadoc))
     (c-label-minimum-indentation . 1)
     (c-special-indent-hook . c-gnu-impose-minimum)
+    (statement-cont . +)
     )
   "Drupal coding style.
 According to https://drupal.org/coding-standards#indenting."
