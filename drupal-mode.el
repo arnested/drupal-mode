@@ -336,11 +336,11 @@ function arguments.")
     (require-final-newline . t)
     (c-offsets-alist . ((arglist-close . 0)
                         (arglist-cont-nonempty . c-lineup-math)
-                        (arglist-intro . +)))
+                        (arglist-intro . +)
+                        (statement-cont . +)))
     (c-doc-comment-style . (php-mode . javadoc))
     (c-label-minimum-indentation . 1)
     (c-special-indent-hook . c-gnu-impose-minimum)
-    (statement-cont . +)
     )
   "Drupal coding style.
 According to https://drupal.org/coding-standards#indenting."
