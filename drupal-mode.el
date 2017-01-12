@@ -899,8 +899,7 @@ If major version number is 4 - return both major and minor."
 (defun drupal-mode-bootstrap ()
   "Activate Drupal minor mode if major mode is supported.
 The command will activate `drupal-mode' if the current major mode
-is a mode supported by `drupal-mode' (currently only
-`php-mode').
+is a mode supported by `drupal-mode'.
 
 The function is suitable for adding to the supported major modes
 mode-hook."
