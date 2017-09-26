@@ -49,21 +49,24 @@ The Drupal standard includes checks for non-PHP files, this
 checker runs those.
 
 See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
-  :command ("phpcs" "--report=emacs"
-            (option "--standard=" drupal/phpcs-standard concat)
-            source-inplace)
-  ;; Though phpcs supports Checkstyle output which we could feed to
-  ;; `flycheck-parse-checkstyle', we are still using error patterns here,
-  ;; because PHP has notoriously unstable output habits.  See URL
-  ;; `https://github.com/lunaryorn/flycheck/issues/78' and URL
-  ;; `https://github.com/lunaryorn/flycheck/issues/118'
-  :error-patterns
-  ((error line-start
-          (file-name) ":" line ":" column ": error - " (message)
-          line-end)
-   (warning line-start
-            (file-name) ":" line ":" column ": warning - " (message)
-            line-end))
+  :command ("phpcs" "--report=checkstyle"
+            (option "--standard=" flycheck-phpcs-standard concat)
+            ;; Pass original file name to phpcs.  We need to concat explicitly
+            ;; here, because phpcs really insists to get option and argument as
+            ;; a single command line argument :|
+            (eval (when (buffer-file-name)
+                    (concat "--stdin-path=" (buffer-file-name)))))
+  :standard-input t
+  :error-parser flycheck-parse-checkstyle
+  :error-filter
+  (lambda (errors)
+    (flycheck-sanitize-errors
+     (flycheck-remove-error-file-names "STDIN" errors)))
+  ;; Hardcoded for the moment, as this doesn't work:
+  ;; :modes (append drupal-css-modes drupal-js-modes drupal-info-modes)
+  ;; As they're reworking the checker selection code, we're letting this
+  ;; lie for the moment.
+  :modes (css-mode javascript-mode js-mode js2-mode conf-windows-mode)
   :predicate (lambda ()
                (and drupal-mode drupal/phpcs-standard)))
 
@@ -73,7 +76,7 @@ See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
 (let ((modes (append drupal-css-modes drupal-js-modes drupal-info-modes)))
   (dolist (checker (flycheck-defined-checkers))
           (dolist (mode (flycheck-checker-get checker 'modes))
-                  (if (memq mode modes)
+            (if (and (memq mode modes) (not (eq checker 'drupal-phpcs)))
                       (flycheck-add-next-checker checker 'drupal-phpcs)))))
 
 

@@ -252,8 +252,6 @@ See `drupal-mode-map'.")
     ;; mode map on C-c C-v C-`mnemonic-key'.
     (dolist (elem drupal-mode-map-alist)
       (define-key map `[(control c) (control v) (control ,(car elem))] (cdr elem)))
-
-    (define-key map [(control a)] #'drupal-mode-beginning-of-line)
     map)
   "Keymap for `drupal-mode'")
 
@@ -336,7 +334,8 @@ function arguments.")
     (require-final-newline . t)
     (c-offsets-alist . ((arglist-close . 0)
                         (arglist-cont-nonempty . c-lineup-math)
-                        (arglist-intro . +)))
+                        (arglist-intro . +)
+                        (statement-cont . +)))
     (c-doc-comment-style . (php-mode . javadoc))
     (c-label-minimum-indentation . 1)
     (c-special-indent-hook . c-gnu-impose-minimum)
@@ -699,35 +698,6 @@ instead."
        ((fboundp 'php-extras-eldoc-documentation-function)
         (php-extras-eldoc-documentation-function))))))
 
-(defun drupal-mode-beginning-of-line (&optional n)
-  "Move point to beginning of property value or to beginning of line.
-The prefix argument N is passed directly to `beginning-of-line'.
-
-This command is identical to `beginning-of-line' if not in a mode
-derived from `conf-mode'.
-
-If point is on a (non-continued) property line, move point to the
-beginning of the property value or the beginning of line,
-whichever is closer.  If point is already at beginning of line,
-move point to beginning of property value.  Therefore, repeated
-calls will toggle point between beginning of property value and
-beginning of line.
-
-Heavily based on `message-beginning-of-line' from Gnus."
-  (interactive "p")
-  (let ((zrs 'zmacs-region-stays))
-    (when (and (featurep 'xemacs) (interactive-p) (boundp zrs))
-      (set zrs t)))
-  (if (derived-mode-p 'conf-mode)
-      (let* ((here (point))
-             (bol (progn (beginning-of-line n) (point)))
-             (eol (point-at-eol))
-             (eoh (re-search-forward "= *" eol t)))
-        (goto-char
-         (if (and eoh (or (< eoh here) (= bol here)))
-             eoh bol)))
-    (beginning-of-line n)))
-
 
 
 (defvar drupal-local-variables (make-hash-table :test 'equal)
@@ -898,8 +868,7 @@ If major version number is 4 - return both major and minor."
 (defun drupal-mode-bootstrap ()
   "Activate Drupal minor mode if major mode is supported.
 The command will activate `drupal-mode' if the current major mode
-is a mode supported by `drupal-mode' (currently only
-`php-mode').
+is a mode supported by `drupal-mode'.
 
 The function is suitable for adding to the supported major modes
 mode-hook."
