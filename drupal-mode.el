@@ -1,11 +1,11 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012, 2013, 2014, 2015, 2016 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
 ;; Created: January 17, 2012
-;; Version: 0.7.1
+;; Version: 0.7.3
 ;; Package-Requires: ((php-mode "1.5.0"))
 ;; Keywords: programming, php, drupal
 
