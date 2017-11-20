@@ -55,10 +55,11 @@ Include path to the executable if it is not in your $PATH.")
 (defun drupal/gxref-get-function-args (symbol &optional version)
   "Get function arguments for SYMBOL from GNU GLOBAL.
 Optional argument VERSION is ignored."
-  (let* ((line (car (gxref--find-symbol symbol)))
-         (string (xref-item-summary line)))
-    (string-match "(\\(.*\\))" string)
-    (match-string-no-properties 1 string)))
+  (ignore-errors
+    (let* ((line (car (gxref--find-symbol symbol)))
+           (string (xref-item-summary line)))
+      (string-match "(\\(.*\\))" string)
+      (match-string-no-properties 1 string))))
 
 (add-hook 'drupal-mode-hook #'drupal/gxref-enable)
 
