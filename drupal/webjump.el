@@ -1,6 +1,6 @@
 ;;; drupal/webjump.el --- Drupal projects as webjump sites
 
-;; Copyright (C) 2012, 2013  Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2019  Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -26,7 +26,7 @@
 
 (require 'webjump)
 
-(add-to-list 'webjump-sites '("Drupal" . [simple-query "drupal.org" "https://drupal.org/project/" ""]))
+(add-to-list 'webjump-sites '("Drupal" . [simple-query "drupal.org" "https://www.drupal.org/project/" ""]))
 
 
 

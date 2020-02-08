@@ -1,6 +1,6 @@
 ;;; drupal/autoinsert.el --- Drupal-mode support for `auto-insert-mode'
 
-;; Copyright (C) 2012, 2013, 2014, 2015, 2016  Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2020  Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; Keywords:
@@ -26,12 +26,13 @@
 
 ;;; Code:
 
-(define-auto-insert '("\\.info" . "Drupal info file") 'drupal/autoinsert-insert-info-skeleton)
-(define-auto-insert '("\\.module" . "Drupal module file") 'drupal/autoinsert-insert-module-skeleton)
-(define-auto-insert '("\\.install" . "Drupal install file") 'drupal/autoinsert-insert-install-skeleton)
-(define-auto-insert '("\\.test" . "Drupal test file") 'drupal/autoinsert-insert-test-skeleton)
-(define-auto-insert '("\\.api.php" . "Drupal API file") 'drupal/autoinsert-insert-api-skeleton)
-(define-auto-insert '("\\.variable.inc" . "Drupal variable module support file") 'drupal/autoinsert-insert-variable-module-skeleton)
+(define-auto-insert '("\\.info\\'" . "Drupal info file") 'drupal/autoinsert-insert-info-skeleton)
+(define-auto-insert '("\\.info\\.yml\\'" . "Drupal info YML file") 'drupal/autoinsert-insert-info-yml-skeleton)
+(define-auto-insert '("\\.module\\'" . "Drupal module file") 'drupal/autoinsert-insert-module-skeleton)
+(define-auto-insert '("\\.install\\'" . "Drupal install file") 'drupal/autoinsert-insert-install-skeleton)
+(define-auto-insert '("\\.test\\'" . "Drupal test file") 'drupal/autoinsert-insert-test-skeleton)
+(define-auto-insert '("\\.api\\.php\\'" . "Drupal API file") 'drupal/autoinsert-insert-api-skeleton)
+(define-auto-insert '("\\.variable.inc\\'" . "Drupal variable module support file") 'drupal/autoinsert-insert-variable-module-skeleton)
 
 (define-skeleton drupal/autoinsert-insert-info-skeleton
   "Drupal info file skeleton."
@@ -50,6 +51,16 @@
   (when v2 "; configure = ") & @ (when v2 "admin/config/something/") & v1 & "\n"
   (when v2 "; required = ") & @ (when v2 "TRUE\n")
   (when v2 "; hidden = ") & @ (when v2 "TRUE\n"))
+
+(define-skeleton drupal/autoinsert-insert-info-yml-skeleton
+  "Drupal 8 info.yml file skeleton."
+  nil
+  '(setq v1 (file-name-nondirectory (file-name-sans-extension (file-name-sans-extension (or buffer-file-name (buffer-name))))))
+  '(setq v2 (if (string= (drupal-major-version) "8") "^8 || ^9" (concat "^" (drupal-major-version))))
+  "name: " @ - (upcase-initials (replace-regexp-in-string "[-_\\.]+" " " v1)) \n
+  "description: " @ (replace-regexp-in-string "[-_\\.]+" " " v1) \n
+  "type: module" @ \n
+  "core_version_requirement: " @ v2 "\n")
 
 (define-skeleton drupal/autoinsert-insert-module-skeleton
   "Drupal module file skeleton."

@@ -1,6 +1,6 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017, 2019, 2020 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
@@ -96,15 +96,13 @@ whitespace at the end."
   :group 'drupal)
 
 
-(defcustom drupal-search-url "http://api.drupal.org/api/search/%v/%s"
+(defcustom drupal-search-url "https://api.drupal.org/api/search/%v/%s"
   "The URL to search the Drupal API.
 %v is the Drupal major version.
 %s is the search term."
-  :type '(choice (const :tag "Api.drupal.org" "http://api.drupal.org/api/search/%v/%s")
-                 (const :tag "Drupalcontrib.org" "http://drupalcontrib.org/api/search/%v/%s")
-                 (string :tag "Other" "http://example.com/api/search/%v/%s"))
-  :link '(url-link :tag "api.drupalcontrib.org" "http://api.drupalcontrib.org")
-  :link '(url-link :tag "api.drupal.org" "http://api.drupal.org")
+  :type '(choice (const :tag "Api.drupal.org" "https://api.drupal.org/api/search/%v/%s")
+                 (string :tag "Other" "https://example.com/api/search/%v/%s"))
+  :link '(url-link :tag "api.drupal.org" "https://api.drupal.org")
   :group 'drupal)
 
 ;;;###autoload
@@ -161,7 +159,7 @@ Include path to the executable if it is not in your $PATH."
   :group 'drupal)
 
 ;;;###autoload
-(defcustom drupal-info-modes (list 'conf-windows-mode)
+(defcustom drupal-info-modes (list 'conf-windows-mode 'yaml-mode)
   "Major modes to consider info files in Drupal mode."
   :type '(repeat symbol)
   :group 'drupal)
@@ -333,8 +331,7 @@ function arguments.")
     (indent-tabs-mode . nil)
     (require-final-newline . t)
     (c-offsets-alist . ((arglist-close . 0)
-                        (arglist-cont-nonempty . c-lineup-math)
-                        (arglist-intro . +)
+                        (arglist-cont-nonempty . 0)
                         (statement-cont . +)))
     (c-doc-comment-style . (php-mode . javadoc))
     (c-label-minimum-indentation . 1)
@@ -809,13 +806,12 @@ older implementation of `locate-dominating-file'."
                   (let ((prev-user user))
                     (setq user (nth 2 (file-attributes dir)))
                     (or (null prev-user) (equal user prev-user))))
-        (if (and (setq files (condition-case nil
-                                 (directory-files dir 'full "\\(.+\\)\\.info\\'" 'nosort)
-                               (error nil)))
-                 (file-exists-p (concat (file-name-sans-extension (car files)) ".module")))
+        (if (setq files (condition-case nil
+                            (directory-files dir 'full "\\(.+\\)\\.info\\(\\.yml\\)\\'" 'nosort)
+                          (error nil)))
             (if info-file-location
                 (throw 'found (car files))
-              (throw 'found (file-name-nondirectory (file-name-sans-extension (car files)))))
+              (throw 'found (file-name-nondirectory (file-name-sans-extension(file-name-sans-extension (car files))))))
           (if (equal dir
                      (setq dir (file-name-directory
                                 (directory-file-name dir))))
@@ -834,7 +830,7 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
                                         drupal-module
                                       ;; Otherwise fall back to a very naive
                                       ;; way of guessing the module name.
-                                      (file-name-nondirectory (file-name-sans-extension (or buffer-file-name (buffer-name))))))))
+                                      (file-name-nondirectory (file-name-sans-extension (file-name-sans-extension (or buffer-file-name (buffer-name)))))))))
     (if (called-interactively-p 'any)
         (insert name)
       name)))
