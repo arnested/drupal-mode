@@ -1,3 +1,3 @@
 (package-file "drupal-mode.el")
 
-(source marmalade)
+(source melpa)
