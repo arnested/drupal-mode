@@ -1,6 +1,6 @@
 ;;; drupal/autoinsert.el --- Drupal-mode support for `auto-insert-mode'
 
-;; Copyright (C) 2012, 2013, 2014, 2015, 2016  Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2020  Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; Keywords:
@@ -26,12 +26,12 @@
 
 ;;; Code:
 
-(define-auto-insert '("\\.info" . "Drupal info file") 'drupal/autoinsert-insert-info-skeleton)
-(define-auto-insert '("\\.module" . "Drupal module file") 'drupal/autoinsert-insert-module-skeleton)
-(define-auto-insert '("\\.install" . "Drupal install file") 'drupal/autoinsert-insert-install-skeleton)
-(define-auto-insert '("\\.test" . "Drupal test file") 'drupal/autoinsert-insert-test-skeleton)
-(define-auto-insert '("\\.api.php" . "Drupal API file") 'drupal/autoinsert-insert-api-skeleton)
-(define-auto-insert '("\\.variable.inc" . "Drupal variable module support file") 'drupal/autoinsert-insert-variable-module-skeleton)
+(define-auto-insert '("\\.info\\'" . "Drupal info file") 'drupal/autoinsert-insert-info-skeleton)
+(define-auto-insert '("\\.module\\'" . "Drupal module file") 'drupal/autoinsert-insert-module-skeleton)
+(define-auto-insert '("\\.install\\'" . "Drupal install file") 'drupal/autoinsert-insert-install-skeleton)
+(define-auto-insert '("\\.test\\'" . "Drupal test file") 'drupal/autoinsert-insert-test-skeleton)
+(define-auto-insert '("\\.api\\.php\\'" . "Drupal API file") 'drupal/autoinsert-insert-api-skeleton)
+(define-auto-insert '("\\.variable.inc\\'" . "Drupal variable module support file") 'drupal/autoinsert-insert-variable-module-skeleton)
 
 (define-skeleton drupal/autoinsert-insert-info-skeleton
   "Drupal info file skeleton."
