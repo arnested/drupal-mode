@@ -1,6 +1,6 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017, 2019 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
@@ -96,15 +96,13 @@ whitespace at the end."
   :group 'drupal)
 
 
-(defcustom drupal-search-url "http://api.drupal.org/api/search/%v/%s"
+(defcustom drupal-search-url "https://api.drupal.org/api/search/%v/%s"
   "The URL to search the Drupal API.
 %v is the Drupal major version.
 %s is the search term."
-  :type '(choice (const :tag "Api.drupal.org" "http://api.drupal.org/api/search/%v/%s")
-                 (const :tag "Drupalcontrib.org" "http://drupalcontrib.org/api/search/%v/%s")
-                 (string :tag "Other" "http://example.com/api/search/%v/%s"))
-  :link '(url-link :tag "api.drupalcontrib.org" "http://api.drupalcontrib.org")
-  :link '(url-link :tag "api.drupal.org" "http://api.drupal.org")
+  :type '(choice (const :tag "Api.drupal.org" "https://api.drupal.org/api/search/%v/%s")
+                 (string :tag "Other" "https://example.com/api/search/%v/%s"))
+  :link '(url-link :tag "api.drupal.org" "https://api.drupal.org")
   :group 'drupal)
 
 ;;;###autoload
