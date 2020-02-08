@@ -1,6 +1,6 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017, 2019 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017, 2019, 2020 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
@@ -331,8 +331,7 @@ function arguments.")
     (indent-tabs-mode . nil)
     (require-final-newline . t)
     (c-offsets-alist . ((arglist-close . 0)
-                        (arglist-cont-nonempty . c-lineup-math)
-                        (arglist-intro . +)
+                        (arglist-cont-nonempty . 0)
                         (statement-cont . +)))
     (c-doc-comment-style . (php-mode . javadoc))
     (c-label-minimum-indentation . 1)
