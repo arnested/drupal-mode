@@ -159,7 +159,7 @@ Include path to the executable if it is not in your $PATH."
   :group 'drupal)
 
 ;;;###autoload
-(defcustom drupal-info-modes (list 'conf-windows-mode)
+(defcustom drupal-info-modes (list 'conf-windows-mode 'yaml-mode)
   "Major modes to consider info files in Drupal mode."
   :type '(repeat symbol)
   :group 'drupal)
@@ -806,13 +806,12 @@ older implementation of `locate-dominating-file'."
                   (let ((prev-user user))
                     (setq user (nth 2 (file-attributes dir)))
                     (or (null prev-user) (equal user prev-user))))
-        (if (and (setq files (condition-case nil
-                                 (directory-files dir 'full "\\(.+\\)\\.info\\'" 'nosort)
-                               (error nil)))
-                 (file-exists-p (concat (file-name-sans-extension (car files)) ".module")))
+        (if (setq files (condition-case nil
+                            (directory-files dir 'full "\\(.+\\)\\.info\\(\\.yml\\)\\'" 'nosort)
+                          (error nil)))
             (if info-file-location
                 (throw 'found (car files))
-              (throw 'found (file-name-nondirectory (file-name-sans-extension (car files)))))
+              (throw 'found (file-name-nondirectory (file-name-sans-extension(file-name-sans-extension (car files))))))
           (if (equal dir
                      (setq dir (file-name-directory
                                 (directory-file-name dir))))
@@ -831,7 +830,7 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
                                         drupal-module
                                       ;; Otherwise fall back to a very naive
                                       ;; way of guessing the module name.
-                                      (file-name-nondirectory (file-name-sans-extension (or buffer-file-name (buffer-name))))))))
+                                      (file-name-nondirectory (file-name-sans-extension (file-name-sans-extension (or buffer-file-name (buffer-name)))))))))
     (if (called-interactively-p 'any)
         (insert name)
       name)))
