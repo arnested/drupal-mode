@@ -17,7 +17,7 @@
 ;; General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with Drupal mode.  If not, see <http://www.gnu.org/licenses/>.
+;; along with Drupal mode.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -48,7 +48,7 @@
 The Drupal standard includes checks for non-PHP files, this
 checker runs those.
 
-See URL `http://pear.php.net/package/PHP_CodeSniffer/'."
+See URL `https://pear.php.net/package/PHP_CodeSniffer/'."
   :command ("phpcs" "--report=checkstyle"
             (option "--standard=" flycheck-phpcs-standard concat)
             ;; Pass original file name to phpcs.  We need to concat explicitly

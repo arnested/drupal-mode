@@ -15,7 +15,7 @@
 # General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with Drupal mode.  If not, see <http://www.gnu.org/licenses/>.
+# along with Drupal mode.  If not, see <https://www.gnu.org/licenses/>.
 
 .PHONY: all test clean install
 

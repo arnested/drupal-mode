@@ -22,7 +22,7 @@
 ;; General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with Drupal mode.  If not, see <http://www.gnu.org/licenses/>.
+;; along with Drupal mode.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -114,7 +114,7 @@ whitespace at the end."
 %v is the Drush version.
 %s is the search term."
   :type '(choice (const :tag "Api.drush.org" "http://api.drush.org/api/search/%v/%s")
-                 (string :tag "Other" "http://example.com/api/search/%v/%s"))
+                 (string :tag "Other" "https://example.com/api/search/%v/%s"))
   :link '(url-link :tag "api.drush.org" "http://api.drush.org")
   :safe 'string-or-null-p
   :group 'drupal-drush)
