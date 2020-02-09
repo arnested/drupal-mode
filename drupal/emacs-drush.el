@@ -1,6 +1,6 @@
 ;;; drupal/emacs-drush.el --- Drupal-mode support for Drush utilities for Emacs users
 
-;; Copyright (C) 2012, 2013, 2015 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2015, 2020 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -22,7 +22,7 @@
 ;;; Commentary:
 
 ;; You need to install `Drush utilities for Emacs users'
-;; <https://drupal.org/project/emacs_drush> for this to work.
+;; <https://www.drupal.org/project/emacs_drush> for this to work.
 
 ;; If `Drush utilities for Emacs users' is installed it will run
 ;; `drush etags' on `after-save-hook' if a TAGS file is present in
@@ -43,7 +43,7 @@ Requires `Drush utilities for Emacs users' to be installed."
   :type `(choice
           (const :tag "Yes" t)
           (const :tag "No" nil))
-  :link '(url-link :tag "Drush utilities for Emacs users" "https://drupal.org/project/emacs_drush")
+  :link '(url-link :tag "Drush utilities for Emacs users" "https://www.drupal.org/project/emacs_drush")
   :group 'drupal)
 
 (defun drupal/emacs-drush-run-after-save ()

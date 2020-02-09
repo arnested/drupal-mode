@@ -71,7 +71,7 @@ a single newline (\\n)."
           (const :tag "Always" t)
           (const :tag "Never" nil)
           (const :tag "Ask" ask))
-  :link '(url-link :tag "drupal.org" "https://drupal.org/coding-standards#indenting")
+  :link '(url-link :tag "drupal.org" "https://www.drupal.org/coding-standards")
   :group 'drupal)
 
 
@@ -92,7 +92,7 @@ whitespace at the end."
           (const :tag "Always" always)
           (const :tag "Default" default)
           (const :tag "Never" never))
-  :link '(url-link :tag "drupal.org" "https://drupal.org/coding-standards#indenting")
+  :link '(url-link :tag "drupal.org" "https://www.drupal.org/coding-standards")
   :group 'drupal)
 
 
@@ -338,8 +338,8 @@ function arguments.")
     (c-special-indent-hook . c-gnu-impose-minimum)
     )
   "Drupal coding style.
-According to https://drupal.org/coding-standards#indenting."
-  :link '(url-link :tag "drupal.org" "https://drupal.org/coding-standards#indenting")
+According to https://www.drupal.org/coding-standards."
+  :link '(url-link :tag "drupal.org" "https://www.drupal.org/coding-standards")
   :group 'drupal)
 
 (c-add-style "drupal" drupal-style)
@@ -439,13 +439,13 @@ of the project)."
 
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-bugs]
-  '(menu-item "Bug reports" (lambda () (interactive) (browse-url (concat "https://drupal.org/project/issues/" drupal-project "?categories=bug")))))
+  '(menu-item "Bug reports" (lambda () (interactive) (browse-url (concat "https://www.drupal.org/project/issues/" drupal-project "?categories=bug")))))
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-issues]
-  '(menu-item "Issues" (lambda () (interactive) (browse-url (concat "https://drupal.org/project/issues/" drupal-project "?categories=All")))))
+  '(menu-item "Issues" (lambda () (interactive) (browse-url (concat "https://www.drupal.org/project/issues/" drupal-project "?categories=All")))))
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-home]
-  '(menu-item "Project page" (lambda () (interactive) (browse-url (concat "https://drupal.org/project/" drupal-project)))))
+  '(menu-item "Project page" (lambda () (interactive) (browse-url (concat "https://www.drupal.org/project/" drupal-project)))))
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-separator]
   '("--"))
@@ -460,7 +460,7 @@ of the project)."
 
 (defun drupal-convert-line-ending ()
   "Convert to unix style line ending.
-According to https://drupal.org/coding-standards#indenting you
+According to https://www.drupal.org/coding-standards you
 should save your files with unix style end of line."
   (when (and drupal-mode
              drupal-convert-line-ending

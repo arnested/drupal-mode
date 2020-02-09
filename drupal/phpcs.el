@@ -1,6 +1,6 @@
 ;;; drupal/phpcs.el --- Drupal-mode common support for flymake-phpcs and flycheck
 
-;; Copyright (C) 2012, 2013, 2016 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2016, 2020 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -43,7 +43,7 @@ This can either be the name of an installed standard (to see
 installed standards run `phpcs -i') or it can be the file name of
 a standard. Adding file name requires PHP CodeSniffer version
 1.3.4 or newer."
-  :link '(url-link :tag "Drupal Coder Sniffer" "https://drupal.org/node/1419980")
+  :link '(url-link :tag "Drupal Coder Sniffer" "https://www.drupal.org/node/1419980")
   :group 'drupal)
 
 

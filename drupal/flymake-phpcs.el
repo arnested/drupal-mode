@@ -1,6 +1,6 @@
 ;;; drupal/flymake-phpcs.el --- Drupal-mode support for flymake-phpcs
 
-;; Copyright (C) 2012, 2013, 2014 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2020 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -57,7 +57,7 @@ file (and thus on the remote machine), or in the same place as
             (const :tag "No" nil)
             (const :tag "Auto" auto)
             (const :tag "Default" default))
-    :link '(url-link :tag "Drupal Coder Sniffer" "https://drupal.org/project/coder")
+    :link '(url-link :tag "Drupal Coder Sniffer" "https://www.drupal.org/project/coder")
     :group 'drupal))
 
 (defun drupal/flymake-phpcs-enable ()

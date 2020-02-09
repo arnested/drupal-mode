@@ -50,7 +50,7 @@ It does this by:
 #### Indentation
 
 In php-mode code will be indented according to
-[Drupals coding standards](https://drupal.org/coding-standards). If not
+[Drupals coding standards](https://www.drupal.org/coding-standards). If not
 it is considered a bug!
 
 
@@ -165,7 +165,7 @@ For this to work you need:
 
 *    [PHP CodeSniffer](https://pear.php.net/package/PHP_CodeSniffer)
 *    [flymake-phpcs.el](https://melpa.org/#/flymake-phpcs)
-*    [Drupal Code Sniffer](https://drupal.org/project/drupalcs) rules
+*    [Drupal Code Sniffer](https://www.drupal.org/project/drupalcs) rules
 
 
 ## Other takes on a Drupal mode
