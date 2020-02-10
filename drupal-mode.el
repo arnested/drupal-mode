@@ -752,7 +752,7 @@ the location of DRUPAL_ROOT."
                    (string= module-version "VERSION"))
           (setq module-version version))
         (puthash (expand-file-name (file-name-directory module)) `((drupal-module . ,(file-name-nondirectory
-                                                                                      (file-name-sans-extension module)))
+                                                                                      (file-name-sans-extension (file-name-sans-extension module))))
                                                                    (drupal-version . ,version)
                                                                    (drupal-module-name . ,module-name)
                                                                    (drupal-module-version . ,module-version)
