@@ -12,8 +12,3 @@ env:
 script:
   - emacs --version
   - make test
-notifications:
-  webhooks: https://webhooks.gitter.im/e/fa0500ce49cab8dc8144
-  on_success: change
-  on_failure: always
-  on_start: never
