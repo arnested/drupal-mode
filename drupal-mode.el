@@ -182,7 +182,10 @@ Drupal mode will only do auto fill in comments (auto filling code
 is not nice).
 
 If `Yes' enable `auto-fill-mode' in Drupal PHP mode buffers.
-If `No' don't enable `auto-fill-mode' in Drupal PHP mode buffers (`auto-fill-mode' can still be enabled by other settings)."
+
+If `No' don't enable `auto-fill-mode' in Drupal PHP mode
+buffers (`auto-fill-mode' can still be enabled by other
+settings)."
   :type `(choice
           :tag "Enable `auto-fill-mode'."
           (const :tag "Yes" t)
@@ -340,6 +343,7 @@ function arguments.")
   "Drupal coding style.
 According to https://www.drupal.org/coding-standards."
   :link '(url-link :tag "drupal.org" "https://www.drupal.org/coding-standards")
+  :type '(cons string (alist symbol sexp))
   :group 'drupal)
 
 (c-add-style "drupal" drupal-style)
