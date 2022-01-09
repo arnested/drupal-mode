@@ -33,7 +33,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'php-mode)
 (require 'format-spec)
 (require 'json)
@@ -539,7 +539,7 @@ buffer."
              (buffer-string)))))
     (when (not config)
       (error "No Drupal SQL configuration found."))
-    (destructuring-bind (&key database driver &allow-other-keys) config
+    (cl-destructuring-bind (&key database driver &allow-other-keys) config
       (let ((sql-interactive-product
              (drupal--db-driver-to-sql-product driver))
             (start-buffer (current-buffer))
@@ -835,7 +835,7 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
         (insert name)
       name)))
 
-(defun* drupal-module-major-version (&key version default)
+(cl-defun drupal-module-major-version (&key version default)
   "Return a modules major version number.
 If VERSION is not set derive it from the buffer local variable
 `drupal-major-version'.
