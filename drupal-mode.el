@@ -310,7 +310,7 @@ function arguments.")
     (setq comment-end "")
 
     ;; Setup cc-mode style stuff.
-    (when (derived-mode-p 'c-mode)
+    (when (or (derived-mode-p 'php-base-mode) (derived-mode-p 'c-mode))
       (c-add-language 'drupal-mode 'c-mode)
       (c-set-style "drupal"))
 
