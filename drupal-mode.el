@@ -1,11 +1,11 @@
 ;;; drupal-mode.el --- Advanced minor mode for Drupal development
 
-;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017, 2019, 2020 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; URL: https://github.com/arnested/drupal-mode
 ;; Created: January 17, 2012
-;; Version: 0.7.3
+;; Version: 0.7.4
 ;; Package-Requires: ((php-mode "1.5.0"))
 ;; Keywords: programming, php, drupal
 
@@ -22,7 +22,7 @@
 ;; General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with Drupal mode.  If not, see <http://www.gnu.org/licenses/>.
+;; along with Drupal mode.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -33,7 +33,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'php-mode)
 (require 'format-spec)
 (require 'json)
@@ -71,7 +71,7 @@ a single newline (\\n)."
           (const :tag "Always" t)
           (const :tag "Never" nil)
           (const :tag "Ask" ask))
-  :link '(url-link :tag "drupal.org" "https://drupal.org/coding-standards#indenting")
+  :link '(url-link :tag "drupal.org" "https://www.drupal.org/coding-standards")
   :group 'drupal)
 
 
@@ -92,19 +92,17 @@ whitespace at the end."
           (const :tag "Always" always)
           (const :tag "Default" default)
           (const :tag "Never" never))
-  :link '(url-link :tag "drupal.org" "https://drupal.org/coding-standards#indenting")
+  :link '(url-link :tag "drupal.org" "https://www.drupal.org/coding-standards")
   :group 'drupal)
 
 
-(defcustom drupal-search-url "http://api.drupal.org/api/search/%v/%s"
+(defcustom drupal-search-url "https://api.drupal.org/api/search/%v/%s"
   "The URL to search the Drupal API.
 %v is the Drupal major version.
 %s is the search term."
-  :type '(choice (const :tag "Api.drupal.org" "http://api.drupal.org/api/search/%v/%s")
-                 (const :tag "Drupalcontrib.org" "http://drupalcontrib.org/api/search/%v/%s")
-                 (string :tag "Other" "http://example.com/api/search/%v/%s"))
-  :link '(url-link :tag "api.drupalcontrib.org" "http://api.drupalcontrib.org")
-  :link '(url-link :tag "api.drupal.org" "http://api.drupal.org")
+  :type '(choice (const :tag "Api.drupal.org" "https://api.drupal.org/api/search/%v/%s")
+                 (string :tag "Other" "https://example.com/api/search/%v/%s"))
+  :link '(url-link :tag "api.drupal.org" "https://api.drupal.org")
   :group 'drupal)
 
 ;;;###autoload
@@ -116,7 +114,7 @@ whitespace at the end."
 %v is the Drush version.
 %s is the search term."
   :type '(choice (const :tag "Api.drush.org" "http://api.drush.org/api/search/%v/%s")
-                 (string :tag "Other" "http://example.com/api/search/%v/%s"))
+                 (string :tag "Other" "https://example.com/api/search/%v/%s"))
   :link '(url-link :tag "api.drush.org" "http://api.drush.org")
   :safe 'string-or-null-p
   :group 'drupal-drush)
@@ -161,7 +159,7 @@ Include path to the executable if it is not in your $PATH."
   :group 'drupal)
 
 ;;;###autoload
-(defcustom drupal-info-modes (list 'conf-windows-mode)
+(defcustom drupal-info-modes (list 'conf-windows-mode 'yaml-mode)
   "Major modes to consider info files in Drupal mode."
   :type '(repeat symbol)
   :group 'drupal)
@@ -184,7 +182,10 @@ Drupal mode will only do auto fill in comments (auto filling code
 is not nice).
 
 If `Yes' enable `auto-fill-mode' in Drupal PHP mode buffers.
-If `No' don't enable `auto-fill-mode' in Drupal PHP mode buffers (`auto-fill-mode' can still be enabled by other settings)."
+
+If `No' don't enable `auto-fill-mode' in Drupal PHP mode
+buffers (`auto-fill-mode' can still be enabled by other
+settings)."
   :type `(choice
           :tag "Enable `auto-fill-mode'."
           (const :tag "Yes" t)
@@ -309,7 +310,7 @@ function arguments.")
     (setq comment-end "")
 
     ;; Setup cc-mode style stuff.
-    (when (derived-mode-p 'c-mode)
+    (when (or (derived-mode-p 'php-base-mode) (derived-mode-p 'c-mode))
       (c-add-language 'drupal-mode 'c-mode)
       (c-set-style "drupal"))
 
@@ -333,16 +334,16 @@ function arguments.")
     (indent-tabs-mode . nil)
     (require-final-newline . t)
     (c-offsets-alist . ((arglist-close . 0)
-                        (arglist-cont-nonempty . c-lineup-math)
-                        (arglist-intro . +)
+                        (arglist-cont-nonempty . php-lineup-arglist)
                         (statement-cont . +)))
     (c-doc-comment-style . (php-mode . javadoc))
     (c-label-minimum-indentation . 1)
     (c-special-indent-hook . c-gnu-impose-minimum)
     )
   "Drupal coding style.
-According to https://drupal.org/coding-standards#indenting."
-  :link '(url-link :tag "drupal.org" "https://drupal.org/coding-standards#indenting")
+According to https://www.drupal.org/coding-standards."
+  :link '(url-link :tag "drupal.org" "https://www.drupal.org/coding-standards")
+  :type '(cons string (alist symbol sexp))
   :group 'drupal)
 
 (c-add-style "drupal" drupal-style)
@@ -442,13 +443,13 @@ of the project)."
 
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-bugs]
-  '(menu-item "Bug reports" (lambda () (interactive) (browse-url (concat "https://drupal.org/project/issues/" drupal-project "?categories=bug")))))
+  '(menu-item "Bug reports" (lambda () (interactive) (browse-url (concat "https://www.drupal.org/project/issues/" drupal-project "?categories=bug")))))
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-issues]
-  '(menu-item "Issues" (lambda () (interactive) (browse-url (concat "https://drupal.org/project/issues/" drupal-project "?categories=All")))))
+  '(menu-item "Issues" (lambda () (interactive) (browse-url (concat "https://www.drupal.org/project/issues/" drupal-project "?categories=All")))))
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-home]
-  '(menu-item "Project page" (lambda () (interactive) (browse-url (concat "https://drupal.org/project/" drupal-project)))))
+  '(menu-item "Project page" (lambda () (interactive) (browse-url (concat "https://www.drupal.org/project/" drupal-project)))))
 (define-key drupal-mode-map
   [menu-bar drupal drupal-project drupal-project-separator]
   '("--"))
@@ -463,7 +464,7 @@ of the project)."
 
 (defun drupal-convert-line-ending ()
   "Convert to unix style line ending.
-According to https://drupal.org/coding-standards#indenting you
+According to https://www.drupal.org/coding-standards you
 should save your files with unix style end of line."
   (when (and drupal-mode
              drupal-convert-line-ending
@@ -542,7 +543,7 @@ buffer."
              (buffer-string)))))
     (when (not config)
       (error "No Drupal SQL configuration found."))
-    (destructuring-bind (&key database driver &allow-other-keys) config
+    (cl-destructuring-bind (&key database driver &allow-other-keys) config
       (let ((sql-interactive-product
              (drupal--db-driver-to-sql-product driver))
             (start-buffer (current-buffer))
@@ -755,7 +756,7 @@ the location of DRUPAL_ROOT."
                    (string= module-version "VERSION"))
           (setq module-version version))
         (puthash (expand-file-name (file-name-directory module)) `((drupal-module . ,(file-name-nondirectory
-                                                                                      (file-name-sans-extension module)))
+                                                                                      (file-name-sans-extension (file-name-sans-extension module))))
                                                                    (drupal-version . ,version)
                                                                    (drupal-module-name . ,module-name)
                                                                    (drupal-module-version . ,module-version)
@@ -809,13 +810,12 @@ older implementation of `locate-dominating-file'."
                   (let ((prev-user user))
                     (setq user (nth 2 (file-attributes dir)))
                     (or (null prev-user) (equal user prev-user))))
-        (if (and (setq files (condition-case nil
-                                 (directory-files dir 'full "\\(.+\\)\\.info\\'" 'nosort)
-                               (error nil)))
-                 (file-exists-p (concat (file-name-sans-extension (car files)) ".module")))
+        (if (setq files (condition-case nil
+                            (directory-files dir 'full "\\(.+\\)\\.info\\(\\.yml\\)\\'" 'nosort)
+                          (error nil)))
             (if info-file-location
                 (throw 'found (car files))
-              (throw 'found (file-name-nondirectory (file-name-sans-extension (car files)))))
+              (throw 'found (file-name-nondirectory (file-name-sans-extension(file-name-sans-extension (car files))))))
           (if (equal dir
                      (setq dir (file-name-directory
                                 (directory-file-name dir))))
@@ -834,12 +834,12 @@ Used in `drupal-insert-hook' and `drupal-insert-function'."
                                         drupal-module
                                       ;; Otherwise fall back to a very naive
                                       ;; way of guessing the module name.
-                                      (file-name-nondirectory (file-name-sans-extension (or buffer-file-name (buffer-name))))))))
+                                      (file-name-nondirectory (file-name-sans-extension (file-name-sans-extension (or buffer-file-name (buffer-name)))))))))
     (if (called-interactively-p 'any)
         (insert name)
       name)))
 
-(defun* drupal-module-major-version (&key version default)
+(cl-defun drupal-module-major-version (&key version default)
   "Return a modules major version number.
 If VERSION is not set derive it from the buffer local variable
 `drupal-major-version'.
@@ -896,6 +896,7 @@ mode-hook."
 (eval-after-load 'eldoc '(require 'drupal/eldoc))
 (eval-after-load 'etags '(require 'drupal/etags))
 (eval-after-load 'gtags '(require 'drupal/gtags))
+(eval-after-load 'gxref '(require 'drupal/gxref))
 (eval-after-load 'helm-gtags '(require 'drupal/helm-gtags))
 (eval-after-load 'ggtags '(require 'drupal/ggtags))
 (eval-after-load 'ispell '(require 'drupal/ispell))

@@ -1,6 +1,6 @@
 # This file is part of Drupal mode.
 
-# Copyright (C) 2012, 2013 Arne Jørgensen
+# Copyright (C) 2012, 2013, 2020 Arne Jørgensen
 
 # Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -15,7 +15,7 @@
 # General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with Drupal mode.  If not, see <http://www.gnu.org/licenses/>.
+# along with Drupal mode.  If not, see <https://www.gnu.org/licenses/>.
 
 .PHONY: all test clean install
 
@@ -42,9 +42,9 @@ README: README.md
 	$(PANDOC) -t plain -o $@ $^
 
 $(ARCHIVE_NAME)-pkg.el: $(ARCHIVE_NAME).el
-	$(CASK) package
+	$(CASK) pkg-file
 
-# create a tar ball in package.el format for uploading to http://marmalade-repo.org
+# create a tar ball in package.el format
 $(PACKAGE_NAME).tar: README $(ARCHIVE_NAME).el $(ARCHIVE_NAME)-pkg.el $(ARCHIVE_NAME).info dir drupal/*.el drupal-tests.el drush-make-mode.el
 	$(TAR) -c -s "@^@$(PACKAGE_NAME)/@" -f $(PACKAGE_NAME).tar $^
 

@@ -32,13 +32,9 @@ below) and depend on a few through the packaging system
 ## Installation
 
 The easiest way to install Drupal mode is probably to install it via
-the ELPA archive at
-[Marmalade](http://marmalade-repo.org/packages/drupal-mode) or
-[MELPA Stable](http://stable.melpa.org/#/drupal-mode) (if you want
-bleeding edge use regular [MELPA](http://melpa.org/#/drupal-mode)).
-
-ELPA (package.el) is part of Emacs 24. For Emacs 23 see
-[Marmalade](http://marmalade-repo.org) for installation instructions.
+the ELPA archive [MELPA
+Stable](https://stable.melpa.org/#/drupal-mode) (if you want bleeding
+edge use regular [MELPA](https://melpa.org/#/drupal-mode)).
 
 
 ## Features of Drupal mode
@@ -46,7 +42,7 @@ ELPA (package.el) is part of Emacs 24. For Emacs 23 see
 ### Drupal Coding Standards
 
 Drupal mode will make you write code that adheres to
-[Drupals coding standards](http://drupal.org/coding-standards#indenting).
+[Drupals coding standards](https://www.drupal.org/coding-standards).
 
 It does this by:
 
@@ -54,7 +50,7 @@ It does this by:
 #### Indentation
 
 In php-mode code will be indented according to
-[Drupals coding standards](http://drupal.org/coding-standards#indenting). If not
+[Drupals coding standards](https://www.drupal.org/coding-standards). If not
 it is considered a bug!
 
 
@@ -91,10 +87,10 @@ menu entry.
 
 Files that are part of a Drupal project will try to identify the used
 version of Drupal core and look up the documentation for the
-corresponding version at http://api.drupal.org.
+corresponding version at https://api.drupal.org.
 
 If the symbol at point is believed to be a Drush command the
-documentation will be looked up at http://api.drush.org instead. If
+documentation will be looked up at https://api.drush.org instead. If
 Drush is installed it will identify the version of Drush and look up
 the documentation for the installed version of Drush.
 
@@ -131,7 +127,7 @@ Etags is a built-in part of Emacs.
 
 ### GNU Globals / gtags
 
-If you load [GNU Globals / gtags](http://www.gnu.org/software/global/)
+If you load [GNU Globals / gtags](https://www.gnu.org/software/global/)
 support in Emacs then Drupal mode will set `gtags-rootdir` to your
 DRUPAL_ROOT.
 
@@ -139,7 +135,7 @@ DRUPAL_ROOT.
 ### Drush utilities for Emacs users
 
 If
-[Drush utilities for Emacs users](http://drupal.org/project/emacs_drush)
+[Drush utilities for Emacs users](https://www.drupal.org/project/emacs_drush)
 is installed Drupal mode will update existing tag files in your
 DRUPAL_ROOT after saving a buffer.
 
@@ -148,11 +144,11 @@ DRUPAL_ROOT after saving a buffer.
 
 If ispell.el is loaded in Emacs then Drupal mode will set the language
 of your Drupal mode buffers to `american` as stated in [Drupals coding
-standards](http://drupal.org/coding-standards).
+standards](https://www.drupal.org/coding-standards).
 
 ispell.el is a built-in part of Emacs. An external program must be
 installed to run the actual spell checking,
-i.e. [ispell](http://www.gnu.org/software/ispell/),
+i.e. [ispell](https://www.gnu.org/software/ispell/),
 [aspell](http://aspell.net/), or
 [hunspell](http://hunspell.sourceforge.net/).
 
@@ -162,14 +158,14 @@ i.e. [ispell](http://www.gnu.org/software/ispell/),
 If support for
 [flymake-phpcs.el](https://github.com/illusori/emacs-flymake-phpcs) is
 loaded in Emacs and you have installed
-[Drupal Code Sniffer](http://drupal.org/project/drupalcs) rules then
+[Drupal Code Sniffer](https://www.drupal.org/project/drupalcs) rules then
 Drupal mode will enable flymake-phpcs under php-mode.
 
 For this to work you need:
 
-*    [PHP CodeSniffer](http://pear.php.net/package/PHP_CodeSniffer)
-*    [flymake-phpcs.el](http://marmalade-repo.org/packages/flymake-phpcs)
-*    [Drupal Code Sniffer](http://drupal.org/project/drupalcs) rules
+*    [PHP CodeSniffer](https://pear.php.net/package/PHP_CodeSniffer)
+*    [flymake-phpcs.el](https://melpa.org/#/flymake-phpcs)
+*    [Drupal Code Sniffer](https://www.drupal.org/project/drupalcs) rules
 
 
 ## Other takes on a Drupal mode
@@ -179,11 +175,11 @@ wild:
 
 *    [Search Github for drupal-mode](https://github.com/search?l=Emacs+Lisp&q=drupal&type=Repositories)
 *     At drupal.org:
-	* http://drupal.org/sandbox/bartlantz/1405156
-	* http://drupal.org/project/emacs
+	* https://www.drupal.org/sandbox/bartlantz/1405156
+	* https://www.drupal.org/project/emacs
 
 All of them more or less based on
-[Configuring Emacs](http://drupal.org/node/59868).
+[Configuring Emacs](https://www.drupal.org/node/59868).
 
 
 ## Development of Drupal mode

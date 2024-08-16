@@ -1,6 +1,6 @@
 ;;; drush-make-mode.el --- Major mode for drush make files
 
-;; Copyright (C) 2013, 2014  Arne Jørgensen
+;; Copyright (C) 2013, 2014, 2020  Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 ;; Keywords: languages, tools, extensions
@@ -18,7 +18,7 @@
 ;; General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with Drupal mode.  If not, see <http://www.gnu.org/licenses/>.
+;; along with Drupal mode.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -35,7 +35,7 @@
   :group 'drupal
 
   ;; Use `bug-reference-mode' for linking issues and patches.
-  (set (make-local-variable 'bug-reference-url-format) "http://drupal.org/node/%s")
+  (set (make-local-variable 'bug-reference-url-format) "https://www.drupal.org/node/%s")
   (set (make-local-variable 'bug-reference-bug-regexp) "\\(?:\\#\\(?2:[0-9]+\\)\\|\\[['\"]?\\(?2:[0-9]+\\)\\([^0-9].*\\)?\\(['\"]?\\]\\)\\)")
   (bug-reference-mode)
 

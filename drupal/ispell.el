@@ -1,6 +1,6 @@
 ;;; drupal/ispell.el --- Drupal-mode support for ispell
 
-;; Copyright (C) 2012, 2013 Arne Jørgensen
+;; Copyright (C) 2012, 2013, 2020 Arne Jørgensen
 
 ;; Author: Arne Jørgensen <arne@arnested.dk>
 
@@ -17,7 +17,7 @@
 ;; General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with Drupal mode.  If not, see <http://www.gnu.org/licenses/>.
+;; along with Drupal mode.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -30,7 +30,7 @@
 (defun drupal/ispell-enable ()
   "Set `ispell-local-dictionary' to `american'.
 Comments and names should use US English spelling (e.g., `color'
-not `colour') according to https://drupal.org/coding-standards."
+not `colour') according to https://www.drupal.org/coding-standards."
   (when (member "american" (ispell-valid-dictionary-list))
     (setq ispell-local-dictionary "american")))
 
